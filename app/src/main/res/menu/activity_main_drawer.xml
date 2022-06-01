@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_notizie"
+            android:icon="@drawable/ic_news"
+            android:title="@string/menu_notizie" />
+        <item
+            android:id="@+id/nav_femminile"
+            android:icon="@drawable/ic_vc_img_ball"
+            android:title="@string/menu_femminile" />
+        <item
+            android:id="@+id/nav_maschile"
+            android:icon="@drawable/ic_vc_img_ball"
+            android:title="@string/menu_maschile" />
+        <item
+            android:id="@+id/nav_contatti"
+            android:icon="@drawable/ic_mail"
+            android:title="@string/menu_contatti" />
+    </group>
+</menu>

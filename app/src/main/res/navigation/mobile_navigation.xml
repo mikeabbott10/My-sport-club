@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_notizie">
+
+    <fragment
+        android:id="@+id/nav_notizie"
+        android:name="it.unipi.sam.app.ui.news.NewsFragment"
+        android:label="@string/menu_notizie"
+        tools:layout="@layout/fragment_news" />
+
+    <fragment
+        android:id="@+id/nav_femminile"
+        android:name="it.unipi.sam.app.ui.female.FemaleFragment"
+        android:label="@string/menu_femminile"
+        tools:layout="@layout/fragment_female" />
+
+    <fragment
+        android:id="@+id/nav_maschile"
+        android:name="it.unipi.sam.app.ui.male.MaleFragment"
+        android:label="@string/menu_maschile"
+        tools:layout="@layout/fragment_male" />
+
+    <fragment
+        android:id="@+id/nav_contatti"
+        android:name="it.unipi.sam.app.ui.contacts.ContactsFragment"
+        android:label="@string/menu_contatti"
+        tools:layout="@layout/fragment_contacts" />
+</navigation>
