@@ -13,11 +13,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import it.unipi.sam.app.MainActivity;
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.FragmentNewsBinding;
 import it.unipi.sam.app.util.BasicRecyclerViewAdapter;
+import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.ItemViewModel;
 
 public class NewsFragment extends Fragment {
@@ -43,9 +45,10 @@ public class NewsFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         recycleView.setLayoutManager(llm);
         recycleView.setHasFixedSize(true);
+        final BasicRecyclerViewAdapter adapter = new BasicRecyclerViewAdapter(null, getActivity());
         newsViewModel.getVcNewsList().observe(getViewLifecycleOwner(), item ->{
             nsv.setVisibility(View.GONE);
-            BasicRecyclerViewAdapter adapter = new BasicRecyclerViewAdapter(item, getActivity());
+            adapter.setNews(item);
             recycleView.setAdapter(adapter);
         });
         return root;

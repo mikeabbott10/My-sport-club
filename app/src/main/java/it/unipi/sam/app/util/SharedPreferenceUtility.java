@@ -70,23 +70,29 @@ public class SharedPreferenceUtility {
 
         ContentResolver cr = ctx.getContentResolver();
         String[] projection = {DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP};
-        Cursor cur;
+        Cursor cur = null;
         try {
             cur = cr.query(Uri.parse(contentUri), projection, null, null, null);
             if (cur != null) {
                 if (cur.moveToFirst()) {
                     long timestamp = cur.getLong(0);
                     if (timestamp == last_modified) {
+                        cur.close();
                         return true;
                     }
                 } else {
                     // Uri was ok but no entry found.
                 }
-                cur.close();
             } else {
                 // content Uri was invalid or some other error occurred
             }
-        }catch(SecurityException ignored){}
+        }catch(IllegalArgumentException | SecurityException ignored){
+            // api 23 doesn't allow the query and throws:
+            // IllegalArgumentException: column last_modified_timestamp is not allowed in queries
+        }finally {
+            if (cur != null)
+                cur.close();
+        }
         return false;
     }
 

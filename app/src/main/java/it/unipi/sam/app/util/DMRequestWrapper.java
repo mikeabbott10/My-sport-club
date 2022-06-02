@@ -15,7 +15,8 @@ public class DMRequestWrapper {
         if(saveDestinationInExternalPublicDir)
             req.setDestinationInExternalPublicDir(dir, fileRelativePath);
         req.setAllowedOverRoaming(allowedOverRoaming);
-        req.setVisibleInDownloadsUi(visibleInDownloadsUi);
+        req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
+        //req.setVisibleInDownloadsUi(visibleInDownloadsUi);
         resource_type = resourceType;
     }
 

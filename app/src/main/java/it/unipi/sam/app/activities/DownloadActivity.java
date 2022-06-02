@@ -92,7 +92,7 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
         if (c.moveToFirst()) {
             int j = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
             int h = c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
-            int t = c.getColumnIndex(DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP);
+            int t = c.getColumnIndex(DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP); // note: if it fails returns -1.
             int status = c.getInt(j);
             int columnReason = c.getColumnIndex(DownloadManager.COLUMN_REASON);
             int reason = c.getInt(columnReason);
@@ -101,8 +101,10 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
                 String uriString = c.getString(h);
                 long lastModifiedTimestamp = c.getLong(t);
                 Integer resources_info = idToResourceType.get(id);
-                if(resources_info==null)
+                if(resources_info==null) {
+                    c.close();
                     return;
+                }
                 DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onDownloadCompleted. "+resources_info+" ready: "+ uriString, null);
                 handleResponseUri(id, resources_info, uriString, lastModifiedTimestamp, true);
                 if(resources_info==REST_INFO_JSON) // file content is in memory now. Delete the file
@@ -117,6 +119,7 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
                 DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "download status: RUNNING", null);
             }
         }
+        c.close();
     }
 
     /**

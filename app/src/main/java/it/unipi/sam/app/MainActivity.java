@@ -13,8 +13,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -42,7 +44,7 @@ import it.unipi.sam.app.util.VCNews;
 //TODO:
 // 2. Se serve, usare preferenceFragment per impostazioni varie (salvataggio come shared preferences)
 
-public class MainActivity extends DownloadActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener{
+public class MainActivity extends DownloadActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener{
     private static final String TAG = "AAAAMainActivity";
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -84,7 +86,12 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                 R.id.nav_notizie, R.id.nav_femminile, R.id.nav_maschile, R.id.nav_contatti)
                 .setOpenableLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavHostFragment navHostFragment =
+                (NavHostFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.nav_host_fragment_content_main);
+        assert navHostFragment != null;
+        NavController navController = navHostFragment.getNavController();
+        //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
@@ -116,6 +123,9 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                 binding.appBarMain.fab.setVisibility(View.GONE);
             }
         });
+
+        // pull-to-refresh
+        binding.appBarMain.swiperefresh.setOnRefreshListener(this);
     }
 
     private void getRestInfoFile(DMRequestWrapper dmRequestWrapper) {
@@ -178,11 +188,13 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                     e.printStackTrace();
                     DebugUtility.showSimpleSnackbar(binding.getRoot(), "ERROR 01. Please retry later.", 5000);
                 }
+                binding.appBarMain.swiperefresh.setRefreshing(false);
                 break;
             case REST_INFO_JSON:
                 if(restInfoInstance!=null) {
                     getVolleyCecinaNews();
-                }
+                }else
+                    binding.appBarMain.swiperefresh.setRefreshing(false);
                 break;
         }
     }
@@ -206,5 +218,13 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                             false, null, null)
             );
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        // ask for rest info
+        getRestInfoFile(new DMRequestWrapper(getString(R.string.restBasePath) + getString(R.string.first_rest_req_path),
+                "notUseful", "notUseful", false, false, REST_INFO_JSON,
+                false, null, null));
     }
 }
