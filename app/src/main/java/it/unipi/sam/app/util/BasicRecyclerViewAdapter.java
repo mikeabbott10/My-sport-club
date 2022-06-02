@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import it.unipi.sam.app.R;
@@ -20,16 +22,16 @@ import it.unipi.sam.app.R;
 public class BasicRecyclerViewAdapter extends RecyclerView.Adapter<BasicRecyclerViewAdapter.ViewHolder> implements View.OnClickListener {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
-        TextView appName;
-        TextView appDesc;
-        ImageView appImage;
+        TextView name;
+        TextView desc;
+        ImageView image;
 
         ViewHolder(View itemView) {
             super(itemView);
             cv = itemView.findViewById(R.id.cv);
-            appName = itemView.findViewById(R.id.app_name);
-            appDesc = itemView.findViewById(R.id.app_description);
-            appImage = itemView.findViewById(R.id.app_image);
+            name = itemView.findViewById(R.id.cv_name);
+            desc = itemView.findViewById(R.id.cv_description);
+            image = itemView.findViewById(R.id.cv_image);
         }
     }
 
@@ -39,6 +41,12 @@ public class BasicRecyclerViewAdapter extends RecyclerView.Adapter<BasicRecycler
     public BasicRecyclerViewAdapter(List<VCNews> news, Context ctx){
         this.news = news;
         context = ctx;
+        // uncomment this in order to see if the images are from the server/disk/memory.
+        // It will show up a flag on the top left corner of your pictures.
+        //  - Red flag means the images come from the server. (No caching at first load)
+        //  - Blue flag means the photos come from the local disk. (Caching)
+        //  - Green flag means the images come from the memory. (Instance Caching)
+        // Picasso.get().setIndicatorsEnabled(true);
     }
 
     @Override
@@ -65,13 +73,13 @@ public class BasicRecyclerViewAdapter extends RecyclerView.Adapter<BasicRecycler
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder appViewHolder, int i) {
-        appViewHolder.appName.setText(apps.get(i).appName);
-        appViewHolder.appDesc.setText(apps.get(i).appDescription);
-        appViewHolder.appImage.setImageResource(apps.get(i).appImageID);
-        if(apps.get(i).classe != null)
-            ((ParamLinearLayout) appViewHolder.itemView ).setObject(apps.get(i).classe);
-        appViewHolder.itemView.setOnClickListener(this);
+    public void onBindViewHolder(ViewHolder viewHolder, int i) {
+        viewHolder.name.setText(news.get(i).getTitle());
+        viewHolder.desc.setText(news.get(i).getDescription());
+        Picasso.get().load(context.getString(R.string.restBasePath) + news.get(i).getLogoPath()).into(viewHolder.image);
+        /*if(news.get(i).classe != null)
+            ((ParamLinearLayout) viewHolder.itemView ).setObject(news.get(i).classe);*/
+        viewHolder.itemView.setOnClickListener(this);
     }
 
     @Override
