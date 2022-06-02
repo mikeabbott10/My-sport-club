@@ -40,7 +40,7 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
     //overview
     protected static final int COVER_IMAGE = 1;
     protected static final int AVATAR_IMAGE = 2;
-    protected static final int INFO_JSON = 3;
+    protected static final int OVERVIEW_INFO_JSON = 3;
     //news
     protected static final int NEWS_JSON = 4;
 
@@ -80,6 +80,7 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
 
     protected void enqueueRequest(DMRequestWrapper dmReq){
         long id = dm.enqueue(dmReq.getReq()); // long id
+        //DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "enqueueRequest. id: "+id, null);
         idToResourceType.put(id, dmReq.getResourceType());
     }
 
@@ -102,10 +103,10 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
                 Integer resources_info = idToResourceType.get(id);
                 if(resources_info==null)
                     return;
-                //DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onDownloadCompleted. "+resources_info+" ready: "+ uriString, null);
+                DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onDownloadCompleted. "+resources_info+" ready: "+ uriString, null);
                 handleResponseUri(id, resources_info, uriString, lastModifiedTimestamp, true);
                 if(resources_info==REST_INFO_JSON) // file content is in memory now. Delete the file
-                    dm.remove(id);
+                    dm.remove(id); // delete last downloaded restInfo record from dm
             }else if(status == DownloadManager.STATUS_FAILED) {
                 DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "download failed reason: " + reason, null);
             }else if(status == DownloadManager.STATUS_PAUSED) {
@@ -131,44 +132,49 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
             // here after sending the first request. We got the rest service info.
 
             // get the file content
-            InputStream is;
-            try {
-                is = getContentResolver().openInputStream(Uri.parse(uriString));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return;
-            }
-
-            StringBuilder content;
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(is))){
-                String line;
-                content = new StringBuilder();
-                while ((line = br.readLine()) != null) {
-                    content.append(line);
-                    content.append(System.lineSeparator());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
-
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
+            String content = getFileContentFromUri(uriString);
 
             // perform jackson from file to object
             try {
                 restInfoInstance =
-                        (RestInfo) JacksonUtil.getObjectFromString(content.toString(), RestInfo.class);
+                        (RestInfo) JacksonUtil.getObjectFromString(content, RestInfo.class);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
 
         }
+    }
+
+    protected String getFileContentFromUri(String uriString) {
+        InputStream is;
+        try {
+            is = getContentResolver().openInputStream(Uri.parse(uriString));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        StringBuilder content;
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(is))){
+            String line;
+            content = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                content.append(line);
+                content.append(System.lineSeparator());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        try {
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return content.toString();
     }
 }
 

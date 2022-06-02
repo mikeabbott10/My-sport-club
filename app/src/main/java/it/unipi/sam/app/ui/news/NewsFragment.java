@@ -8,9 +8,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
+import it.unipi.sam.app.MainActivity;
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.FragmentNewsBinding;
 import it.unipi.sam.app.util.ItemViewModel;
@@ -24,7 +27,7 @@ public class NewsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         NewsViewModel newsViewModel =
-                new ViewModelProvider(this).get(NewsViewModel.class);
+                new ViewModelProvider(requireActivity()).get(NewsViewModel.class);
 
         binding = FragmentNewsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -33,9 +36,14 @@ public class NewsFragment extends Fragment {
         item = new ClipData.Item(requireActivity().getString(R.string.menu_notizie));
         viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
-
-        final TextView textView = binding.textHome;
-        newsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final RecyclerView recycleView = binding.newsRecyclerView;
+        final NestedScrollView nsv = binding.newsContainer;
+        recycleView.setHasFixedSize(true);
+        newsViewModel.getVcNewsList().observe(getViewLifecycleOwner(), v ->{
+            nsv.setVisibility(View.GONE);
+            /*RecyclerViewAdapter adapter = new RecyclerViewAdapter(appDescriptorList, this);
+            rv.setAdapter(adapter);*/
+        });
         return root;
     }
 

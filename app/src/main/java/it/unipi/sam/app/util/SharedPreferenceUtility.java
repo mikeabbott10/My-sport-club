@@ -14,10 +14,17 @@ public class SharedPreferenceUtility {
     private static final String TAG = "CLCLSharedPreference";
 
     // general resources
-    public static ResourcePreferenceWrapper getResourceUri(Context ctx, int type) {
+    public static ResourcePreferenceWrapper getResourceUri(Context ctx, int type, Long last_update_timestamp) {
         SharedPreferences prefs = ctx.getSharedPreferences(ctx.getString(R.string.general)+type, MODE_PRIVATE);
         String uri = prefs.getString(ctx.getString(R.string.general)+type, null);
         long last_modified = prefs.getLong(ctx.getString(R.string.general)+ctx.getString(R.string.timestamp)+type, -1);
+
+        // se last_update_timestamp è nullo bypasso il confronto tra timestamp
+        if(last_update_timestamp != null) {
+            if(last_modified!=-1 && last_modified <= last_update_timestamp)
+                return null;
+        }
+
         long dm_resource_id = prefs.getLong(ctx.getString(R.string.general)+ctx.getString(R.string.id)+type, -1);
         if(isValidUri(ctx, uri, last_modified)) {
             return new ResourcePreferenceWrapper(uri, last_modified, dm_resource_id);
@@ -33,10 +40,17 @@ public class SharedPreferenceUtility {
     }
 
     // Team resources
-    public static ResourcePreferenceWrapper getTeamResourceUri(Context ctx, String teamCode, int type) {
+    public static ResourcePreferenceWrapper getTeamResourceUri(Context ctx, String teamCode, int type, Long last_update_timestamp) {
         SharedPreferences prefs = ctx.getSharedPreferences(ctx.getString(R.string.teams)+teamCode+type, MODE_PRIVATE);
         String uri = prefs.getString(ctx.getString(R.string.teams)+teamCode+type, null);
         long last_modified = prefs.getLong(ctx.getString(R.string.teams)+ctx.getString(R.string.timestamp)+teamCode+type, -1);
+
+        // se last_update_timestamp è nullo bypasso il confronto tra timestamp
+        if(last_update_timestamp != null) {
+            if (last_modified != -1 && last_modified <= last_update_timestamp)
+                return null;
+        }
+
         long dm_resource_id = prefs.getLong(ctx.getString(R.string.teams)+ctx.getString(R.string.id)+teamCode+type, -1);
         if(isValidUri(ctx, uri, last_modified))
             return new ResourcePreferenceWrapper(uri, last_modified, dm_resource_id);

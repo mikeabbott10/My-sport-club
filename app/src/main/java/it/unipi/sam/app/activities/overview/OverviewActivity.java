@@ -28,15 +28,14 @@ public class OverviewActivity extends DownloadActivity implements AppBarLayout.O
 
         binding.teamoverviewToolbar.inflateMenu(R.menu.menu_main);
 
-        OverviewActivityAlphaHandler.startAlphaAnimation(binding.mainTextviewTitle, 0, View.INVISIBLE);
+        OverviewActivityAlphaHandler.startAlphaAnimation(binding.toolbarMainTextviewTitle, 0, View.INVISIBLE);
     }
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
         int maxScroll = appBarLayout.getTotalScrollRange();
         float percentage = (float) Math.abs(offset) / (float) maxScroll;
-        // todo: issue, check github
-        OverviewActivityAlphaHandler.handleAlphaOnTitle(binding.mainTextviewTitle, percentage);
+        OverviewActivityAlphaHandler.handleAlphaOnTitle(binding.mainLinearlayoutTitle, percentage);
         OverviewActivityAlphaHandler.handleToolbarTitleVisibility(binding.toolbarMainTextviewTitle, percentage);
     }
 
@@ -50,7 +49,7 @@ public class OverviewActivity extends DownloadActivity implements AppBarLayout.O
             case AVATAR_IMAGE:
                 onAvatarImageReceived(dm_resource_id, uriString, type, lastModifiedTimestamp, updateResourcePreference);
                 break;
-            case INFO_JSON:
+            case OVERVIEW_INFO_JSON:
                 onJsonInformationReceived(dm_resource_id, uriString, type, lastModifiedTimestamp, updateResourcePreference);
                 break;
         }
@@ -58,18 +57,18 @@ public class OverviewActivity extends DownloadActivity implements AppBarLayout.O
 
     // UI update needed after download:
     public void onCoverImageReceived(long dm_resource_id, String uri, Integer type, long lastModifiedTimestamp, boolean updateResourcePreference) {
-        DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onCoverImageReceived. Cover image ready at: "+ uri, null);
+        //DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onCoverImageReceived. Cover image ready at: "+ uri, null);
         binding.toolbarLogo.setImageURI(Uri.parse(uri));
     }
 
     public void onAvatarImageReceived(long dm_resource_id, String uri, Integer type, long lastModifiedTimestamp, boolean updateResourcePreference) {
-        DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onAvatarImageReceived. Avatar image ready at: "+ uri, null);
+        //DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onAvatarImageReceived. Avatar image ready at: "+ uri, null);
         binding.avatarImage.setImageURI(Uri.parse(uri));
     }
 
     // override this in activities (call super)
     public void onJsonInformationReceived(long dm_resource_id, String uri, Integer type, long lastModifiedTimestamp, boolean updateResourcePreference) {
-        DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onTextInformationReceived. Info ready at: "+ uri, null);
+        //DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onJsonInformationReceived. Info ready at: "+ uri, null);
         binding.infoPlaceholderImage.setVisibility(View.GONE);
     }
 }

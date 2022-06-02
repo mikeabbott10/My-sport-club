@@ -4,16 +4,24 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import it.unipi.sam.app.util.VCNews;
+
 public class NewsViewModel extends ViewModel {
 
-    private final MutableLiveData<String> mText;
+    private final MutableLiveData<List<VCNews>> vcNewsList;
 
     public NewsViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
+        vcNewsList = new MutableLiveData<>();
+        vcNewsList.setValue(new ArrayList<>());
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public void setVcNewsList(List<VCNews> l){
+        vcNewsList.setValue(l);
+    }
+    public LiveData<List<VCNews>> getVcNewsList() {
+        return vcNewsList;
     }
 }

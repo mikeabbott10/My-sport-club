@@ -113,6 +113,7 @@
     <string name="info_file">info_file</string>
 
     <!-- sharedPreferences stuff -->
+    <string name="news">news</string>
     <string name="teams">squadre</string>
     <string name="general">general</string>
     <string name="timestamp">timestamp</string>

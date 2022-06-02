@@ -2,6 +2,8 @@ package it.unipi.sam.app.activities.overview;
 
 import android.os.Bundle;
 
+import java.util.Map;
+
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
@@ -36,39 +38,64 @@ public class TeamOverviewActivity extends OverviewActivity {
     }
 
     private void startRequestsForPopulatingActivityLayout() {
-        ResourcePreferenceWrapper coverImagePreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, COVER_IMAGE);
-        ResourcePreferenceWrapper avatarImagePreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, AVATAR_IMAGE);
-        ResourcePreferenceWrapper teamInfoJsonPreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, INFO_JSON);
+        Map<String, Long> riiMap = restInfoInstance.getLastModifiedTimestamp().get( restInfoInstance.getTeamsPath()+teamCode );
+        ResourcePreferenceWrapper coverImagePreference = null;
+        ResourcePreferenceWrapper avatarImagePreference = null;
+        ResourcePreferenceWrapper teamInfoJsonPreference = null;
+        if(riiMap!=null) {
+            coverImagePreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, COVER_IMAGE,
+                    riiMap.get(getString(R.string.cover_image)));
+            avatarImagePreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, AVATAR_IMAGE,
+                    riiMap.get(getString(R.string.profile_image)));
+            teamInfoJsonPreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, OVERVIEW_INFO_JSON,
+                    riiMap.get(getString(R.string.info_file)));
+        }else{
+            coverImagePreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, COVER_IMAGE,
+                    null);
+            avatarImagePreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, AVATAR_IMAGE,
+                    null);
+            teamInfoJsonPreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, OVERVIEW_INFO_JSON,
+                    null);
+        }
 
-        if(coverImagePreference!=null && coverImagePreference.getUri()!=null)
+        if(coverImagePreference!=null && coverImagePreference.getUri()!=null) {
+            DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. From local", null);
             super.handleResponseUri(coverImagePreference.getDMResourceId(), COVER_IMAGE,
                     coverImagePreference.getUri(), coverImagePreference.getLastModifiedTimestamp(), false);
-        else
+        }else {
+            DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. From net", null);
             enqueueRequest(
                     new DMRequestWrapper(urlBasePath + restInfoInstance.getKeyWords().get(getString(R.string.cover_image)),
                             "randomTitle", "randomDescription", false, false, COVER_IMAGE,
                             false, null, null)
             );
+        }
 
-        if(avatarImagePreference!=null && avatarImagePreference.getUri()!=null)
+        if(avatarImagePreference!=null && avatarImagePreference.getUri()!=null) {
+            DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. From local", null);
             super.handleResponseUri(avatarImagePreference.getDMResourceId(), AVATAR_IMAGE,
                     avatarImagePreference.getUri(), avatarImagePreference.getLastModifiedTimestamp(), false);
-        else
+        }else {
+            DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. From net", null);
             enqueueRequest(
                     new DMRequestWrapper(urlBasePath + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)),
                             "randomTitle", "randomDescription", false, false, AVATAR_IMAGE,
                             false, null, null)
             );
+        }
 
-        if(teamInfoJsonPreference!=null && teamInfoJsonPreference.getUri()!=null)
-            super.handleResponseUri(teamInfoJsonPreference.getDMResourceId(), INFO_JSON,
+        if(teamInfoJsonPreference!=null && teamInfoJsonPreference.getUri()!=null) {
+            DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. From local", null);
+            super.handleResponseUri(teamInfoJsonPreference.getDMResourceId(), OVERVIEW_INFO_JSON,
                     teamInfoJsonPreference.getUri(), teamInfoJsonPreference.getLastModifiedTimestamp(), false);
-        else
+        }else {
+            DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. From net", null);
             enqueueRequest(
                     new DMRequestWrapper(urlBasePath + restInfoInstance.getKeyWords().get(getString(R.string.info_file)),
-                            "randomTitle", "randomDescription", false, false, INFO_JSON,
+                            "randomTitle", "randomDescription", false, false, OVERVIEW_INFO_JSON,
                             false, null, null)
             );
+        }
     }
 
     @Override
