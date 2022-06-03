@@ -55,7 +55,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
 
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private VCNews[] vcn_arr;
-    private List<VCNews> vc_news;
+    private List<VCNews> vc_news = null;
     private NewsViewModel newsViewModel;
 
     @Override
@@ -159,7 +159,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         if(view.getId() == R.id.fab){
             // TODO: togliere start activity
             Intent i = new Intent(this, TeamOverviewActivity.class);
-            i.putExtra(getString(R.string.team_code), restInfoInstance.getTeamCodes()[2]);
+            i.putExtra(getString(R.string.team_code), restInfoInstance.getTeamCodes()[0]);
             i.putExtra(getString(R.string.rest_info_instance_key), restInfoInstance);
             startActivity(i);
         }
@@ -176,6 +176,12 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                 if(updateResourcePreference)
                     SharedPreferenceUtility.setResourceUri(this, type, uriString, lastModifiedTimestamp, dm_resource_id);
 
+                if(!updateResourcePreference && vc_news!=null){
+                    // se non devo salvare la Preference e vc_news è già una lista con elementi,
+                    // allora è inutile aggiornare vc_news con sè stessa
+                    binding.appBarMain.swiperefresh.setRefreshing(false);
+                    break;
+                }
                 String content = getFileContentFromUri(uriString);
                 // perform jackson from file to object
                 try {

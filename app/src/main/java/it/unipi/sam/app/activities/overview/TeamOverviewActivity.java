@@ -2,13 +2,20 @@ package it.unipi.sam.app.activities.overview;
 
 import android.os.Bundle;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
+import it.unipi.sam.app.util.JacksonUtil;
 import it.unipi.sam.app.util.ResourcePreferenceWrapper;
 import it.unipi.sam.app.util.SharedPreferenceUtility;
+import it.unipi.sam.app.util.Team;
+import it.unipi.sam.app.util.VCNews;
 
 public class TeamOverviewActivity extends OverviewActivity {
     private static final String TAG = "AAATeamOverviewActivity";
@@ -117,6 +124,21 @@ public class TeamOverviewActivity extends OverviewActivity {
     @Override
     public void onJsonInformationReceived(long dm_resource_id, String uri, Integer type, long lastModifiedTimestamp, boolean updateResourcePreference) {
         super.onJsonInformationReceived(dm_resource_id, uri, type, lastModifiedTimestamp, updateResourcePreference);
+        String content = getFileContentFromUri(uri);
+        // perform jackson from file to object
+        Team t;
+        try {
+            t = (Team) JacksonUtil.getObjectFromString(content, Team.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            DebugUtility.showSimpleSnackbar(binding.getRoot(), "ERROR 01. Please retry later.", 5000);
+            return;
+        }
+        binding.toolbarMainTextviewTitle.setText(t.getCurrentLeague());
+        binding.mainTextviewTitle.setText(t.getCurrentLeague());
+        String s = getString(R.string.coach) + t.getCoach();
+        binding.mainTextviewDescription.setText(s);
+
         // todo: aggiungi team_activity_overview_content (popolato) alla cardview binding.info_container
 
         // update resource preference if needed

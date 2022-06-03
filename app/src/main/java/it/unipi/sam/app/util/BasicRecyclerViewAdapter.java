@@ -36,12 +36,10 @@ public class BasicRecyclerViewAdapter extends RecyclerView.Adapter<BasicRecycler
     }
 
     Context context;
-
+    List<VCNews> news;
     public void setNews(List<VCNews> news) {
         this.news = news;
     }
-
-    List<VCNews> news;
 
     public BasicRecyclerViewAdapter(List<VCNews> news, Context ctx){
         this.news = news;

@@ -24,4 +24,5 @@ public class NewsViewModel extends ViewModel {
     public LiveData<List<VCNews>> getVcNewsList() {
         return vcNewsList;
     }
+
 }

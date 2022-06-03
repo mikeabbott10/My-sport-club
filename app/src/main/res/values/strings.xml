@@ -119,6 +119,7 @@
     <string name="timestamp">timestamp</string>
     <string name="id">_id</string>
     <string name="rest_info_instance_key">rest_info_instance_key</string>
+    <string name="coach">"Coach: "</string>
 
 
 </resources>

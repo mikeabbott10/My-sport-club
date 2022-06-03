@@ -1,5 +1,6 @@
 package it.unipi.sam.app.ui.news;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ public class NewsFragment extends Fragment {
     private ItemViewModel viewModel;
     private ClipData.Item item;
 
+    @SuppressLint("NotifyDataSetChanged")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         NewsViewModel newsViewModel =
@@ -46,10 +48,11 @@ public class NewsFragment extends Fragment {
         recycleView.setLayoutManager(llm);
         recycleView.setHasFixedSize(true);
         final BasicRecyclerViewAdapter adapter = new BasicRecyclerViewAdapter(null, getActivity());
+        recycleView.setAdapter(adapter);
         newsViewModel.getVcNewsList().observe(getViewLifecycleOwner(), item ->{
             nsv.setVisibility(View.GONE);
             adapter.setNews(item);
-            recycleView.setAdapter(adapter);
+            adapter.notifyDataSetChanged(); // ultima spiaggia
         });
         return root;
     }
