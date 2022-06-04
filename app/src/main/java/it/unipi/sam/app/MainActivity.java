@@ -74,7 +74,6 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                 "notUseful", "notUseful", false, false, REST_INFO_JSON,
                 false, null, null));
 
-
         binding.navView.setNavigationItemSelectedListener(this);
         binding.appBarMain.fab.setOnClickListener(this);
 
@@ -94,7 +93,6 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
 
         newsViewModel = new ViewModelProvider(this).get(NewsViewModel.class);
 
@@ -159,7 +157,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         if(view.getId() == R.id.fab){
             // TODO: togliere start activity
             Intent i = new Intent(this, TeamOverviewActivity.class);
-            i.putExtra(getString(R.string.team_code), restInfoInstance.getTeamCodes()[0]);
+            i.putExtra(getString(R.string.team_code), restInfoInstance.getTeamCodes()[1]);
             i.putExtra(getString(R.string.rest_info_instance_key), restInfoInstance);
             startActivity(i);
         }
@@ -168,13 +166,12 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     @Override
     protected void handleResponseUri(long dm_resource_id, Integer type, String uriString, long lastModifiedTimestamp, boolean updateResourcePreference) {
         super.handleResponseUri(dm_resource_id, type, uriString, lastModifiedTimestamp, updateResourcePreference);
-
         switch(type){
             case NEWS_JSON:
                 // DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "handleResponseUri. NEWS_JSON", null);
                 // update resource preference if needed
                 if(updateResourcePreference)
-                    SharedPreferenceUtility.setResourceUri(this, type, uriString, lastModifiedTimestamp, dm_resource_id);
+                    SharedPreferenceUtility.setResourceUri(this, getString(R.string.news)+type, uriString, lastModifiedTimestamp, dm_resource_id);
 
                 if(!updateResourcePreference && vc_news!=null){
                     // se non devo salvare la Preference e vc_news è già una lista con elementi,
@@ -209,7 +206,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         Map<String, Long> riiMap = restInfoInstance.getLastModifiedTimestamp().get( getString(R.string.news) );
         ResourcePreferenceWrapper newsJsonPreference = null;
         if(riiMap!=null)
-            newsJsonPreference = SharedPreferenceUtility.getResourceUri(this, NEWS_JSON,
+            newsJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.news)+NEWS_JSON,
                 riiMap.get( getString(R.string.news) ));
 
         if(newsJsonPreference!=null && newsJsonPreference.getUri()!=null) {

@@ -14,10 +14,10 @@ public class SharedPreferenceUtility {
     private static final String TAG = "CLCLSharedPreference";
 
     // general resources
-    public static ResourcePreferenceWrapper getResourceUri(Context ctx, int type, Long last_update_timestamp) {
-        SharedPreferences prefs = ctx.getSharedPreferences(ctx.getString(R.string.general)+type, MODE_PRIVATE);
-        String uri = prefs.getString(ctx.getString(R.string.general)+type, null);
-        long last_modified = prefs.getLong(ctx.getString(R.string.general)+ctx.getString(R.string.timestamp)+type, -1);
+    public static ResourcePreferenceWrapper getResourceUri(Context ctx, String key, Long last_update_timestamp) {
+        SharedPreferences prefs = ctx.getSharedPreferences(key, MODE_PRIVATE);
+        String uri = prefs.getString(key, null);
+        long last_modified = prefs.getLong(key+ctx.getString(R.string.timestamp), -1);
 
         // se last_update_timestamp è nullo bypasso il confronto tra timestamp
         if(last_update_timestamp != null) {
@@ -25,22 +25,22 @@ public class SharedPreferenceUtility {
                 return null;
         }
 
-        long dm_resource_id = prefs.getLong(ctx.getString(R.string.general)+ctx.getString(R.string.id)+type, -1);
+        long dm_resource_id = prefs.getLong(key+ctx.getString(R.string.id), -1);
         if(isValidUri(ctx, uri, last_modified)) {
             return new ResourcePreferenceWrapper(uri, last_modified, dm_resource_id);
         }
         return null;
     }
-    public static void setResourceUri(Context ctx, int type, String uri, long timestamp, long dm_resource_id) {
-        SharedPreferences.Editor spEditor = ctx.getSharedPreferences(ctx.getString(R.string.general)+type, MODE_PRIVATE).edit();
-        spEditor.putString(ctx.getString(R.string.general)+type, uri);
-        spEditor.putLong(ctx.getString(R.string.general)+ctx.getString(R.string.timestamp)+type, timestamp);
-        spEditor.putLong(ctx.getString(R.string.general)+ctx.getString(R.string.id)+type, dm_resource_id);
+    public static void setResourceUri(Context ctx, String key, String uri, long timestamp, long dm_resource_id) {
+        SharedPreferences.Editor spEditor = ctx.getSharedPreferences(key, MODE_PRIVATE).edit();
+        spEditor.putString(key, uri);
+        spEditor.putLong(key+ctx.getString(R.string.timestamp), timestamp);
+        spEditor.putLong(key+ctx.getString(R.string.id), dm_resource_id);
         spEditor.apply();
     }
 
     // Team resources
-    public static ResourcePreferenceWrapper getTeamResourceUri(Context ctx, String teamCode, int type, Long last_update_timestamp) {
+    /*public static ResourcePreferenceWrapper getTeamResourceUri(Context ctx, String teamCode, int type, Long last_update_timestamp) {
         SharedPreferences prefs = ctx.getSharedPreferences(ctx.getString(R.string.teams)+teamCode+type, MODE_PRIVATE);
         String uri = prefs.getString(ctx.getString(R.string.teams)+teamCode+type, null);
         long last_modified = prefs.getLong(ctx.getString(R.string.teams)+ctx.getString(R.string.timestamp)+teamCode+type, -1);
@@ -62,7 +62,7 @@ public class SharedPreferenceUtility {
         spEditor.putLong(ctx.getString(R.string.teams)+ctx.getString(R.string.timestamp)+teamCode+type, timestamp);
         spEditor.putLong(ctx.getString(R.string.teams)+ctx.getString(R.string.id)+teamCode+type, dm_resource_id);
         spEditor.apply();
-    }
+    }*/
 
     public static boolean isValidUri(Context ctx, String contentUri, long last_modified){
         if(contentUri==null || last_modified==-1)

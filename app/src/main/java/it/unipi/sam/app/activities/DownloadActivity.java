@@ -48,7 +48,7 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
     protected DownloadManager dm;
     protected ConcurrentHashMap<Long, Integer> idToResourceType;
 
-    protected RestInfo restInfoInstance;
+    public RestInfo restInfoInstance;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

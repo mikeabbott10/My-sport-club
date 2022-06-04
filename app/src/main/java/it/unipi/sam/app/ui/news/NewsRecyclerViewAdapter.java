@@ -1,4 +1,4 @@
-package it.unipi.sam.app.util;
+package it.unipi.sam.app.ui.news;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,9 +17,13 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import it.unipi.sam.app.MainActivity;
 import it.unipi.sam.app.R;
+import it.unipi.sam.app.activities.ScreenSlidePagerActivity;
+import it.unipi.sam.app.util.ParamLinearLayout;
+import it.unipi.sam.app.util.VCNews;
 
-public class BasicRecyclerViewAdapter extends RecyclerView.Adapter<BasicRecyclerViewAdapter.ViewHolder> implements View.OnClickListener {
+public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerViewAdapter.ViewHolder> implements View.OnClickListener {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         TextView name;
@@ -41,7 +45,7 @@ public class BasicRecyclerViewAdapter extends RecyclerView.Adapter<BasicRecycler
         this.news = news;
     }
 
-    public BasicRecyclerViewAdapter(List<VCNews> news, Context ctx){
+    public NewsRecyclerViewAdapter(List<VCNews> news, Context ctx){
         this.news = news;
         context = ctx;
         // uncomment this in order to see if the images are from the server/disk/memory.
@@ -60,12 +64,15 @@ public class BasicRecyclerViewAdapter extends RecyclerView.Adapter<BasicRecycler
     @Override
     public void onClick(View view) {
         if( ((ParamLinearLayout) view).getObj() == null){
-            Toast.makeText(context, "Impossibile lanciare l'activity", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Retry later.", Toast.LENGTH_SHORT).show();
             return;
         }
-        //(Class<?>) ((ParamLinearLayout) view).getObj() è la classe relativa all'activity da lanciare
-        Intent in = new Intent(context, (Class<?>) ((ParamLinearLayout) view).getObj());
-        context.startActivity(in);
+        //(VCNews) ((ParamLinearLayout) view).getObj() è la notizia relativa alla view cliccata
+        // apri notizia
+        Intent i = new Intent(context, ScreenSlidePagerActivity.class);
+        i.putExtra(context.getString(R.string.news), (VCNews) ((ParamLinearLayout) view).getObj());
+        i.putExtra(context.getString(R.string.rest_info_instance_key), ((MainActivity)context).restInfoInstance);
+        context.startActivity(i);
     }
 
     @NonNull
@@ -79,9 +86,9 @@ public class BasicRecyclerViewAdapter extends RecyclerView.Adapter<BasicRecycler
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         viewHolder.name.setText(news.get(i).getTitle());
         viewHolder.desc.setText(news.get(i).getDescription());
-        Picasso.get().load(context.getString(R.string.restBasePath) + news.get(i).getLogoPath()).into(viewHolder.image);
-        /*if(news.get(i).classe != null)
-            ((ParamLinearLayout) viewHolder.itemView ).setObject(news.get(i).classe);*/
+        // load vertical image
+        Picasso.get().load(context.getString(R.string.restBasePath) + news.get(i).getResourcePath() + "/" + news.get(i).getLogoImgName()).into(viewHolder.image);
+        ((ParamLinearLayout) viewHolder.itemView ).setObject(news.get(i));
         viewHolder.itemView.setOnClickListener(this);
     }
 

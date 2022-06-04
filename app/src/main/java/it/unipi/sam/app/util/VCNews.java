@@ -1,14 +1,18 @@
 package it.unipi.sam.app.util;
 
+import java.io.Serializable;
+
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class VCNews {
+public class VCNews implements Serializable {
     private String tag;
     private String title;
     private String author;
     private long date;
-    private String logoPath;
+    private String resourcePath;
+    private String logoImgName;
+    private String coverImgName;
     private String imageDescription;
     private String description;
     private String relatedGameName;
@@ -18,7 +22,6 @@ public class VCNews {
     public String getTag() {
         return tag;
     }
-
     public void setTag(String tag) {
         this.tag = tag;
     }
@@ -26,7 +29,6 @@ public class VCNews {
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -34,7 +36,6 @@ public class VCNews {
     public String getAuthor() {
         return author;
     }
-
     public void setAuthor(String author) {
         this.author = author;
     }
@@ -42,23 +43,34 @@ public class VCNews {
     public long getDate() {
         return date;
     }
-
     public void setDate(long date) {
         this.date = date;
     }
 
-    public String getLogoPath() {
-        return logoPath;
+    public String getResourcePath() {
+        return resourcePath;
+    }
+    public void setResourcePath(String resourcePath) {
+        this.resourcePath = resourcePath;
     }
 
-    public void setLogoPath(String logoPath) {
-        this.logoPath = logoPath;
+    public String getLogoImgName() {
+        return logoImgName;
+    }
+    public void setLogoImgName(String logoImgName) {
+        this.logoImgName = logoImgName;
+    }
+
+    public String getCoverImgName() {
+        return coverImgName;
+    }
+    public void setCoverImgName(String coverImgName) {
+        this.coverImgName = coverImgName;
     }
 
     public String getImageDescription() {
         return imageDescription;
     }
-
     public void setImageDescription(String imageDescription) {
         this.imageDescription = imageDescription;
     }
@@ -66,7 +78,6 @@ public class VCNews {
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
@@ -74,7 +85,6 @@ public class VCNews {
     public String getRelatedGameName() {
         return relatedGameName;
     }
-
     public void setRelatedGameName(String relatedGameName) {
         this.relatedGameName = relatedGameName;
     }
@@ -82,7 +92,6 @@ public class VCNews {
     public String getRelatedGameHomeSets() {
         return relatedGameHomeSets;
     }
-
     public void setRelatedGameHomeSets(String relatedGameHomeSets) {
         this.relatedGameHomeSets = relatedGameHomeSets;
     }
@@ -90,8 +99,8 @@ public class VCNews {
     public String getRelatedGameAwaySets() {
         return relatedGameAwaySets;
     }
-
     public void setRelatedGameAwaySets(String relatedGameAwaySets) {
         this.relatedGameAwaySets = relatedGameAwaySets;
     }
+
 }

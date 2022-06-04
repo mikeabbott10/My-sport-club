@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
@@ -14,13 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import it.unipi.sam.app.MainActivity;
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.FragmentNewsBinding;
-import it.unipi.sam.app.util.BasicRecyclerViewAdapter;
-import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.ItemViewModel;
 
 public class NewsFragment extends Fragment {
@@ -43,11 +38,11 @@ public class NewsFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
         final RecyclerView recycleView = binding.newsRecyclerView;
-        final NestedScrollView nsv = binding.newsContainer;
+        final NestedScrollView nsv = binding.newsPlaceholder;
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         recycleView.setLayoutManager(llm);
         recycleView.setHasFixedSize(true);
-        final BasicRecyclerViewAdapter adapter = new BasicRecyclerViewAdapter(null, getActivity());
+        final NewsRecyclerViewAdapter adapter = new NewsRecyclerViewAdapter(null, getActivity());
         recycleView.setAdapter(adapter);
         newsViewModel.getVcNewsList().observe(getViewLifecycleOwner(), item ->{
             nsv.setVisibility(View.GONE);

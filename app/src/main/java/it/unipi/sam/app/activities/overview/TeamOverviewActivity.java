@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import it.unipi.sam.app.R;
+import it.unipi.sam.app.util.AvatarImageBehavior;
 import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.JacksonUtil;
@@ -40,7 +41,7 @@ public class TeamOverviewActivity extends OverviewActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(urlBasePath!=null || restInfoInstance == null)
+        if(urlBasePath!=null && restInfoInstance != null)
             startRequestsForPopulatingActivityLayout();
     }
 
@@ -50,18 +51,18 @@ public class TeamOverviewActivity extends OverviewActivity {
         ResourcePreferenceWrapper avatarImagePreference = null;
         ResourcePreferenceWrapper teamInfoJsonPreference = null;
         if(riiMap!=null) {
-            coverImagePreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, COVER_IMAGE,
+            coverImagePreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.teams)+teamCode+COVER_IMAGE,
                     riiMap.get(getString(R.string.cover_image)));
-            avatarImagePreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, AVATAR_IMAGE,
+            avatarImagePreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.teams)+teamCode+AVATAR_IMAGE,
                     riiMap.get(getString(R.string.profile_image)));
-            teamInfoJsonPreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, OVERVIEW_INFO_JSON,
+            teamInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.teams)+teamCode+OVERVIEW_INFO_JSON,
                     riiMap.get(getString(R.string.info_file)));
         }else{
-            coverImagePreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, COVER_IMAGE,
+            coverImagePreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.teams)+teamCode+COVER_IMAGE,
                     null);
-            avatarImagePreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, AVATAR_IMAGE,
+            avatarImagePreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.teams)+teamCode+AVATAR_IMAGE,
                     null);
-            teamInfoJsonPreference = SharedPreferenceUtility.getTeamResourceUri(this, teamCode, OVERVIEW_INFO_JSON,
+            teamInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.teams)+teamCode+OVERVIEW_INFO_JSON,
                     null);
         }
 
@@ -110,7 +111,7 @@ public class TeamOverviewActivity extends OverviewActivity {
         super.onCoverImageReceived(dm_resource_id, uri, type, lastModifiedTimestamp, updateResourcePreference);
         // update resource preference if needed
         if(updateResourcePreference)
-            SharedPreferenceUtility.setTeamResourceUri(this, teamCode, type, uri, lastModifiedTimestamp, dm_resource_id);
+            SharedPreferenceUtility.setResourceUri(this, getString(R.string.teams)+teamCode+type, uri, lastModifiedTimestamp, dm_resource_id);
     }
 
     @Override
@@ -118,7 +119,7 @@ public class TeamOverviewActivity extends OverviewActivity {
         super.onAvatarImageReceived(dm_resource_id, uri, type, lastModifiedTimestamp, updateResourcePreference);
         // update resource preference if needed
         if(updateResourcePreference)
-            SharedPreferenceUtility.setTeamResourceUri(this, teamCode, type, uri, lastModifiedTimestamp, dm_resource_id);
+            SharedPreferenceUtility.setResourceUri(this, getString(R.string.teams)+teamCode+type, uri, lastModifiedTimestamp, dm_resource_id);
     }
 
     @Override
@@ -143,6 +144,6 @@ public class TeamOverviewActivity extends OverviewActivity {
 
         // update resource preference if needed
         if(updateResourcePreference)
-            SharedPreferenceUtility.setTeamResourceUri(this, teamCode, type, uri, lastModifiedTimestamp, dm_resource_id);
+            SharedPreferenceUtility.setResourceUri(this, getString(R.string.teams)+teamCode+type, uri, lastModifiedTimestamp, dm_resource_id);
     }
 }
