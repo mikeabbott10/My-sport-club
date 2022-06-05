@@ -13,6 +13,7 @@
         <entry key="app/src/main/res/drawable/ic_menu_camera.xml" value="0.302" />
         <entry key="app/src/main/res/drawable/ic_menu_gallery.xml" value="0.3155" />
         <entry key="app/src/main/res/drawable/ic_menu_slideshow.xml" value="0.3155" />
+        <entry key="app/src/main/res/drawable/ic_share_adaptive_foreground.xml" value="0.3055" />
         <entry key="app/src/main/res/drawable/ic_vc_launcher_background.xml" value="0.2875" />
         <entry key="app/src/main/res/drawable/side_nav_bar.xml" value="0.302" />
         <entry key="app/src/main/res/layout-w1240dp/content_scrolling.xml" value="0.23125836680053546" />
@@ -32,7 +33,7 @@
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.35989583333333336" />
         <entry key="app/src/main/res/layout/fragment_male.xml" value="0.3115942028985507" />
         <entry key="app/src/main/res/layout/fragment_news.xml" value="0.3115942028985507" />
-        <entry key="app/src/main/res/layout/fragment_screen_slide_page.xml" value="0.3509963768115942" />
+        <entry key="app/src/main/res/layout/fragment_screen_slide_page.xml" value="0.240850470547229" />
         <entry key="app/src/main/res/layout/fragment_slideshow.xml" value="0.35989583333333336" />
         <entry key="app/src/main/res/layout/item.xml" value="0.240625" />
         <entry key="app/src/main/res/layout/nav_header_main.xml" value="0.35989583333333336" />
@@ -43,6 +44,7 @@
         <entry key="app/src/main/res/menu/menu_scrolling.xml" value="0.35989583333333336" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.302" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.302" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_share_adaptive_round.xml" value="0.3055" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_vc_launcher.xml" value="0.2875" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_vc_launcher_round.xml" value="0.2875" />
       </map>

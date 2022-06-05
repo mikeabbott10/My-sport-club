@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.unipi.sam.app.MainActivity;
@@ -67,10 +68,18 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
             Toast.makeText(context, "Retry later.", Toast.LENGTH_SHORT).show();
             return;
         }
-        //(VCNews) ((ParamLinearLayout) view).getObj() è la notizia relativa alla view cliccata
+        // (ArrayList<VCNews>) ((Object[])((ParamLinearLayout) view).getObj())[0] è la lista di news
+        // (int) ((Object[])((ParamLinearLayout) view).getObj())[1] è la posizione relativa alla news cliccata
         // apri notizia
         Intent i = new Intent(context, ScreenSlidePagerActivity.class);
-        i.putExtra(context.getString(R.string.news), (VCNews) ((ParamLinearLayout) view).getObj());
+        try{
+            i.putExtra(context.getString(R.string.news), (ArrayList<VCNews>) ((Object[])((ParamLinearLayout) view).getObj())[0]);
+        }catch (ClassCastException e){
+            e.printStackTrace();
+            Toast.makeText(context, "ERROR 02. Retry later.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        i.putExtra(context.getString(R.string.news_position), (int) ((Object[])((ParamLinearLayout) view).getObj())[1]);
         i.putExtra(context.getString(R.string.rest_info_instance_key), ((MainActivity)context).restInfoInstance);
         context.startActivity(i);
     }
@@ -86,9 +95,9 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         viewHolder.name.setText(news.get(i).getTitle());
         viewHolder.desc.setText(news.get(i).getDescription());
-        // load vertical image
+        // load image
         Picasso.get().load(context.getString(R.string.restBasePath) + news.get(i).getResourcePath() + "/" + news.get(i).getLogoImgName()).into(viewHolder.image);
-        ((ParamLinearLayout) viewHolder.itemView ).setObject(news.get(i));
+        ((ParamLinearLayout) viewHolder.itemView ).setObject(new Object[]{news, i});
         viewHolder.itemView.setOnClickListener(this);
     }
 

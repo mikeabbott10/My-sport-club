@@ -42,6 +42,7 @@ import it.unipi.sam.app.util.SharedPreferenceUtility;
 import it.unipi.sam.app.util.VCNews;
 
 //TODO:
+// 1. share button nelle notizie
 // 2. Se serve, usare preferenceFragment per impostazioni varie (salvataggio come shared preferences)
 
 public class MainActivity extends DownloadActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener{
@@ -189,7 +190,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                     newsViewModel.setVcNewsList(vc_news);
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
-                    DebugUtility.showSimpleSnackbar(binding.getRoot(), "ERROR 01. Please retry later.", 5000);
+                    DebugUtility.showSimpleSnackbar(binding.getRoot(), "ERROR 00. Please retry later.", 5000);
                 }
                 binding.appBarMain.swiperefresh.setRefreshing(false);
                 break;

@@ -1,24 +1,29 @@
 package it.unipi.sam.app.activities;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import it.unipi.sam.app.R;
+import it.unipi.sam.app.databinding.ActivityMainBinding;
+import it.unipi.sam.app.databinding.ActivityScreenSlideBinding;
 import it.unipi.sam.app.ui.ScreenSlidePageFragment;
+import it.unipi.sam.app.util.VCNews;
 import it.unipi.sam.app.util.graphics.DepthPageTransformer;
 import it.unipi.sam.app.util.graphics.ZoomOutPageTransformer;
 
-public class ScreenSlidePagerActivity extends FragmentActivity {
-    /**
-     * The number of pages (wizard steps) to show in this demo.
-     */
-    private static final int NUM_PAGES = 5;
-
+public class ScreenSlidePagerActivity extends AppCompatActivity {
     /**
      * The pager widget, which handles animation and allows swiping horizontally to access previous
      * and next wizard steps.
@@ -30,16 +35,50 @@ public class ScreenSlidePagerActivity extends FragmentActivity {
      */
     private FragmentStateAdapter pagerAdapter;
 
+    ActivityScreenSlideBinding binding;
+    List<VCNews> news;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_screen_slide);
+        int news_position;
+        try{
+            news = (ArrayList<VCNews>) getIntent().getSerializableExtra(getString(R.string.news));
+            news_position = getIntent().getIntExtra(getString(R.string.news_position), -1);
+        }catch (ClassCastException e){
+            e.printStackTrace();
+            finish();
+            return;
+        }
+        binding = ActivityScreenSlideBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setSupportActionBar(binding.fToolbar);
+        //binding.fToolbar.setTitle("");
+        // Enable the Up button
+        ActionBar ab = getSupportActionBar();
+        if(ab!=null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setTitle("");
+            binding.fToolbar.setNavigationIcon(R.drawable.ic_back);
+        }
+
 
         // Instantiate a ViewPager2 and a PagerAdapter.
-        viewPager = findViewById(R.id.pager);
+        viewPager = binding.pager;
         pagerAdapter = new ScreenSlidePagerAdapter(this);
         viewPager.setPageTransformer(new ZoomOutPageTransformer());
         viewPager.setAdapter(pagerAdapter);
+        viewPager.setCurrentItem(news_position, false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /*@Override
@@ -58,7 +97,7 @@ public class ScreenSlidePagerActivity extends FragmentActivity {
      * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
      * sequence.
      */
-    private static class ScreenSlidePagerAdapter extends FragmentStateAdapter {
+    private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
         public ScreenSlidePagerAdapter(FragmentActivity fa) {
             super(fa);
         }
@@ -66,12 +105,12 @@ public class ScreenSlidePagerActivity extends FragmentActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            return new ScreenSlidePageFragment();
+            return new ScreenSlidePageFragment(news.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return NUM_PAGES;
+            return news.size();
         }
     }
 }
