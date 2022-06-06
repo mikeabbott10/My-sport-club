@@ -103,7 +103,6 @@
     <string name="menu_contatti">Contatti</string>
 
 
-
     <string name="restBasePath">https://donow.cloud/volleycecina/</string>
     <string name="first_rest_req_path">restInfo.json</string>
 
@@ -119,7 +118,7 @@
     <string name="id">_id</string>
     <string name="rest_info_instance_key">rest_info_instance_key</string>
     <string name="coach">"Coach: "</string>
-    <string name="news_position">newsposition</string>
+    <string name="news_id">newsid</string>
     <string name="autore">"Autore: "</string>
 
 

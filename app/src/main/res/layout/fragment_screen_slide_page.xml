@@ -46,7 +46,6 @@
                     style="?android:textAppearanceSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="5 gennaio 2021"
                     android:textAlignment="textEnd"
                     android:textColor="@color/gray"
                     android:layout_centerVertical="true"
@@ -59,7 +58,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/first_row"
-                android:text="TITOLO"
                 android:paddingTop="5dp"
                 />
             <TextView
@@ -76,7 +74,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/newsAuthor"
-                android:text="@string/large_text"
                 android:paddingVertical="7dp"
                 />
 

@@ -24,13 +24,31 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                    android:host="volleycecina.it"
+                    android:pathPrefix="/news"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                    android:host="www.volleycecina.it"
+                    android:pathPrefix="/news"/>
+            </intent-filter>
         </activity>
         <activity
             android:name=".activities.overview.TeamOverviewActivity"
             android:exported="false"
             android:theme="@style/Theme.MyApplication.NoActionBar" >
         </activity>
-        <activity android:name=".activities.ScreenSlidePagerActivity" />
+        <activity
+            android:name=".activities.ScreenSlidePagerActivity">
+        </activity>
     </application>
 
 </manifest>

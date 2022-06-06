@@ -1,6 +1,5 @@
 package it.unipi.sam.app.ui;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -8,18 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.FragmentScreenSlidePageBinding;
@@ -48,7 +42,13 @@ public class ScreenSlidePageFragment extends Fragment {
         // set content
         binding.newsParagraph.setText(Html.fromHtml(thisNews.getDescription()));
         // load/set image
-        Picasso.get().load(requireActivity().getString(R.string.restBasePath) + thisNews.getResourcePath() + "/" + thisNews.getCoverImgName()).into( binding.newsImage );
+        Glide
+                .with(requireActivity())
+                .load(requireActivity().getString(R.string.restBasePath) + thisNews.getResourcePath() + "/" + thisNews.getCoverImgName())
+                //.centerCrop()
+                .placeholder(R.drawable.placeholder_126)
+                .error(R.drawable.placeholder_126)
+                .into(binding.newsImage);
         return binding.getRoot();
     }
 }

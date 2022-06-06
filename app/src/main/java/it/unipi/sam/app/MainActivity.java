@@ -3,11 +3,15 @@ package it.unipi.sam.app;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.widget.ImageViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,10 +30,12 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 import it.unipi.sam.app.activities.DownloadActivity;
+import it.unipi.sam.app.activities.ScreenSlidePagerActivity;
 import it.unipi.sam.app.activities.overview.TeamOverviewActivity;
 import it.unipi.sam.app.databinding.ActivityMainBinding;
 import it.unipi.sam.app.ui.news.NewsViewModel;
@@ -37,13 +43,15 @@ import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.ItemViewModel;
 import it.unipi.sam.app.util.JacksonUtil;
+import it.unipi.sam.app.util.ParamLinearLayout;
 import it.unipi.sam.app.util.ResourcePreferenceWrapper;
 import it.unipi.sam.app.util.SharedPreferenceUtility;
 import it.unipi.sam.app.util.VCNews;
 
 //TODO:
-// 1. share button nelle notizie
-// 2. Se serve, usare preferenceFragment per impostazioni varie (salvataggio come shared preferences)
+// 1.  : share button nelle notizie
+// 1.5 : API 32 non apre link https://volleycecina.it/news/1 con questa app
+// 2.  : Se serve, usare preferenceFragment per impostazioni varie (salvataggio come shared preferences)
 
 public class MainActivity extends DownloadActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener{
     private static final String TAG = "AAAAMainActivity";
@@ -62,6 +70,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // ask for rest info
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -70,7 +79,6 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         toolBarLayout = binding.appBarMain.toolbarLayout;
         toolBarLayout.setTitle(getString(R.string.menu_notizie));
 
-        // ask for rest info
         getRestInfoFile(new DMRequestWrapper(getString(R.string.restBasePath) + getString(R.string.first_rest_req_path),
                 "notUseful", "notUseful", false, false, REST_INFO_JSON,
                 false, null, null));
@@ -186,7 +194,23 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                     vcn_arr = (VCNews[]) JacksonUtil.getObjectFromString(content, VCNews[].class);
                     vc_news = new ArrayList<>(Arrays.asList(vcn_arr));
                     DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "handleResponseUri. vc_news:" + vc_news, null);
+
+                    Long calledNewsId = getCalledNewsIdFromIntent(getIntent());
+                    if(calledNewsId!=null) {
+                        Intent i = new Intent(this, ScreenSlidePagerActivity.class);
+                        try {
+                            i.putExtra(getString(R.string.news), (ArrayList<VCNews>) vc_news);
+                        } catch (ClassCastException e) {
+                            e.printStackTrace();
+                            Toast.makeText(this, "ERROR 03. Retry later.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        i.putExtra(getString(R.string.news_id), calledNewsId);
+                        i.putExtra(getString(R.string.rest_info_instance_key), restInfoInstance);
+                        startActivity(i);
+                    }
                     // populate news in news fragment
+                    Collections.sort(vc_news); // date sort
                     newsViewModel.setVcNewsList(vc_news);
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
@@ -230,5 +254,35 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         getRestInfoFile(new DMRequestWrapper(getString(R.string.restBasePath) + getString(R.string.first_rest_req_path),
                 "notUseful", "notUseful", false, false, REST_INFO_JSON,
                 false, null, null));
+    }
+
+    /**
+     * Get news id from the intent.
+     *
+     * @param intent : the intent
+     * @return String[] : an array of 3 strings: [code, randomFactor, region]
+     */
+    protected Long getCalledNewsIdFromIntent(@Nullable Intent intent) {
+        if(intent==null) return null;
+        String action = intent.getAction();
+        Uri data = intent.getData();
+        if (action != null && action.equals("android.intent.action.VIEW") && data != null) {
+            String scheme = data.getScheme(); // "https"
+            String host = data.getHost(); // "volleycecina.it"
+            List<String> params = data.getPathSegments();
+            if (host != null && scheme != null && params != null &&
+                    scheme.equals("https") && host.equals("volleycecina.it")) {
+                String paramKey = params.get(0); // "news"
+                String paramValue = params.get(1); // (int) news_id
+                if(paramKey!=null && paramValue!=null && !(paramValue.trim()).equals("")) {
+                    DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG,
+                            "DeepLink key: " + paramKey + "DeepLink value:" + paramValue, this);
+                    if(paramKey.equals("news")){
+                        return Long.parseLong(paramValue);
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

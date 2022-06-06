@@ -168,6 +168,9 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
             }
         } catch (IOException e) {
             e.printStackTrace();
+            try {
+                is.close();
+            } catch (IOException ignored) {}
             return null;
         }
 

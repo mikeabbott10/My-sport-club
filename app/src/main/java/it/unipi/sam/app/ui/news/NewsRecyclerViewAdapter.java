@@ -2,6 +2,7 @@ package it.unipi.sam.app.ui.news;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 import it.unipi.sam.app.MainActivity;
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.activities.ScreenSlidePagerActivity;
+import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.ParamLinearLayout;
 import it.unipi.sam.app.util.VCNews;
 
@@ -79,7 +81,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
             Toast.makeText(context, "ERROR 02. Retry later.", Toast.LENGTH_SHORT).show();
             return;
         }
-        i.putExtra(context.getString(R.string.news_position), (int) ((Object[])((ParamLinearLayout) view).getObj())[1]);
+        i.putExtra(context.getString(R.string.news_id), (long) ((Object[])((ParamLinearLayout) view).getObj())[1]);
         i.putExtra(context.getString(R.string.rest_info_instance_key), ((MainActivity)context).restInfoInstance);
         context.startActivity(i);
     }
@@ -94,11 +96,18 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         viewHolder.name.setText(news.get(i).getTitle());
-        viewHolder.desc.setText(news.get(i).getDescription());
+        viewHolder.desc.setText(Html.fromHtml(news.get(i).getDescription()));
         // load image
-        Picasso.get().load(context.getString(R.string.restBasePath) + news.get(i).getResourcePath() + "/" + news.get(i).getLogoImgName()).into(viewHolder.image);
-        ((ParamLinearLayout) viewHolder.itemView ).setObject(new Object[]{news, i});
+        Glide
+            .with(context)
+            .load(context.getString(R.string.restBasePath) + news.get(i).getResourcePath() + "/" + news.get(i).getLogoImgName())
+            //.centerCrop()
+            .placeholder(R.drawable.placeholder_126)
+            .error(R.drawable.placeholder_126)
+            .into(viewHolder.image);
+        ((ParamLinearLayout) viewHolder.itemView ).setObject(new Object[]{news, news.get(i).getId()});
         viewHolder.itemView.setOnClickListener(this);
+        DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, "AAAA", "pos: "+i, null);
     }
 
     @Override

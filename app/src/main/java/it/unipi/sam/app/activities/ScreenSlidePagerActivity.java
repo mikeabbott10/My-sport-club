@@ -19,6 +19,7 @@ import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.ActivityMainBinding;
 import it.unipi.sam.app.databinding.ActivityScreenSlideBinding;
 import it.unipi.sam.app.ui.ScreenSlidePageFragment;
+import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.VCNews;
 import it.unipi.sam.app.util.graphics.DepthPageTransformer;
 import it.unipi.sam.app.util.graphics.ZoomOutPageTransformer;
@@ -41,10 +42,19 @@ public class ScreenSlidePagerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int news_position;
+        int news_position = 0;
+        long news_id;
         try{
             news = (ArrayList<VCNews>) getIntent().getSerializableExtra(getString(R.string.news));
-            news_position = getIntent().getIntExtra(getString(R.string.news_position), -1);
+            news_id = getIntent().getLongExtra(getString(R.string.news_id), -1);
+            for (int index = 0; index<news.size(); ++index) {
+                if(news.get(index).getId() == news_id) {
+                    news_position = index;
+                    DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, "AAAA", news.get(index).getTitle()+"--"+index, null);
+                    DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, "AAAA", "-id-"+news_id, null);
+                    break;
+                }
+            }
         }catch (ClassCastException e){
             e.printStackTrace();
             finish();

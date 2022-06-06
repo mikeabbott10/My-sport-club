@@ -5,11 +5,12 @@ import java.io.Serializable;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class VCNews implements Serializable {
+public class VCNews implements Serializable, Comparable<VCNews>{
     private String tag;
     private String title;
     private String author;
-    private long date;
+    public long date;
+    private long id;
     private String resourcePath;
     private String logoImgName;
     private String coverImgName;
@@ -103,4 +104,15 @@ public class VCNews implements Serializable {
         this.relatedGameAwaySets = relatedGameAwaySets;
     }
 
+    public long getId() {
+        return id;
+    }
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    @Override
+    public int compareTo(VCNews vcNews) {
+        return this.date > vcNews.getDate() ? -1 : 1;
+    }
 }
