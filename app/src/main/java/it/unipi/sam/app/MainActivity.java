@@ -1,19 +1,32 @@
 package it.unipi.sam.app;
 
+import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.verify.domain.DomainVerificationManager;
+import android.content.pm.verify.domain.DomainVerificationUserState;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.widget.ImageViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -30,7 +43,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,17 +55,19 @@ import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.ItemViewModel;
 import it.unipi.sam.app.util.JacksonUtil;
-import it.unipi.sam.app.util.ParamLinearLayout;
 import it.unipi.sam.app.util.ResourcePreferenceWrapper;
 import it.unipi.sam.app.util.SharedPreferenceUtility;
 import it.unipi.sam.app.util.VCNews;
 
 //TODO:
-// 1.  : share button nelle notizie
-// 1.5 : API 32 non apre link https://volleycecina.it/news/1 con questa app
-// 2.  : Se serve, usare preferenceFragment per impostazioni varie (salvataggio come shared preferences)
+// 1. completare pagina teams
+// 2. fare pagina contatti
+// 3. inserire in settore maschile/femminile le squadre
+// 4. implementare preferiti
 
-public class MainActivity extends DownloadActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener{
+public class MainActivity extends DownloadActivity implements NavigationView.OnNavigationItemSelectedListener,
+                                                View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, Observer<ClipData.Item>,
+                                                DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener {
     private static final String TAG = "AAAAMainActivity";
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -91,7 +105,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_notizie, R.id.nav_femminile, R.id.nav_maschile, R.id.nav_contatti)
+                R.id.nav_notizie, R.id.nav_femminile, R.id.nav_maschile, R.id.nav_contatti, R.id.nav_settings)
                 .setOpenableLayout(drawer)
                 .build();
         NavHostFragment navHostFragment =
@@ -106,33 +120,25 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         newsViewModel = new ViewModelProvider(this).get(NewsViewModel.class);
 
         viewModel = new ViewModelProvider(this).get(ItemViewModel.class);
-        viewModel.getSelectedItem().observe(this, item -> {
-            // Perform an action with the latest item data
-            toolBarLayout.setTitle(item.getText());
-            if(item.getText().equals(getString(R.string.menu_contatti))){
-                // show fab
-                //binding.appBarMain.fab.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.white));
-                ImageViewCompat.setImageTintList(
-                        binding.appBarMain.fab,
-                        ColorStateList.valueOf(Color.BLACK)
-                );
-                binding.appBarMain.fab.setImageResource(android.R.drawable.ic_dialog_email);
-                binding.appBarMain.fab.setVisibility(View.VISIBLE);
-            }else if(item.getText().equals(getString(R.string.menu_notizie))){
-                //binding.appBarMain.fab.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.main_color));
-                ImageViewCompat.setImageTintList(
-                        binding.appBarMain.fab,
-                        ColorStateList.valueOf(Color.RED)
-                );
-                binding.appBarMain.fab.setImageResource(R.drawable.ic_filled_red_heart);
-                binding.appBarMain.fab.setVisibility(View.VISIBLE);
-            }else{
-                binding.appBarMain.fab.setVisibility(View.GONE);
-            }
-        });
+        viewModel.getSelectedItem().observe(this, this);
 
         // pull-to-refresh
         binding.appBarMain.swiperefresh.setOnRefreshListener(this);
+
+        // domain verification
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            try {
+                boolean isDomainVerified = isDomainVerified();
+                DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "isdomainverified: "+isDomainVerified, null);
+                DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "don't ask for domain verification: "+SharedPreferenceUtility.getDontAskForDomainVerification(this), null);
+                if(!SharedPreferenceUtility.getDontAskForDomainVerification(this) && !isDomainVerified){
+                    requestDomainApprovation();
+                }else if(isDomainVerified)
+                    SharedPreferenceUtility.setDontAskForDomainVerification(this, true);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void getRestInfoFile(DMRequestWrapper dmRequestWrapper) {
@@ -149,7 +155,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // todo: doesn't work
+        // TODO: doesn't work
         if(item.getItemId()==R.id.emailTextView) {
             // intent to mail apps
             DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, TAG, "email selected", null);
@@ -231,8 +237,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         Map<String, Long> riiMap = restInfoInstance.getLastModifiedTimestamp().get( getString(R.string.news) );
         ResourcePreferenceWrapper newsJsonPreference = null;
         if(riiMap!=null)
-            newsJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.news)+NEWS_JSON,
-                riiMap.get( getString(R.string.news) ));
+            newsJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.news)+NEWS_JSON, riiMap.get( getString(R.string.news) ));
 
         if(newsJsonPreference!=null && newsJsonPreference.getUri()!=null) {
             DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. From local", null);
@@ -248,6 +253,9 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         }
     }
 
+    /**
+     * Swipe to refresh listener
+     */
     @Override
     public void onRefresh() {
         // ask for rest info
@@ -284,5 +292,109 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
             }
         }
         return null;
+    }
+
+    /**
+     * Callback on ClipData.Item item changes
+     * @param item
+     */
+    @Override
+    public void onChanged(ClipData.Item item) {
+        // Perform an action with the latest item data
+        toolBarLayout.setTitle(item.getText());
+
+        if(item.getText().equals(getString(R.string.menu_contatti))){
+            // show fab
+            //binding.appBarMain.fab.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.white));
+            ImageViewCompat.setImageTintList(
+                    binding.appBarMain.fab,
+                    ColorStateList.valueOf(Color.BLACK)
+            );
+            binding.appBarMain.fab.setImageResource(android.R.drawable.ic_dialog_email);
+            binding.appBarMain.fab.setVisibility(View.VISIBLE);
+        }else if(item.getText().equals(getString(R.string.menu_notizie))){
+            //binding.appBarMain.fab.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.main_color));
+            ImageViewCompat.setImageTintList(
+                    binding.appBarMain.fab,
+                    ColorStateList.valueOf(Color.RED)
+            );
+            binding.appBarMain.fab.setImageResource(R.drawable.ic_filled_red_heart);
+            binding.appBarMain.fab.setVisibility(View.VISIBLE);
+        }else{
+            binding.appBarMain.fab.setVisibility(View.GONE);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    private void requestDomainApprovation() {
+        @SuppressLint("InflateParams")
+        View v = getLayoutInflater().inflate(R.layout.dialog_show_again, null);
+        CheckBox cb = v.findViewById(R.id.checkBox);
+        cb.setOnCheckedChangeListener(this);
+        new AlertDialog.Builder(MainActivity.this)
+                .setMessage(R.string.approvazione_dominio)
+                .setTitle("Approvazione del dominio")
+                .setView(v) // add the
+                .setCancelable(false)
+                .setPositiveButton("", this)
+                .setNegativeButton("", this)
+                .setPositiveButtonIcon(AppCompatResources.getDrawable(this, R.drawable.ic_ok_adaptive_foreground))
+                .setNegativeButtonIcon(AppCompatResources.getDrawable(this, R.drawable.ic_close_adaptive_foreground))
+                .create()
+                .show();
+    }
+
+    /**
+     * Dialog buttons listener
+     * @param dialogInterface
+     * @param which
+     */
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    @Override
+    public void onClick(DialogInterface dialogInterface, int which) {
+        if(which==AlertDialog.BUTTON_POSITIVE) {
+            startActivity(new Intent(Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS,
+                    Uri.parse("package:" + getPackageName())));
+        }
+        dialogInterface.cancel();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    private boolean isDomainVerified() throws PackageManager.NameNotFoundException {
+        DomainVerificationManager manager =
+                getSystemService(DomainVerificationManager.class);
+        DomainVerificationUserState userState =
+                manager.getDomainVerificationUserState(getPackageName());
+
+        Map<String, Integer> hostToStateMap = userState.getHostToStateMap();
+        for (String key : hostToStateMap.keySet()) {
+            Integer stateValue = hostToStateMap.get(key);
+            //DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, key + "->" + stateValue, null);
+            if (stateValue!=null && stateValue == DomainVerificationUserState.DOMAIN_STATE_VERIFIED) {
+                // Domain has passed Android App Links verification.
+                if(key.equals("volleycecina.it") || key.equals("www.volleycecina.it")){
+                    return true;
+                }
+            } else if (stateValue!=null && stateValue == DomainVerificationUserState.DOMAIN_STATE_SELECTED) {
+                // Domain hasn't passed Android App Links verification, but the user has
+                // associated it with an app.
+                if(key.equals("volleycecina.it") || key.equals("www.volleycecina.it")){
+                    return true;
+                }
+            } else {
+                // All other domains.
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Listen to the changes of the checkbox inside AlertDialog
+     * @param compoundButton
+     * @param b
+     */
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        SharedPreferenceUtility.setDontAskForDomainVerification(this, compoundButton.isChecked());
     }
 }

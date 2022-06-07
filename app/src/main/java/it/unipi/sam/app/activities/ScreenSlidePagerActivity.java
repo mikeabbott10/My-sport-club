@@ -42,7 +42,7 @@ public class ScreenSlidePagerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int news_position = 0;
+        int news_position = -1;
         long news_id;
         try{
             news = (ArrayList<VCNews>) getIntent().getSerializableExtra(getString(R.string.news));
@@ -50,10 +50,15 @@ public class ScreenSlidePagerActivity extends AppCompatActivity {
             for (int index = 0; index<news.size(); ++index) {
                 if(news.get(index).getId() == news_id) {
                     news_position = index;
-                    DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, "AAAA", news.get(index).getTitle()+"--"+index, null);
-                    DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, "AAAA", "-id-"+news_id, null);
+                    //DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, "AAAA", news.get(index).getTitle()+"--"+index, null);
+                    //DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, "AAAA", "-id-"+news_id, null);
                     break;
                 }
+            }
+            if(news_position==-1) {
+                // id locally not available
+                finish();
+                return;
             }
         }catch (ClassCastException e){
             e.printStackTrace();

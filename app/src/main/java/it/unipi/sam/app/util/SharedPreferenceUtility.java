@@ -8,14 +8,30 @@ import android.net.Uri;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import androidx.preference.PreferenceManager;
+
 import it.unipi.sam.app.R;
 
 public class SharedPreferenceUtility {
     private static final String TAG = "CLCLSharedPreference";
 
-    // general resources
+    // show screen at start
+    public static boolean getDontAskForDomainVerification(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        //SharedPreferences prefs = ctx.getSharedPreferences(ctx.getString(R.string.dontaskfordomainverification_key), MODE_PRIVATE);
+        return prefs.getBoolean(ctx.getString(R.string.dontaskfordomainverification_key), false);
+    }
+    public static void setDontAskForDomainVerification(Context ctx, boolean dontShowAtStartup) {
+        SharedPreferences.Editor spEditor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
+        //SharedPreferences.Editor spEditor = ctx.getSharedPreferences(ctx.getString(R.string.dontaskfordomainverification_key), MODE_PRIVATE).edit();
+        spEditor.putBoolean(ctx.getString(R.string.dontaskfordomainverification_key), dontShowAtStartup);
+        spEditor.apply();
+    }
+
+    // resources
     public static ResourcePreferenceWrapper getResourceUri(Context ctx, String key, Long last_update_timestamp) {
-        SharedPreferences prefs = ctx.getSharedPreferences(key, MODE_PRIVATE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        //SharedPreferences prefs = ctx.getSharedPreferences(key, MODE_PRIVATE);
         String uri = prefs.getString(key, null);
         long last_modified = prefs.getLong(key+ctx.getString(R.string.timestamp), -1);
 
@@ -32,7 +48,8 @@ public class SharedPreferenceUtility {
         return null;
     }
     public static void setResourceUri(Context ctx, String key, String uri, long timestamp, long dm_resource_id) {
-        SharedPreferences.Editor spEditor = ctx.getSharedPreferences(key, MODE_PRIVATE).edit();
+        SharedPreferences.Editor spEditor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
+        //SharedPreferences.Editor spEditor = ctx.getSharedPreferences(key, MODE_PRIVATE).edit();
         spEditor.putString(key, uri);
         spEditor.putLong(key+ctx.getString(R.string.timestamp), timestamp);
         spEditor.putLong(key+ctx.getString(R.string.id), dm_resource_id);

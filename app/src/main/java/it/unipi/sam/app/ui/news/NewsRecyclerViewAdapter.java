@@ -51,12 +51,6 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
     public NewsRecyclerViewAdapter(List<VCNews> news, Context ctx){
         this.news = news;
         context = ctx;
-        // uncomment this in order to see if the images are from the server/disk/memory.
-        // It will show up a flag on the top left corner of your pictures.
-        //  - Red flag means the images come from the server. (No caching at first load)
-        //  - Blue flag means the photos come from the local disk. (Caching)
-        //  - Green flag means the images come from the memory. (Instance Caching)
-        // Picasso.get().setIndicatorsEnabled(true);
     }
 
     @Override
@@ -107,7 +101,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
             .into(viewHolder.image);
         ((ParamLinearLayout) viewHolder.itemView ).setObject(new Object[]{news, news.get(i).getId()});
         viewHolder.itemView.setOnClickListener(this);
-        DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, "AAAA", "pos: "+i, null);
+        //DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, "AAAA", "pos: "+i, null);
     }
 
     @Override

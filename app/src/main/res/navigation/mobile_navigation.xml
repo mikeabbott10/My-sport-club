@@ -28,4 +28,9 @@
         android:name="it.unipi.sam.app.ui.contacts.ContactsFragment"
         android:label="@string/menu_contatti"
         tools:layout="@layout/fragment_contacts" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="it.unipi.sam.app.ui.settings.MyPreferenceFragment"
+        android:label="@string/menu_settings"/>
 </navigation>

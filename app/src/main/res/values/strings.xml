@@ -120,6 +120,15 @@
     <string name="coach">"Coach: "</string>
     <string name="news_id">newsid</string>
     <string name="autore">"Autore: "</string>
+    <string name="approvazione_dominio">Si vorrebbero aprire i link https://volleycecina.it con questa applicazione piuttosto che con il browser. \nProcedendo verrai indirizzato nelle impostazioni per concedere l\'approvazione del dominio. \nProcedere?</string>
+    <string name="dontaskfordomainverification_key">dontaskfordomainverification</string>
+    <string name="dontshowagain">Non chiedere più</string>
+    <string name="menu_settings">Impostazioni</string>
+    <string name="approvazione_dominio_settings_title">Aggiungi link supportati da questa app</string>
+    <string name="dontshowagain_settings_title">Non approvare il dominio all\'avvio</string>
+    <string name="dontshowagain_settings_desc">Selezionare per non mostrare all\'avvio</string>
+    <string name="share_using">Condividi tramite:</string>
+    <string name="share_news_presentation_text">Leggi questa notizia da VolleyCecina.it</string>
 
 
 </resources>

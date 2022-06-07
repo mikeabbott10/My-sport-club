@@ -42,8 +42,8 @@ public class DebugUtility {
     private static final boolean showBasicLog = false;
     private static final boolean showIdentityLog = false;
     private static final boolean showServerCommunicationLog = true;
-    private static final boolean showUILog = true;
-    private static final boolean showGestureLog = true;
+    private static final boolean showUILog = false;
+    private static final boolean showGestureLog = false;
     private static final boolean showRecordingScreenLog = false;
     private static final boolean showMyFileHandling = true;
     private static final boolean showTcpLog = false;
@@ -104,11 +104,7 @@ public class DebugUtility {
     }
 
     public static void showSimpleSnackbar(View view, String msg, int duration){
-        Snackbar sb = Snackbar.make(view, msg, duration);
-        /*sb.setAction("clicca qui", v -> {
-            Toast.makeText(ctx, "BRAVO", Toast.LENGTH_LONG).show();
-        });*/
-        sb.show();
+        Snackbar.make(view, msg, duration).show();
     }
 
     private static void writeClearFile(Context ctx, String stringToWrite) {

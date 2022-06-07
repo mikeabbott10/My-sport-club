@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Approvazione dominio">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/dontaskfordomainverification_key"
+            android:title="@string/dontshowagain_settings_title"
+            android:summary="@string/dontshowagain_settings_desc" />
+        <Preference android:title="@string/approvazione_dominio_settings_title"
+            android:icon="@drawable/ic_open_new">
+            <intent android:action="android.settings.APP_OPEN_BY_DEFAULT_SETTINGS"
+            android:data="package:it.unipi.sam.app"/>
+        </Preference>
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -49,6 +49,7 @@
         <activity
             android:name=".activities.ScreenSlidePagerActivity">
         </activity>
+        <activity android:name=".activities.ShareValues" />
     </application>
 
 </manifest>

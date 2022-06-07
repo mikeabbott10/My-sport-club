@@ -31,6 +31,7 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.preference:preference:1.2.0'
     compileOnly "org.projectlombok:lombok:1.18.24"
     annotationProcessor "org.projectlombok:lombok:1.18.24"
 
