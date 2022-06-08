@@ -1,10 +1,12 @@
 package it.unipi.sam.app.ui.settings;
 
 import android.content.ClipData;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import it.unipi.sam.app.R;
@@ -17,9 +19,16 @@ public class MyPreferenceFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
         setPreferencesFromResource(R.xml.my_preferences, rootKey);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            // no need for verified domain settings
+            // disable them
+            Preference domainVerificationCategory =  getPreferenceScreen().getPreference(0); // nota: 0 è l'indice della prima PreferenceCategory in PreferenceScreen
+            domainVerificationCategory.setEnabled(false);
+            domainVerificationCategory.setTitle(getString(R.string.domainverification_title) + " (" + getString(R.string.not_supported) + ")");
+
+        }
         item = new ClipData.Item(requireActivity().getString(R.string.menu_settings));
         viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
-
     }
 
     @Override

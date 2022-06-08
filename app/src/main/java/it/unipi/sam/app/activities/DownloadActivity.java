@@ -1,27 +1,22 @@
 package it.unipi.sam.app.activities;
 
 import android.app.DownloadManager;
-import android.content.ContentResolver;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
 
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.util.DMRequestWrapper;
@@ -30,7 +25,6 @@ import it.unipi.sam.app.util.DownloadBroadcastReceiver;
 import it.unipi.sam.app.util.JacksonUtil;
 import it.unipi.sam.app.util.MyBroadcastListener;
 import it.unipi.sam.app.util.RestInfo;
-import it.unipi.sam.app.util.SharedPreferenceUtility;
 
 public class DownloadActivity extends AppCompatActivity implements MyBroadcastListener {
     private static final String TAG = "AAADownloadActivity";
@@ -38,11 +32,9 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
     //overall
     protected static final int REST_INFO_JSON = 0;
     //overview
-    protected static final int COVER_IMAGE = 1;
-    protected static final int AVATAR_IMAGE = 2;
-    protected static final int OVERVIEW_INFO_JSON = 3;
+    protected static final int OVERVIEW_INFO_JSON = 1;
     //news
-    protected static final int NEWS_JSON = 4;
+    protected static final int NEWS_JSON = 2;
 
     protected DownloadBroadcastReceiver receiver;
     protected DownloadManager dm;

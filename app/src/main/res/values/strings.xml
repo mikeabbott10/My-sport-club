@@ -129,6 +129,8 @@
     <string name="dontshowagain_settings_desc">Selezionare per non mostrare all\'avvio</string>
     <string name="share_using">Condividi tramite:</string>
     <string name="share_news_presentation_text">Leggi questa notizia da VolleyCecina.it</string>
+    <string name="domainverification_title">Approvazione dominio</string>
+    <string name="not_supported">non supportato</string>
 
 
 </resources>
