@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -68,6 +69,13 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
                 .placeholder(R.drawable.placeholder_126)
                 .error(R.drawable.placeholder_126)
                 .into(binding.avatarImage);
+
+
+        for (int i=0;i<14;i++) {
+            Button b=new Button(this);
+            b.setText("#"+i);
+            teamInfoContentBinding.playersGrid.addView(b);
+        }
     }
 
     @Override

@@ -22,8 +22,7 @@ import java.util.List;
 import it.unipi.sam.app.MainActivity;
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.activities.ScreenSlidePagerActivity;
-import it.unipi.sam.app.util.DebugUtility;
-import it.unipi.sam.app.util.ParamLinearLayout;
+import it.unipi.sam.app.util.graphics.ParamLinearLayout;
 import it.unipi.sam.app.util.VCNews;
 
 public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerViewAdapter.ViewHolder> implements View.OnClickListener {

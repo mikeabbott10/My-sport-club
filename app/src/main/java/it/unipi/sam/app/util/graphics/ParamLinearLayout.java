@@ -1,4 +1,4 @@
-package it.unipi.sam.app.util;
+package it.unipi.sam.app.util.graphics;
 
 
 import android.content.Context;

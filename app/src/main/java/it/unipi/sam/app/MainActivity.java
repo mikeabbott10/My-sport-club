@@ -80,6 +80,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     private VCNews[] vcn_arr;
     private List<VCNews> vc_news = null;
     private NewsViewModel newsViewModel;
+    private AlertDialog domainApprovationDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -331,7 +332,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         View v = getLayoutInflater().inflate(R.layout.dialog_show_again, null);
         CheckBox cb = v.findViewById(R.id.checkBox);
         cb.setOnCheckedChangeListener(this);
-        new AlertDialog.Builder(MainActivity.this)
+        domainApprovationDialog = new AlertDialog.Builder(MainActivity.this)
                 .setMessage(R.string.approvazione_dominio)
                 .setTitle("Approvazione del dominio")
                 .setView(v) // add the
@@ -340,8 +341,14 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                 .setNegativeButton("", this)
                 .setPositiveButtonIcon(AppCompatResources.getDrawable(this, R.drawable.ic_ok_adaptive_foreground))
                 .setNegativeButtonIcon(AppCompatResources.getDrawable(this, R.drawable.ic_close_adaptive_foreground))
-                .create()
-                .show();
+                .create();
+        domainApprovationDialog.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        domainApprovationDialog.dismiss();
     }
 
     /**

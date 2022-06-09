@@ -24,4 +24,10 @@
         android:padding="13dp"
         android:background="@drawable/rounded_corners"/>
 
+    <it.unipi.sam.app.util.graphics.DynamicGridLayout
+        android:id="@+id/players_grid"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        app:layout_constraintTop_toBottomOf="@id/leagueDescription" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
