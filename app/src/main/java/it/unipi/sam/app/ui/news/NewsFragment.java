@@ -47,7 +47,8 @@ public class NewsFragment extends Fragment {
         newsViewModel.getVcNewsList().observe(getViewLifecycleOwner(), item ->{
             nsv.setVisibility(View.GONE);
             adapter.setNews(item);
-            adapter.notifyDataSetChanged(); // ultima spiaggia
+            // idk quante entries ci sono in più o in meno rispetto a prima (nè dove sono state inserite/eliminate). Necessario refresh dell'intero data set:
+            adapter.notifyDataSetChanged();
         });
         return root;
     }

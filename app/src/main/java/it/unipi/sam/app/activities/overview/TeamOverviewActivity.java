@@ -4,23 +4,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.appbar.AppBarLayout;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 import it.unipi.sam.app.R;
-import it.unipi.sam.app.databinding.ActivityOverviewBinding;
 import it.unipi.sam.app.databinding.TeamInfoContentBinding;
-import it.unipi.sam.app.util.AvatarImageBehavior;
 import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.JacksonUtil;
@@ -28,11 +21,11 @@ import it.unipi.sam.app.util.OverviewActivityAlphaHandler;
 import it.unipi.sam.app.util.ResourcePreferenceWrapper;
 import it.unipi.sam.app.util.SharedPreferenceUtility;
 import it.unipi.sam.app.util.Team;
-import it.unipi.sam.app.util.VCNews;
+import it.unipi.sam.app.util.graphics.ParamImageView;
 
 public class TeamOverviewActivity extends OverviewActivity implements View.OnClickListener {
     private static final String TAG = "AAATeamOverviewActivity";
-    private String urlBasePath = null;
+    private String urlTeamBasePath = null;
     private String teamCode;
     protected TeamInfoContentBinding teamInfoContentBinding;
 
@@ -48,14 +41,14 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
             DebugUtility.showSimpleSnackbar(binding.getRoot(), "Something went wrong, please retry later.", 5000);
             return;
         }
-        urlBasePath = getString(R.string.restBasePath) + restInfoInstance.getTeamsPath() + teamCode + "/";
+        urlTeamBasePath = getString(R.string.restBasePath) + restInfoInstance.getTeamsPath() + teamCode + "/";
 
         teamInfoContentBinding = TeamInfoContentBinding.inflate(getLayoutInflater());
 
         // load cover image
         Glide
             .with(this)
-            .load(urlBasePath + restInfoInstance.getKeyWords().get(getString(R.string.cover_image)))
+            .load(urlTeamBasePath + restInfoInstance.getKeyWords().get(getString(R.string.cover_image)))
             //.centerCrop()
             .placeholder(R.drawable.placeholder_126)
             .error(R.drawable.placeholder_126)
@@ -64,24 +57,17 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         // load avatar image
         Glide
                 .with(this)
-                .load(urlBasePath + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
+                .load(urlTeamBasePath + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
                 //.centerCrop()
                 .placeholder(R.drawable.placeholder_126)
                 .error(R.drawable.placeholder_126)
                 .into(binding.avatarImage);
-
-
-        for (int i=0;i<14;i++) {
-            Button b=new Button(this);
-            b.setText("#"+i);
-            teamInfoContentBinding.playersGrid.addView(b);
-        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if(urlBasePath!=null && restInfoInstance != null)
+        if(urlTeamBasePath !=null && restInfoInstance != null)
             startRequestsForPopulatingActivityLayout();
     }
 
@@ -115,7 +101,7 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         }else {
             DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. From net", null);
             enqueueRequest(
-                    new DMRequestWrapper(urlBasePath + restInfoInstance.getKeyWords().get(getString(R.string.info_file)),
+                    new DMRequestWrapper(urlTeamBasePath + restInfoInstance.getKeyWords().get(getString(R.string.info_file)),
                             "randomTitle", "randomDescription", false, false, OVERVIEW_INFO_JSON,
                             false, null, null)
             );
@@ -125,6 +111,8 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
     @Override
     public void onJsonInformationReceived(long dm_resource_id, String uri, Integer type, long lastModifiedTimestamp, boolean updateResourcePreference) {
         super.onJsonInformationReceived(dm_resource_id, uri, type, lastModifiedTimestamp, updateResourcePreference);
+        if(teamInfoContentBinding.getRoot().getParent() != null)
+            return;
         String content = getFileContentFromUri(uri);
         // perform jackson from file to object
         Team t;
@@ -145,6 +133,22 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         teamInfoContentBinding.leagueDescription.setObject(t.getLeagueLink());
         teamInfoContentBinding.leagueDescription.setOnClickListener(this);
 
+        for (int i=0; i<t.getPlayers().size(); i++) {
+            ParamImageView iv=new ParamImageView(this);
+            iv.setPadding(10,10,10,10);
+            iv.setObject(t.getPlayers().get(i));
+            iv.setOnClickListener(this);
+            // load image
+            Glide
+                .with(this)
+                .load(getString(R.string.restBasePath) + restInfoInstance.getPlayersPath() + t.getPlayers().get(i) + "/avatar.jpg")
+                .centerCrop()
+                .placeholder(R.drawable.person_placeholder)
+                .error(R.drawable.person_placeholder)
+                .into(iv);
+            teamInfoContentBinding.playersGrid.addView(iv);
+        }
+
         binding.infoContainer.addView(teamInfoContentBinding.getRoot());
         // update resource preference if needed
         if(updateResourcePreference)
@@ -153,9 +157,15 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
 
     @Override
     public void onClick(View view) {
-        if(view==teamInfoContentBinding.leagueDescription){
+        if(view==teamInfoContentBinding.leagueDescription && teamInfoContentBinding.leagueDescription.getObj()!=null){
             startActivity(new Intent(Intent.ACTION_VIEW,
                     Uri.parse((String) teamInfoContentBinding.leagueDescription.getObj())));
+        }else if(view instanceof ParamImageView){
+            // TODO: scrivere PlayerOverviewActivity e lanciare quella
+            Intent i = new Intent(this, TeamOverviewActivity.class);
+            i.putExtra(getString(R.string.player_code), (String) ((ParamImageView) view).getObj());
+            i.putExtra(getString(R.string.rest_info_instance_key), restInfoInstance);
+            startActivity(i);
         }
     }
 }

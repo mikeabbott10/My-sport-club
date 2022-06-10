@@ -39,6 +39,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -170,12 +171,23 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
 
     @Override
     public void onClick(View view) {
+        if(restInfoInstance==null){
+            Snackbar.make(binding.getRoot(), "ERROR 04. Please retry later.", 5000).show();
+            return;
+        }
         if(view.getId() == R.id.fab){
-            // TODO: togliere start activity
-            Intent i = new Intent(this, TeamOverviewActivity.class);
-            i.putExtra(getString(R.string.team_code), restInfoInstance.getTeamCodes()[1]);
-            i.putExtra(getString(R.string.rest_info_instance_key), restInfoInstance);
-            startActivity(i);
+            // TODO: togliere
+            if(viewModel.getSelectedItem().getValue().getText().equals(getString(R.string.menu_contatti))){
+                Intent i = new Intent(this, TeamOverviewActivity.class);
+                i.putExtra(getString(R.string.team_code), restInfoInstance.getTeamCodes()[1]);
+                i.putExtra(getString(R.string.rest_info_instance_key), restInfoInstance);
+                startActivity(i);
+            }else{
+                Intent i = new Intent(this, TeamOverviewActivity.class);
+                i.putExtra(getString(R.string.team_code), restInfoInstance.getTeamCodes()[0]);
+                i.putExtra(getString(R.string.rest_info_instance_key), restInfoInstance);
+                startActivity(i);
+            }
         }
     }
 
@@ -204,6 +216,10 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
 
                     Long calledNewsId = getCalledNewsIdFromIntent(getIntent());
                     if(calledNewsId!=null) {
+                        if(restInfoInstance==null){
+                            Snackbar.make(binding.getRoot(), "ERROR 05. Please retry later.", 5000).show();
+                            return;
+                        }
                         Intent i = new Intent(this, ScreenSlidePagerActivity.class);
                         try {
                             i.putExtra(getString(R.string.news), (ArrayList<VCNews>) vc_news);
@@ -348,7 +364,8 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        domainApprovationDialog.dismiss();
+        if(domainApprovationDialog!=null)
+            domainApprovationDialog.dismiss();
     }
 
     /**

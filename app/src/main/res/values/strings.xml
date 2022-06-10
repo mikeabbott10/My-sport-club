@@ -107,6 +107,7 @@
     <string name="first_rest_req_path">restInfo.json</string>
 
     <string name="team_code">team_code</string>
+    <string name="player_code">player_code</string>
     <string name="cover_image">cover_image</string>
     <string name="profile_image">profile_image</string>
     <string name="info_file">info_file</string>
