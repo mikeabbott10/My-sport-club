@@ -1,15 +1,16 @@
 package it.unipi.sam.app.util;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class Team {
-    private ArrayList<String> players;
-    private String coach;
-    private String secondCoach;
-    private String assistantManager;
+    private ArrayList<Map<String, String>> players;
+    private Map<String, String> coach;
+    private Map<String, String> secondCoach;
+    private ArrayList<Map<String, String>> assistantManager;
     private String currentLeague;
     private String leagueDescription;
     private String leagueLink;
@@ -21,31 +22,31 @@ public class Team {
         this.currentLeague = currentLeague;
     }
 
-    public String getCoach() {
+    public Map<String, String> getCoach() {
         return coach;
     }
-    public void setCoach(String coach) {
+    public void setCoach(Map<String, String> coach) {
         this.coach = coach;
     }
 
-    public ArrayList<String> getPlayers() {
+    public ArrayList<Map<String, String>> getPlayers() {
         return players;
     }
-    public void setPlayers(ArrayList<String> players) {
+    public void setPlayers(ArrayList<Map<String, String>> players) {
         this.players = players;
     }
 
-    public String getSecondCoach() {
+    public Map<String, String> getSecondCoach() {
         return secondCoach;
     }
-    public void setSecondCoach(String secondCoach) {
+    public void setSecondCoach(Map<String, String> secondCoach) {
         this.secondCoach = secondCoach;
     }
 
-    public String getAssistantManager() {
+    public ArrayList<Map<String, String>> getAssistantManager() {
         return assistantManager;
     }
-    public void setAssistantManager(String assistantManager) {
+    public void setAssistantManager(ArrayList<Map<String, String>> assistantManager) {
         this.assistantManager = assistantManager;
     }
 

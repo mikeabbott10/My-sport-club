@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RestInfo implements Serializable {
     private String news;
-    private String playersPath;
+    private String peoplePath;
     private String teamsPath;
     private String[] teamCodes;
     private Map<String, String> keyWords;
@@ -28,11 +28,11 @@ public class RestInfo implements Serializable {
         this.news = news;
     }
 
-    public String getPlayersPath() {
-        return playersPath;
+    public String getPeoplePath() {
+        return peoplePath;
     }
-    public void setPlayersPath(String playersPath) {
-        this.playersPath = playersPath;
+    public void setPeoplePath(String peoplePath) {
+        this.peoplePath = peoplePath;
     }
 
     public String getTeamsPath() {

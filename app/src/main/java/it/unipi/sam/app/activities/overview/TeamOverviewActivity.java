@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,12 +55,12 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
 
         // load avatar image
         Glide
-                .with(this)
-                .load(urlTeamBasePath + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
-                //.centerCrop()
-                .placeholder(R.drawable.placeholder_126)
-                .error(R.drawable.placeholder_126)
-                .into(binding.avatarImage);
+            .with(this)
+            .load(urlTeamBasePath + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
+            //.centerCrop()
+            .placeholder(R.drawable.placeholder_126)
+            .error(R.drawable.placeholder_126)
+            .into(binding.avatarImage);
     }
 
     @Override
@@ -125,10 +124,9 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         }
         binding.toolbarMainTextviewTitle.setText(t.getCurrentLeague());
         binding.mainTextviewTitle.setText(t.getCurrentLeague());
-        String s = getString(R.string.coach) + t.getCoach();
+        String s = getString(R.string.coach) + t.getCoach().get(getString(R.string.res_name));
         binding.mainTextviewDescription.setText(s);
 
-        // todo: aggiungi team_activity_overview_content (popolato) alla cardview binding.info_container
         teamInfoContentBinding.leagueDescription.setText(t.getLeagueDescription());
         teamInfoContentBinding.leagueDescription.setObject(t.getLeagueLink());
         teamInfoContentBinding.leagueDescription.setOnClickListener(this);
@@ -136,12 +134,15 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         for (int i=0; i<t.getPlayers().size(); i++) {
             ParamImageView iv=new ParamImageView(this);
             iv.setPadding(10,10,10,10);
-            iv.setObject(t.getPlayers().get(i));
+            String currPlayerPath = t.getPlayers().get(i).get(getString(R.string.res_path));
+            String currPlayerName = t.getPlayers().get(i).get(getString(R.string.res_name));
+            iv.setObject(currPlayerPath);
             iv.setOnClickListener(this);
+
             // load image
             Glide
                 .with(this)
-                .load(getString(R.string.restBasePath) + restInfoInstance.getPlayersPath() + t.getPlayers().get(i) + "/avatar.jpg")
+                .load(getString(R.string.restBasePath) + restInfoInstance.getPeoplePath() + currPlayerPath + "/avatar.jpg")
                 .centerCrop()
                 .placeholder(R.drawable.person_placeholder)
                 .error(R.drawable.person_placeholder)

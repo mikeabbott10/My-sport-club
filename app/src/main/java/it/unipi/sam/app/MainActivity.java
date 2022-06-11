@@ -86,7 +86,6 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // ask for rest info
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -95,6 +94,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         toolBarLayout = binding.appBarMain.toolbarLayout;
         toolBarLayout.setTitle(getString(R.string.menu_notizie));
 
+        // ask for restInfo
         getRestInfoFile(new DMRequestWrapper(getString(R.string.restBasePath) + getString(R.string.first_rest_req_path),
                 "notUseful", "notUseful", false, false, REST_INFO_JSON,
                 false, null, null));

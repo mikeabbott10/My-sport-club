@@ -133,5 +133,9 @@
     <string name="domainverification_title">Approvazione dominio</string>
     <string name="not_supported">non supportato</string>
 
+    <string name="res_path">path</string>
+    <string name="res_name">name</string>
+    <string name="roster">Roster</string>
+
 
 </resources>
