@@ -25,15 +25,6 @@
         android:padding="13dp"
         android:background="@drawable/rounded_corners" />
 
-    <!--<TextView
-        android:id="@+id/roster_tv"
-        android:text="@string/roster"
-        style="?android:textAppearanceMedium"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:textColor="@color/black"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/roster_tv"/>-->
     <it.unipi.sam.app.util.graphics.DynamicGridLayout
         android:layout_marginTop="4dp"
         android:id="@+id/players_grid"
@@ -42,4 +33,45 @@
         app:layout_constraintTop_toBottomOf="@id/leagueDescription"
         />
 
+    <TextView
+        android:id="@+id/coach_tv"
+        android:text="@string/coach"
+        style="?android:textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textColor="@color/black"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/players_grid"
+        android:gravity="center_vertical"
+        android:padding="13dp"
+        />
+
+    <it.unipi.sam.app.util.graphics.DynamicGridLayout
+        android:layout_marginTop="4dp"
+        android:id="@+id/coach_grid"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        app:layout_constraintTop_toBottomOf="@id/coach_tv"
+        />
+
+    <TextView
+        android:id="@+id/staff_tv"
+        android:text="@string/staff"
+        style="?android:textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textColor="@color/black"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/coach_grid"
+        android:gravity="center_vertical"
+        android:padding="13dp"
+        />
+
+    <it.unipi.sam.app.util.graphics.DynamicGridLayout
+        android:layout_marginTop="4dp"
+        android:id="@+id/staff_grid"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        app:layout_constraintTop_toBottomOf="@id/staff_tv"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

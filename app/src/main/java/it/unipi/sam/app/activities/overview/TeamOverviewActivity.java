@@ -53,14 +53,20 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
             .error(R.drawable.placeholder_126)
             .into(binding.toolbarLogo);
 
+
         // load avatar image
-        Glide
+        /*Glide
             .with(this)
             .load(urlTeamBasePath + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
             //.centerCrop()
             .placeholder(R.drawable.placeholder_126)
             .error(R.drawable.placeholder_126)
-            .into(binding.avatarImage);
+            .into(binding.avatarImage);*/
+
+        binding.avatarImage.setImageResource(R.drawable.vc);
+        binding.avatarImage.setBorderWidth(0);
+        binding.avatarImage.setDisableCircularTransformation(true);
+
     }
 
     @Override
@@ -124,33 +130,96 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         }
         binding.toolbarMainTextviewTitle.setText(t.getCurrentLeague());
         binding.mainTextviewTitle.setText(t.getCurrentLeague());
-        String s = getString(R.string.coach) + t.getCoach().get(getString(R.string.res_name));
+        String s = getString(R.string.coach_title) + t.getCoach().get(getString(R.string.res_name));
         binding.mainTextviewDescription.setText(s);
 
         teamInfoContentBinding.leagueDescription.setText(t.getLeagueDescription());
         teamInfoContentBinding.leagueDescription.setObject(t.getLeagueLink());
         teamInfoContentBinding.leagueDescription.setOnClickListener(this);
 
+        // players views
         for (int i=0; i<t.getPlayers().size(); i++) {
-            ParamImageView iv=new ParamImageView(this);
-            iv.setPadding(10,10,10,10);
             String currPlayerPath = t.getPlayers().get(i).get(getString(R.string.res_path));
-            String currPlayerName = t.getPlayers().get(i).get(getString(R.string.res_name));
-            iv.setObject(currPlayerPath);
-            iv.setOnClickListener(this);
+            assert currPlayerPath != null;
+            if(!currPlayerPath.equals("")) {
+                //String currPlayerName = t.getPlayers().get(i).get(getString(R.string.res_name));
+                ParamImageView iv=new ParamImageView(this);
+                iv.setPadding(10,10,10,10);
+                iv.setObject(currPlayerPath);
+                iv.setOnClickListener(this);
+                Glide
+                        .with(this)
+                        .load(getString(R.string.restBasePath) + restInfoInstance.getPeoplePath() + currPlayerPath + "/" + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
+                        .centerCrop()
+                        .placeholder(R.drawable.person_placeholder)
+                        .error(R.drawable.person_placeholder)
+                        .into(iv);
+                teamInfoContentBinding.playersGrid.addView(iv);
+            }
+        }
 
-            // load image
+        // coach view
+        String coachPath = t.getCoach().get(getString(R.string.res_path));
+        assert coachPath != null;
+        if(!coachPath.equals("")) {
+            //String coachName = t.getCoach().get(getString(R.string.res_name));
+            ParamImageView iv =new ParamImageView(this);
+            iv.setPadding(10,10,10,10);
+            iv.setObject(coachPath);
+            iv.setOnClickListener(this);
+            Glide
+                    .with(this)
+                    .load(getString(R.string.restBasePath) + restInfoInstance.getPeoplePath() + coachPath + "/" + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
+                    .centerCrop()
+                    .placeholder(R.drawable.person_placeholder)
+                    .error(R.drawable.person_placeholder)
+                    .into(iv);
+            teamInfoContentBinding.coachGrid.addView(iv);
+        }
+
+        // staff views
+        String secondCoachPath = t.getSecondCoach().get(getString(R.string.res_path));
+        assert secondCoachPath != null;
+        if(!secondCoachPath.equals("")) {
+            //String secondCoachName = t.getSecondCoach().get(getString(R.string.res_name));
+            ParamImageView iv =new ParamImageView(this);
+            iv.setPadding(10,10,10,10);
+            iv.setObject(secondCoachPath);
+            iv.setOnClickListener(this);
             Glide
                 .with(this)
-                .load(getString(R.string.restBasePath) + restInfoInstance.getPeoplePath() + currPlayerPath + "/avatar.jpg")
+                .load(getString(R.string.restBasePath) + restInfoInstance.getPeoplePath() + secondCoachPath + "/" + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
                 .centerCrop()
                 .placeholder(R.drawable.person_placeholder)
                 .error(R.drawable.person_placeholder)
                 .into(iv);
-            teamInfoContentBinding.playersGrid.addView(iv);
+            teamInfoContentBinding.staffGrid.addView(iv);
+        }
+
+        // dirigenti views
+        for (int i=0; i<t.getAssistantManager().size(); i++) {
+            String currManagerPath = t.getAssistantManager().get(i).get(getString(R.string.res_path));
+            assert currManagerPath != null;
+            if(!currManagerPath.equals("")) {
+                //String currManagerName = t.getAssistantManager().get(i).get(getString(R.string.res_name));
+                ParamImageView iv=new ParamImageView(this);
+                iv.setPadding(10,10,10,10);
+                iv.setObject(currManagerPath);
+                iv.setOnClickListener(this);
+                Glide
+                    .with(this)
+                    .load(getString(R.string.restBasePath) + restInfoInstance.getPeoplePath() + currManagerPath + "/" + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
+                    .centerCrop()
+                    .placeholder(R.drawable.person_placeholder)
+                    .error(R.drawable.person_placeholder)
+                    .into(iv);
+                teamInfoContentBinding.staffGrid.addView(iv);
+            }
+
         }
 
         binding.infoContainer.addView(teamInfoContentBinding.getRoot());
+
         // update resource preference if needed
         if(updateResourcePreference)
             SharedPreferenceUtility.setResourceUri(this, getString(R.string.teams)+teamCode+type, uri, lastModifiedTimestamp, dm_resource_id);
@@ -162,9 +231,8 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
             startActivity(new Intent(Intent.ACTION_VIEW,
                     Uri.parse((String) teamInfoContentBinding.leagueDescription.getObj())));
         }else if(view instanceof ParamImageView){
-            // TODO: scrivere PlayerOverviewActivity e lanciare quella
-            Intent i = new Intent(this, TeamOverviewActivity.class);
-            i.putExtra(getString(R.string.player_code), (String) ((ParamImageView) view).getObj());
+            Intent i = new Intent(this, PeopleOverviewActivity.class);
+            i.putExtra(getString(R.string.people_code), (String) ((ParamImageView) view).getObj());
             i.putExtra(getString(R.string.rest_info_instance_key), restInfoInstance);
             startActivity(i);
         }

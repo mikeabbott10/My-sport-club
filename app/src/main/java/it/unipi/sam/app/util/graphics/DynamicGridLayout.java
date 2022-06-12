@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import it.unipi.sam.app.util.DebugUtility;
 
 public class DynamicGridLayout extends ViewGroup {
-
     public DynamicGridLayout(Context context) {
         super(context);
     }

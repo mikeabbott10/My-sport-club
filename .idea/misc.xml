@@ -20,8 +20,10 @@
         <entry key="app/src/main/res/drawable/ic_ok_adaptive_foreground.xml" value="0.3155" />
         <entry key="app/src/main/res/drawable/ic_share_adaptive_foreground.xml" value="0.3055" />
         <entry key="app/src/main/res/drawable/ic_vc_launcher_background.xml" value="0.2875" />
+        <entry key="app/src/main/res/drawable/instagram.xml" value="0.2465" />
         <entry key="app/src/main/res/drawable/rounded_corners.xml" value="0.2465" />
         <entry key="app/src/main/res/drawable/side_nav_bar.xml" value="0.302" />
+        <entry key="app/src/main/res/layout-v23/activity_overview.xml" value="0.3500905797101449" />
         <entry key="app/src/main/res/layout-w1240dp/content_scrolling.xml" value="0.23125836680053546" />
         <entry key="app/src/main/res/layout-w936dp/content_scrolling.xml" value="0.269921875" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.35989583333333336" />
@@ -45,6 +47,7 @@
         <entry key="app/src/main/res/layout/item.xml" value="0.240625" />
         <entry key="app/src/main/res/layout/nav_header_main.xml" value="0.35989583333333336" />
         <entry key="app/src/main/res/layout/news_card.xml" value="0.31929347826086957" />
+        <entry key="app/src/main/res/layout/person_info_content.xml" value="0.5208526413345691" />
         <entry key="app/src/main/res/layout/preferences_category.xml" value="0.240625" />
         <entry key="app/src/main/res/layout/team_info_content.xml" value="0.35885416666666664" />
         <entry key="app/src/main/res/layout/transparent_layout.xml" value="0.24166666666666667" />

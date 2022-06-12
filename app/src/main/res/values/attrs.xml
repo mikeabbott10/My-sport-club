@@ -6,5 +6,6 @@
         <attr name="startToolbarPosition" format="dimension"/>
         <attr name="startHeight" format="dimension"/>
         <attr name="finalHeight" format="dimension"/>
+
     </declare-styleable>
 </resources>

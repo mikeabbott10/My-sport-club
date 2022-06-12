@@ -1,5 +1,6 @@
 package it.unipi.sam.app.activities.overview;
 
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.view.View;
 
@@ -15,7 +16,6 @@ public class OverviewActivity extends DownloadActivity implements AppBarLayout.O
     private static final String TAG = "AAAOverviewActivity";
     protected ActivityOverviewBinding binding;
     protected float currentScrollingPercentage;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

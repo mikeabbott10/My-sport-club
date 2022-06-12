@@ -137,7 +137,6 @@
         android:layout_height="@dimen/image_width"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/placeholder_126"
-
         app:finalHeight="@dimen/image_final_width"
         app:finalYPosition="2dp"
         app:layout_behavior=".util.AvatarImageBehavior"

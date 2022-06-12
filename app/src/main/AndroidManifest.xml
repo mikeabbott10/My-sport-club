@@ -50,6 +50,7 @@
             android:name=".activities.ScreenSlidePagerActivity">
         </activity>
         <activity android:name=".activities.ShareValues" />
+        <activity android:name=".activities.overview.PeopleOverviewActivity" />
     </application>
 
 </manifest>
