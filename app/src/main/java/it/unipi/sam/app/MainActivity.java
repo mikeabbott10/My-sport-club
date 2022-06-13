@@ -95,6 +95,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         toolBarLayout.setTitle(getString(R.string.menu_notizie));
 
         // ask for restInfo
+        // rest info file is always downloaded at least once
         getRestInfoFile(new DMRequestWrapper(getString(R.string.restBasePath) + getString(R.string.first_rest_req_path),
                 "notUseful", "notUseful", false, false, REST_INFO_JSON,
                 false, null, null));
@@ -144,7 +145,6 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     }
 
     private void getRestInfoFile(DMRequestWrapper dmRequestWrapper) {
-        // rest info file is always downloaded
         enqueueRequest(dmRequestWrapper);
     }
 

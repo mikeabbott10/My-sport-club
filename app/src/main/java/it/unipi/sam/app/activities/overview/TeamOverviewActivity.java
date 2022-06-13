@@ -100,11 +100,11 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         }
 
         if(teamInfoJsonPreference!=null && teamInfoJsonPreference.getUri()!=null) {
-            DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. From local", null);
+            DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getTeam. From local", null);
             super.handleResponseUri(teamInfoJsonPreference.getDMResourceId(), OVERVIEW_INFO_JSON,
                     teamInfoJsonPreference.getUri(), teamInfoJsonPreference.getLastModifiedTimestamp(), false);
         }else {
-            DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. From net", null);
+            DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getTeam. From net", null);
             enqueueRequest(
                     new DMRequestWrapper(urlTeamBasePath + restInfoInstance.getKeyWords().get(getString(R.string.info_file)),
                             "randomTitle", "randomDescription", false, false, OVERVIEW_INFO_JSON,

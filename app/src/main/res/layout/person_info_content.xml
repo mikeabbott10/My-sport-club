@@ -6,31 +6,324 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activities.overview.PeopleOverviewActivity">
+
+
+    <!-- social container -->
     <RelativeLayout
-        android:id="@+id/first_row"
+        android:id="@+id/social_row"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:layout_constraintTop_toTopOf="parent">
+        android:text="@string/dontshowagain"
+        android:layout_centerVertical="true"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="8dp"
+        android:layout_marginBottom="1dp"
+        android:background="@drawable/rounded_corners"
+        android:gravity="center">
 
         <it.unipi.sam.app.util.graphics.ParamImageView
-            android:id="@+id/shareBtn"
-            android:layout_width="30dp"
+            android:id="@+id/instagram_btn"
+            android:layout_width="45dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
+            android:padding="2dp"
             android:src="@drawable/instagram"
             tools:ignore="ContentDescription" />
 
-        <!-- Data -->
-        <TextView
-            android:id="@+id/fDate"
-            style="?android:textAppearanceSmall"
+        <it.unipi.sam.app.util.graphics.ParamImageView
+            android:id="@+id/facebook_btn"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            android:src="@drawable/facebook"
+            android:layout_toEndOf="@id/instagram_btn"
+            tools:ignore="ContentDescription" />
+
+        <it.unipi.sam.app.util.graphics.ParamImageView
+            android:id="@+id/twitter_btn"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            android:src="@drawable/twitter"
+            android:layout_toEndOf="@id/facebook_btn"
+            tools:ignore="ContentDescription"
+            android:visibility="gone"/>
+
+        <it.unipi.sam.app.util.graphics.ParamImageView
+            android:id="@+id/tiktok_btn"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            android:src="@drawable/tiktok"
+            android:layout_toEndOf="@id/twitter_btn"
+            tools:ignore="ContentDescription" />
+
+        <it.unipi.sam.app.util.graphics.ParamImageView
+            android:id="@+id/linkedin_btn"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            android:src="@drawable/linkedin"
+            android:layout_toEndOf="@id/tiktok_btn"
+            tools:ignore="ContentDescription"
+            android:visibility="gone"/>
+
+        <it.unipi.sam.app.util.graphics.ParamImageView
+            android:id="@+id/whatsapp_btn"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            android:src="@drawable/whatsapp"
+            android:layout_toEndOf="@id/linkedin_btn"
+            tools:ignore="ContentDescription" />
+
+        <it.unipi.sam.app.util.graphics.ParamImageView
+            android:id="@+id/telegram_btn"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            android:src="@drawable/telegram"
+            android:layout_toEndOf="@id/whatsapp_btn"
+            tools:ignore="ContentDescription" />
+
+        <it.unipi.sam.app.util.graphics.ParamImageView
+            android:id="@+id/discord_btn"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            android:src="@drawable/discord"
+            android:layout_toEndOf="@id/telegram_btn"
+            tools:ignore="ContentDescription"
+            android:visibility="gone"/>
+
+        <it.unipi.sam.app.util.graphics.ParamImageView
+            android:id="@+id/steam_btn"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            android:src="@drawable/steam"
+            android:layout_toEndOf="@id/discord_btn"
+            tools:ignore="ContentDescription"
+            android:visibility="gone"/>
+
+        <it.unipi.sam.app.util.graphics.ParamImageView
+            android:id="@+id/twitch_btn"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            android:src="@drawable/twitch"
+            android:layout_toEndOf="@id/steam_btn"
+            tools:ignore="ContentDescription"
+            android:visibility="gone"/>
+
+        <it.unipi.sam.app.util.graphics.ParamImageView
+            android:id="@+id/youtube_btn"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            android:src="@drawable/youtube"
+            android:layout_toEndOf="@id/twitch_btn"
+            tools:ignore="ContentDescription"
+            android:visibility="gone"/>
+
+        <it.unipi.sam.app.util.graphics.ParamImageView
+            android:id="@+id/spotify_btn"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            android:src="@drawable/spotify"
+            android:layout_toEndOf="@id/youtube_btn"
+            tools:ignore="ContentDescription"
+            android:visibility="gone"/>
+
+        <it.unipi.sam.app.util.graphics.ParamImageView
+            android:id="@+id/email_btn"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            android:src="@drawable/email"
+            android:layout_toEndOf="@id/spotify_btn"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/info_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.4"
+        android:gravity="center"
+        android:paddingHorizontal="3dp"
+        app:layout_constraintTop_toBottomOf="@id/social_row">
+
+        <androidx.constraintlayout.utils.widget.ImageFilterView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:roundPercent="0.1"
+            android:scaleType="centerCrop"
+            android:src="@drawable/field" />
+
+        <androidx.constraintlayout.utils.widget.ImageFilterView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:roundPercent="0.1"
+            android:src="@drawable/backgroud_draw" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/shareBtn"
-            android:textAlignment="textEnd"
-            android:textColor="@color/gray" />
+            android:layout_centerInParent="true">
+
+            <TextView
+                android:id="@+id/number_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/audiowide"
+                android:textAlignment="center"
+                android:textColor="@color/main_color"
+                android:textSize="56sp"
+                android:textStyle="bold|italic"
+                android:typeface="normal"
+                android:layout_marginStart="3dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/number_tv1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/audiowide"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="56sp"
+                android:layout_marginEnd="3dp"
+                android:textStyle="bold|italic"
+                android:typeface="normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!--Nazione-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/nationality_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/textlines"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/number_tv">
+
+                <TextView
+                    android:id="@+id/nationality_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="@string/nation"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:typeface="normal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/nationality_value_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:maxLength="14"
+                    android:typeface="normal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/nationality_tv"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!--Anno-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/year_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/textlines"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/nationality_container">
+
+                <TextView
+                    android:id="@+id/year_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="@string/year"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:typeface="normal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/year_value_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:typeface="normal"
+                    app:layout_constraintStart_toEndOf="@id/year_tv"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!--Altezza-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/height_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/textlines"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/year_container">
+
+                <TextView
+                    android:id="@+id/height_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="@string/height"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:typeface="normal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/height_value_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:typeface="normal"
+                    app:layout_constraintStart_toEndOf="@id/height_tv"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </RelativeLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -41,6 +41,8 @@ public class SharedPreferenceUtility {
                 return null;
         }
 
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "passp", null);
+
         long dm_resource_id = prefs.getLong(key+ctx.getString(R.string.id), -1);
         if(isValidUri(ctx, uri, last_modified)) {
             return new ResourcePreferenceWrapper(uri, last_modified, dm_resource_id);

@@ -107,7 +107,8 @@
     <string name="first_rest_req_path">restInfo.json</string>
 
     <string name="team_code">team_code</string>
-    <string name="people_code">player_code</string>
+    <string name="people_code">people_code</string>
+    <string name="tag_image">tag_image</string>
     <string name="cover_image">cover_image</string>
     <string name="profile_image">profile_image</string>
     <string name="info_file">info_file</string>
@@ -141,6 +142,9 @@
     <string name="staff">Staff</string>
     <string name="coach_title">"Coach: "</string>
     <string name="role_title">"Ruolo: "</string>
+    <string name="nation">"Nazione: "</string>
+    <string name="year">"Anno: "</string>
+    <string name="height">"Altezza: "</string>
 
 
 </resources>

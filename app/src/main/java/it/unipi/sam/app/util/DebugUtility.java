@@ -40,7 +40,7 @@ public class DebugUtility {
 
     private static final boolean showAuthenticationLog = false;
     private static final boolean showBasicLog = false;
-    private static final boolean showIdentityLog = false;
+    private static final boolean showIdentityLog = true;
     private static final boolean showServerCommunicationLog = true;
     private static final boolean showUILog = true;
     private static final boolean showGestureLog = false;
