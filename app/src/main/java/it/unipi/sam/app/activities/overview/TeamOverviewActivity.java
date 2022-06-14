@@ -27,6 +27,8 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
     private String urlTeamBasePath = null;
     private String teamCode;
     protected TeamInfoContentBinding teamInfoContentBinding;
+    private String thisTeamPartialPath;
+    private Map<String, Object> thisLastModifiedEntry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +42,16 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
             DebugUtility.showSimpleSnackbar(binding.getRoot(), "Something went wrong, please retry later.", 5000);
             return;
         }
-        urlTeamBasePath = getString(R.string.restBasePath) + restInfoInstance.getTeamsPath() + teamCode + "/";
+        thisTeamPartialPath = restInfoInstance.getTeamsPath() + teamCode;
+        urlTeamBasePath = getString(R.string.restBasePath) + thisTeamPartialPath + "/";
+        thisLastModifiedEntry = restInfoInstance.getLastModified().get(thisTeamPartialPath);
 
         teamInfoContentBinding = TeamInfoContentBinding.inflate(getLayoutInflater());
 
         // load cover image
         Glide
             .with(this)
-            .load(urlTeamBasePath + restInfoInstance.getKeyWords().get(getString(R.string.cover_image)))
+            .load( getCoverImagePath(thisTeamPartialPath, thisLastModifiedEntry) )
             //.centerCrop()
             .placeholder(R.drawable.placeholder_126)
             .error(R.drawable.placeholder_126)
@@ -57,7 +61,7 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         // load avatar image
         /*Glide
             .with(this)
-            .load(urlTeamBasePath + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
+            .load( getProfileImagePath(thisPartialPath, thisLastModifiedEntry) )
             //.centerCrop()
             .placeholder(R.drawable.placeholder_126)
             .error(R.drawable.placeholder_126)
@@ -89,11 +93,11 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
     }
 
     private void startRequestsForPopulatingActivityLayout() {
-        Map<String, Long> riiMap = restInfoInstance.getLastModifiedTimestamp().get( restInfoInstance.getTeamsPath()+teamCode );
+        Map<String, Object> riiMap = restInfoInstance.getLastModified().get(thisTeamPartialPath);
         ResourcePreferenceWrapper teamInfoJsonPreference = null;
         if(riiMap!=null) {
             teamInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.teams)+teamCode+OVERVIEW_INFO_JSON,
-                    riiMap.get(getString(R.string.info_file)));
+                    (Long) riiMap.get(getString(R.string.info_file)));
         }else{
             teamInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.teams)+teamCode+OVERVIEW_INFO_JSON,
                     null);
@@ -147,9 +151,10 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
                 iv.setPadding(10,10,10,10);
                 iv.setObject(currPlayerPath);
                 iv.setOnClickListener(this);
+                String partialPath = restInfoInstance.getPeoplePath() + currPlayerPath;
                 Glide
                         .with(this)
-                        .load(getString(R.string.restBasePath) + restInfoInstance.getPeoplePath() + currPlayerPath + "/" + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
+                        .load( getProfileImagePath(partialPath, restInfoInstance.getLastModified().get(partialPath)) )
                         .centerCrop()
                         .placeholder(R.drawable.person_placeholder)
                         .error(R.drawable.person_placeholder)
@@ -167,9 +172,10 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
             iv.setPadding(10,10,10,10);
             iv.setObject(coachPath);
             iv.setOnClickListener(this);
+            String partialPath = restInfoInstance.getPeoplePath() + coachPath;
             Glide
                     .with(this)
-                    .load(getString(R.string.restBasePath) + restInfoInstance.getPeoplePath() + coachPath + "/" + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
+                    .load( getProfileImagePath(partialPath, restInfoInstance.getLastModified().get(partialPath)) )
                     .centerCrop()
                     .placeholder(R.drawable.person_placeholder)
                     .error(R.drawable.person_placeholder)
@@ -186,9 +192,10 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
             iv.setPadding(10,10,10,10);
             iv.setObject(secondCoachPath);
             iv.setOnClickListener(this);
+            String partialPath = restInfoInstance.getPeoplePath() + secondCoachPath;
             Glide
                 .with(this)
-                .load(getString(R.string.restBasePath) + restInfoInstance.getPeoplePath() + secondCoachPath + "/" + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
+                .load( getProfileImagePath(partialPath, restInfoInstance.getLastModified().get(partialPath)) )
                 .centerCrop()
                 .placeholder(R.drawable.person_placeholder)
                 .error(R.drawable.person_placeholder)
@@ -206,9 +213,10 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
                 iv.setPadding(10,10,10,10);
                 iv.setObject(currManagerPath);
                 iv.setOnClickListener(this);
+                String partialPath = restInfoInstance.getPeoplePath() + currManagerPath;
                 Glide
                     .with(this)
-                    .load(getString(R.string.restBasePath) + restInfoInstance.getPeoplePath() + currManagerPath + "/" + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
+                    .load( getProfileImagePath(partialPath, restInfoInstance.getLastModified().get(partialPath)) )
                     .centerCrop()
                     .placeholder(R.drawable.person_placeholder)
                     .error(R.drawable.person_placeholder)

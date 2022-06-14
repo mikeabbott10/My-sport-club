@@ -1,6 +1,5 @@
 package it.unipi.sam.app.activities.overview;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -33,6 +32,8 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
     protected PersonInfoContentBinding personInfoContentBinding;
 
     private ColorMatrixColorFilter cf;
+    private String thisPersonPartialPath;
+    private Map<String, Object> thisLastModifiedEntry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +47,17 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
             DebugUtility.showSimpleSnackbar(binding.getRoot(), "Something went wrong, please retry later.", 5000);
             return;
         }
-        urlPersonBasePath = getString(R.string.restBasePath) + restInfoInstance.getPeoplePath() + personCode + "/";
+
+        thisPersonPartialPath = restInfoInstance.getPeoplePath() + personCode;
+        urlPersonBasePath = getString(R.string.restBasePath) + thisPersonPartialPath + "/";
+        thisLastModifiedEntry = restInfoInstance.getLastModified().get(thisPersonPartialPath);
 
         personInfoContentBinding = PersonInfoContentBinding.inflate(getLayoutInflater());
 
         // load cover image
         Glide
                 .with(this)
-                .load(urlPersonBasePath + restInfoInstance.getKeyWords().get(getString(R.string.cover_image)))
+                .load( getCoverImagePath(thisPersonPartialPath, thisLastModifiedEntry) )
                 //.centerCrop()
                 .placeholder(R.drawable.placeholder_126)
                 .error(R.drawable.placeholder_126)
@@ -62,7 +66,7 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
         // load avatar image
         Glide
             .with(this)
-            .load(urlPersonBasePath + restInfoInstance.getKeyWords().get(getString(R.string.profile_image)))
+            .load( getProfileImagePath(thisPersonPartialPath, thisLastModifiedEntry) )
             //.centerCrop()
             .placeholder(R.drawable.person_placeholder)
             .error(R.drawable.person_placeholder)
@@ -94,12 +98,11 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
     }
 
     private void startRequestsForPopulatingActivityLayout() {
-        // TODO: wtf is happening?
-        Map<String, Long> riiMap = restInfoInstance.getLastModifiedTimestamp().get( restInfoInstance.getPeoplePath()+ personCode);
+        Map<String, Object> riiMap = restInfoInstance.getLastModified().get( thisPersonPartialPath );
         ResourcePreferenceWrapper personInfoJsonPreference = null;
         if(riiMap!=null) {
             personInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.people)+personCode+OVERVIEW_INFO_JSON,
-                    riiMap.get(getString(R.string.info_file)));
+                    (Long) riiMap.get(getString(R.string.info_file)));
         }else{
             personInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.people)+personCode+OVERVIEW_INFO_JSON,
                     null);

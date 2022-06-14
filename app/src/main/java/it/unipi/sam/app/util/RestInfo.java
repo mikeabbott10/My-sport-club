@@ -12,13 +12,13 @@ public class RestInfo implements Serializable {
     private String teamsPath;
     private String[] teamCodes;
     private Map<String, String> keyWords;
-    private Map<String, Map<String, Long>> lastModifiedTimestamp;
+    private Map<String, Map<String, Object>> lastModified;
 
-    public Map<String, Map<String, Long>> getLastModifiedTimestamp() {
-        return lastModifiedTimestamp;
+    public Map<String, Map<String, Object>> getLastModified() {
+        return lastModified;
     }
-    public void setLastModifiedTimestamp(Map<String, Map<String, Long>> lastModifiedTimestamp) {
-        this.lastModifiedTimestamp = lastModifiedTimestamp;
+    public void setLastModified(Map<String, Map<String, Object>> lastModified) {
+        this.lastModified = lastModified;
     }
 
     public String getNews() {

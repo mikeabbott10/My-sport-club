@@ -251,10 +251,10 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     }
 
     private void getVolleyCecinaNews() {
-        Map<String, Long> riiMap = restInfoInstance.getLastModifiedTimestamp().get( getString(R.string.news) );
+        Map<String, Object> riiMap = restInfoInstance.getLastModified().get( getString(R.string.news) );
         ResourcePreferenceWrapper newsJsonPreference = null;
         if(riiMap!=null)
-            newsJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.news)+NEWS_JSON, riiMap.get( getString(R.string.news) ));
+            newsJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.news)+NEWS_JSON, (Long) riiMap.get( getString(R.string.news) ));
 
         if(newsJsonPreference!=null && newsJsonPreference.getUri()!=null) {
             DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. From local", null);

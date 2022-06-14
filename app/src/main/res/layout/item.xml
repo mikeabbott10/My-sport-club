@@ -8,15 +8,16 @@
     android:padding="4dp">
     <androidx.cardview.widget.CardView
         android:id="@+id/cv"
+        android:backgroundTint="#22ffffff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        app:cardElevation="8dp"
         app:contentPadding="8dp">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
+            android:background="#00ffffff"
             >
             <ImageView
                 android:layout_width="70dp"
