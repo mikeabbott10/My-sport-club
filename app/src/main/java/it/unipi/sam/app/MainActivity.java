@@ -87,6 +87,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onCreate", null);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarMain.toolbar);
@@ -102,6 +103,9 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
 
         binding.navView.setNavigationItemSelectedListener(this);
         binding.appBarMain.fab.setOnClickListener(this);
+
+        // start refreshing status
+        binding.appBarMain.swiperefresh.setRefreshing(true);
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
@@ -250,12 +254,27 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         }
     }
 
+    @Override
+    protected void handle404(long dm_resource_id, Integer type, String uriString) {
+        super.handle404(dm_resource_id, type, uriString);
+        switch(type) {
+            case NEWS_JSON:
+                DebugUtility.showSimpleSnackbar(binding.getRoot(), "ERROR 07. Please retry later.", 5000);
+                break;
+            case REST_INFO_JSON:
+                DebugUtility.showSimpleSnackbar(binding.getRoot(), "ERROR 08. Please retry later.", 5000);
+                break;
+        }
+        binding.appBarMain.swiperefresh.setRefreshing(false);
+    }
+
     private void getVolleyCecinaNews() {
         Map<String, Object> riiMap = restInfoInstance.getLastModified().get( getString(R.string.news) );
         ResourcePreferenceWrapper newsJsonPreference = null;
         if(riiMap!=null)
             newsJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.news)+NEWS_JSON, (Long) riiMap.get( getString(R.string.news) ));
 
+        DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. newsJsonPreference:"+newsJsonPreference, null);
         if(newsJsonPreference!=null && newsJsonPreference.getUri()!=null) {
             DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. From local", null);
             handleResponseUri(newsJsonPreference.getDMResourceId(), NEWS_JSON,

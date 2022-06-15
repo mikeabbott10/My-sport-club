@@ -11,6 +11,7 @@ import java.util.Map;
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.activities.DownloadActivity;
 import it.unipi.sam.app.databinding.ActivityOverviewBinding;
+import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.MyBroadcastListener;
 import it.unipi.sam.app.util.OverviewActivityAlphaHandler;
 
@@ -50,9 +51,15 @@ public class OverviewActivity extends DownloadActivity implements AppBarLayout.O
         }
     }
 
-    // override this in activities (call super)
+    @Override
+    protected void handle404(long dm_resource_id, Integer type, String uriString) {
+        super.handle404(dm_resource_id, type, uriString);
+        DebugUtility.showSimpleSnackbar(binding.getRoot(), "ERROR 09. Please retry later.", 5000);
+    }
+
+    // override this in activities
     public void onJsonInformationReceived(long dm_resource_id, String uri, Integer type, long lastModifiedTimestamp, boolean updateResourcePreference) {
-        //DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onJsonInformationReceived. Info ready at: "+ uri, null);
+        DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onJsonInformationReceived. Info ready at: "+ uri, null);
         binding.infoPlaceholderImage.setVisibility(View.GONE);
     }
 

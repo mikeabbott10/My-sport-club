@@ -65,9 +65,14 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
-        unregisterReceiver(receiver);
     }
 
     protected void enqueueRequest(DMRequestWrapper dmReq){
@@ -88,21 +93,22 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
             int status = c.getInt(j);
             int columnReason = c.getColumnIndex(DownloadManager.COLUMN_REASON);
             int reason = c.getInt(columnReason);
+            String uriString = c.getString(h);
+            Integer resources_type = idToResourceType.get(id);
             if(status == DownloadManager.STATUS_SUCCESSFUL){
                 // dm.remove(id); // If there is a downloaded file, partial or complete, it is deleted.
-                String uriString = c.getString(h);
                 long lastModifiedTimestamp = c.getLong(t);
-                Integer resources_info = idToResourceType.get(id);
-                if(resources_info==null) {
+                if(resources_type==null) {
                     c.close();
                     return;
                 }
-                DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onDownloadCompleted. "+resources_info+" ready: "+ uriString, null);
-                handleResponseUri(id, resources_info, uriString, lastModifiedTimestamp, true);
-                if(resources_info==REST_INFO_JSON) // file content is in memory now. Delete the file
+                DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onDownloadCompleted. "+resources_type+" ready: "+ uriString, null);
+                handleResponseUri(id, resources_type, uriString, lastModifiedTimestamp, true);
+                if(resources_type==REST_INFO_JSON) // rest info file content is in memory now and we don't want to keep the file
                     dm.remove(id); // delete last downloaded restInfo record from dm
             }else if(status == DownloadManager.STATUS_FAILED) {
                 DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "download failed reason: " + reason, null);
+                handle404(id, resources_type, uriString);
             }else if(status == DownloadManager.STATUS_PAUSED) {
                 DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "download paused reason: " + reason, null);
             }else if(status == DownloadManager.STATUS_PENDING) {
@@ -113,6 +119,9 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
         }
         c.close();
     }
+
+    // override this in activities
+    protected void handle404(long dm_resource_id, Integer type, String uriString) {}
 
     /**
      * Handle uri.

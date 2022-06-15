@@ -33,6 +33,7 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onCreate", null);
         teamCode = getIntent().getStringExtra(getString(R.string.team_code));
         if(teamCode ==null){
             DebugUtility.showSimpleSnackbar(binding.getRoot(), "No team selected, please go back.", 5000);
@@ -46,8 +47,9 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         urlTeamBasePath = getString(R.string.restBasePath) + thisTeamPartialPath + "/";
         thisLastModifiedEntry = restInfoInstance.getLastModified().get(thisTeamPartialPath);
 
-        teamInfoContentBinding = TeamInfoContentBinding.inflate(getLayoutInflater());
+        startRequestsForPopulatingActivityLayout();
 
+        teamInfoContentBinding = TeamInfoContentBinding.inflate(getLayoutInflater());
         // load cover image
         Glide
             .with(this)
@@ -56,17 +58,6 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
             .placeholder(R.drawable.placeholder_126)
             .error(R.drawable.placeholder_126)
             .into(binding.toolbarLogo);
-
-
-        // load avatar image
-        /*Glide
-            .with(this)
-            .load( getProfileImagePath(thisPartialPath, thisLastModifiedEntry) )
-            //.centerCrop()
-            .placeholder(R.drawable.placeholder_126)
-            .error(R.drawable.placeholder_126)
-            .into(binding.avatarImage);*/
-
         binding.avatarImage.setImageResource(R.drawable.vc);
         binding.avatarImage.setBorderWidth(0);
         binding.avatarImage.setDisableCircularTransformation(true);
@@ -76,8 +67,14 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
     @Override
     protected void onStart() {
         super.onStart();
-        if(urlTeamBasePath !=null && restInfoInstance != null)
-            startRequestsForPopulatingActivityLayout();
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onStart", null);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onResume", null);
     }
 
     /**
@@ -120,7 +117,7 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
     @Override
     public void onJsonInformationReceived(long dm_resource_id, String uri, Integer type, long lastModifiedTimestamp, boolean updateResourcePreference) {
         super.onJsonInformationReceived(dm_resource_id, uri, type, lastModifiedTimestamp, updateResourcePreference);
-        if(teamInfoContentBinding.getRoot().getParent() != null)
+        if(teamInfoContentBinding != null && teamInfoContentBinding.getRoot().getParent() != null)
             return;
         String content = getFileContentFromUri(uri);
         // perform jackson from file to object
@@ -136,6 +133,9 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         binding.mainTextviewTitle.setText(t.getCurrentLeague());
         String s = getString(R.string.coach_title) + t.getCoach().get(getString(R.string.res_name));
         binding.mainTextviewDescription.setText(s);
+
+        if(teamInfoContentBinding==null)
+            teamInfoContentBinding = TeamInfoContentBinding.inflate(getLayoutInflater());
 
         teamInfoContentBinding.leagueDescription.setText(t.getLeagueDescription());
         teamInfoContentBinding.leagueDescription.setObject(t.getLeagueLink());
@@ -235,7 +235,13 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
 
     @Override
     public void onClick(View view) {
-        if(view==teamInfoContentBinding.leagueDescription && teamInfoContentBinding.leagueDescription.getObj()!=null){
+        // teamInfoContentBinding.leagueDescription.getObj() is null here on API 25 emulator
+        // on same API 25 emulator view!=teamInfoContentBinding.leagueDescription
+        // but view.getId()==teamInfoContentBinding.leagueDescription.getId()
+        // on the contrary of other used emulators and devices
+        // DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, TAG, "teamInfoContentBinding.leagueDescription.getObj():"+teamInfoContentBinding.leagueDescription.getObj(), null);
+
+        if(view.getId()==teamInfoContentBinding.leagueDescription.getId() && teamInfoContentBinding.leagueDescription.getObj()!=null){
             startActivity(new Intent(Intent.ACTION_VIEW,
                     Uri.parse((String) teamInfoContentBinding.leagueDescription.getObj())));
         }else if(view instanceof ParamImageView){

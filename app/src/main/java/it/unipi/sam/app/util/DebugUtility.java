@@ -43,7 +43,7 @@ public class DebugUtility {
     private static final boolean showIdentityLog = true;
     private static final boolean showServerCommunicationLog = true;
     private static final boolean showUILog = true;
-    private static final boolean showGestureLog = false;
+    private static final boolean showGestureLog = true;
     private static final boolean showRecordingScreenLog = false;
     private static final boolean showMyFileHandling = true;
     private static final boolean showTcpLog = false;

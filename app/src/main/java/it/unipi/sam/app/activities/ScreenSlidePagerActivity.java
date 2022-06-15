@@ -81,7 +81,7 @@ public class ScreenSlidePagerActivity extends AppCompatActivity {
         // Instantiate a ViewPager2 and a PagerAdapter.
         viewPager = binding.pager;
         pagerAdapter = new ScreenSlidePagerAdapter(this);
-        viewPager.setPageTransformer(new ZoomOutPageTransformer());
+        //viewPager.setPageTransformer(new ZoomOutPageTransformer());
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(news_position, false);
     }

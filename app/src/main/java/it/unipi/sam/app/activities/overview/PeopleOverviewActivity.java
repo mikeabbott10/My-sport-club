@@ -126,6 +126,7 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
     public void onJsonInformationReceived(long dm_resource_id, String uri, Integer type, long lastModifiedTimestamp, boolean updateResourcePreference) {
         super.onJsonInformationReceived(dm_resource_id, uri, type, lastModifiedTimestamp, updateResourcePreference);
         if(personInfoContentBinding.getRoot().getParent() != null)
+            // view già aggiunta a binding.infoContainer
             return;
         String content = getFileContentFromUri(uri);
         // perform jackson from file to object
