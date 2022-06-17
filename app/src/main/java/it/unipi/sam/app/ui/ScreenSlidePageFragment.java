@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,6 +19,7 @@ import java.util.Locale;
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.activities.ShareValues;
 import it.unipi.sam.app.databinding.FragmentScreenSlidePageBinding;
+import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.VCNews;
 
 public class ScreenSlidePageFragment extends Fragment implements View.OnClickListener {
@@ -52,7 +52,7 @@ public class ScreenSlidePageFragment extends Fragment implements View.OnClickLis
         // load/set image
         Glide
                 .with(requireActivity())
-                .load(requireActivity().getString(R.string.restBasePath) + thisNews.getResourcePath() + "/" + thisNews.getCoverImgName())
+                .load(Constants.restBasePath + thisNews.getResourcePath() + "/" + thisNews.getCoverImgName())
                 //.centerCrop()
                 .placeholder(R.drawable.placeholder_126)
                 .error(R.drawable.placeholder_126)
@@ -70,8 +70,8 @@ public class ScreenSlidePageFragment extends Fragment implements View.OnClickLis
     private void startShareNews(long news_id) {
         Intent i = new Intent(requireActivity(), ShareValues.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.putExtra("PURPOSE", ShareValues.SHARE_NEWS_PURPOSE);
-        i.putExtra(getString(R.string.news_id), news_id);
+        i.putExtra(Constants.purpose_key, ShareValues.SHARE_NEWS_PURPOSE);
+        i.putExtra(Constants.news_id_key, news_id);
         startActivity(i);
     }
 }

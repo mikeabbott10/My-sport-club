@@ -12,17 +12,13 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import it.unipi.sam.app.R;
-import it.unipi.sam.app.databinding.ActivityMainBinding;
 import it.unipi.sam.app.databinding.ActivityScreenSlideBinding;
 import it.unipi.sam.app.ui.ScreenSlidePageFragment;
-import it.unipi.sam.app.util.DebugUtility;
+import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.VCNews;
-import it.unipi.sam.app.util.graphics.DepthPageTransformer;
-import it.unipi.sam.app.util.graphics.ZoomOutPageTransformer;
 
 public class ScreenSlidePagerActivity extends AppCompatActivity {
     /**
@@ -45,8 +41,8 @@ public class ScreenSlidePagerActivity extends AppCompatActivity {
         int news_position = -1;
         long news_id;
         try{
-            news = (ArrayList<VCNews>) getIntent().getSerializableExtra(getString(R.string.news));
-            news_id = getIntent().getLongExtra(getString(R.string.news_id), -1);
+            news = (ArrayList<VCNews>) getIntent().getSerializableExtra(Constants.news_key);
+            news_id = getIntent().getLongExtra(Constants.news_id_key, -1);
             for (int index = 0; index<news.size(); ++index) {
                 if(news.get(index).getId() == news_id) {
                     news_position = index;

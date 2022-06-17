@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--TODO: non valido -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:top="50dp">
+        android:left="50dp">
         <shape android:shape="rectangle">
             <gradient
                 android:startColor="#00ffffff"
                 android:endColor="@color/white"
                 android:centerColor="#00ffffff"
-                android:centerY="30%"/>
+                android:centerX="10%"/>
         </shape>
     </item>
     <item
-        android:bottom="50dp">
+        android:right="50dp">
         <shape android:shape="rectangle">
             <gradient
                 android:startColor="@color/white"
                 android:endColor="#00ffffff"
                 android:centerColor="#00ffffff"
-                android:centerY="70%"/>
+                android:centerX="90%"/>
         </shape>
     </item>
 </layer-list>

@@ -1,17 +1,11 @@
 package it.unipi.sam.app.util;
-import android.app.DownloadManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
-
-import static android.content.Context.MODE_PRIVATE;
 
 import androidx.preference.PreferenceManager;
-
-import it.unipi.sam.app.R;
 
 public class SharedPreferenceUtility {
     private static final String TAG = "CLCLSharedPreference";
@@ -20,12 +14,12 @@ public class SharedPreferenceUtility {
     public static boolean getDontAskForDomainVerification(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         //SharedPreferences prefs = ctx.getSharedPreferences(ctx.getString(R.string.dontaskfordomainverification_key), MODE_PRIVATE);
-        return prefs.getBoolean(ctx.getString(R.string.dontaskfordomainverification_key), false);
+        return prefs.getBoolean(Constants.dontaskfordomainverification_key, false);
     }
     public static void setDontAskForDomainVerification(Context ctx, boolean dontShowAtStartup) {
         SharedPreferences.Editor spEditor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
         //SharedPreferences.Editor spEditor = ctx.getSharedPreferences(ctx.getString(R.string.dontaskfordomainverification_key), MODE_PRIVATE).edit();
-        spEditor.putBoolean(ctx.getString(R.string.dontaskfordomainverification_key), dontShowAtStartup);
+        spEditor.putBoolean(Constants.dontaskfordomainverification_key, dontShowAtStartup);
         spEditor.apply();
     }
 
@@ -34,7 +28,7 @@ public class SharedPreferenceUtility {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         //SharedPreferences prefs = ctx.getSharedPreferences(key, MODE_PRIVATE);
         String uri = prefs.getString(key, null);
-        long last_modified = prefs.getLong(key+ctx.getString(R.string.timestamp), -1);
+        long last_modified = prefs.getLong(key+Constants.timestamp_key, -1);
 
         DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "last_modified:" + last_modified + ". uri:"+uri, null);
 
@@ -44,9 +38,9 @@ public class SharedPreferenceUtility {
                 return null;
         }
 
-        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "passp", null);
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "after timestamp check", null);
 
-        long dm_resource_id = prefs.getLong(key+ctx.getString(R.string.id), -1);
+        long dm_resource_id = prefs.getLong(key+Constants.id_key, -1);
         if(isValidUri(ctx, uri, last_modified)) {
             return new ResourcePreferenceWrapper(uri, last_modified, dm_resource_id);
         }
@@ -56,8 +50,8 @@ public class SharedPreferenceUtility {
         SharedPreferences.Editor spEditor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
         //SharedPreferences.Editor spEditor = ctx.getSharedPreferences(key, MODE_PRIVATE).edit();
         spEditor.putString(key, uri);
-        spEditor.putLong(key+ctx.getString(R.string.timestamp), timestamp);
-        spEditor.putLong(key+ctx.getString(R.string.id), dm_resource_id);
+        spEditor.putLong(key+Constants.timestamp_key, timestamp);
+        spEditor.putLong(key+Constants.id_key, dm_resource_id);
         spEditor.apply();
     }
 
@@ -80,6 +74,7 @@ public class SharedPreferenceUtility {
                     /*
                       Please note: "lastmod" is the name of the column which a DownloadManager.Query is
                       able to reach looking for the name DowloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP.
+                      This is just a workaround because api 25- don't allow column last_modified_timestamp in queries
                      */
                     int last_modification_timestampIndex = cur.getColumnIndex("lastmod");
 
@@ -96,7 +91,7 @@ public class SharedPreferenceUtility {
                 // content Uri was invalid or some other error occurred
             }
         }catch(IllegalArgumentException | SecurityException ignored){
-            // api 25- doesn't allow the query and throws:
+            // api 25- don't allow the query and throws:
             // IllegalArgumentException: column last_modified_timestamp is not allowed in queries
         }finally {
             if (cur != null)

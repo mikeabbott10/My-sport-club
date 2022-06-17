@@ -22,6 +22,7 @@ import java.util.List;
 import it.unipi.sam.app.MainActivity;
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.activities.ScreenSlidePagerActivity;
+import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.graphics.ParamLinearLayout;
 import it.unipi.sam.app.util.VCNews;
 
@@ -64,25 +65,25 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
             return;
         }
         // (ArrayList<VCNews>) ((Object[])((ParamLinearLayout) view).getObj())[0] è la lista di news
-        // (int) ((Object[])((ParamLinearLayout) view).getObj())[1] è la posizione relativa alla news cliccata
+        // (int) ((Object[])((ParamLinearLayout) view).getObj())[1] è l'id della news cliccata
         // apri notizia
         Intent i = new Intent(context, ScreenSlidePagerActivity.class);
         try{
-            i.putExtra(context.getString(R.string.news), (ArrayList<VCNews>) ((Object[])((ParamLinearLayout) view).getObj())[0]);
+            i.putExtra(Constants.news_key, (ArrayList<VCNews>) ((Object[])((ParamLinearLayout) view).getObj())[0]);
         }catch (ClassCastException e){
             e.printStackTrace();
             Toast.makeText(context, "ERROR 02. Retry later.", Toast.LENGTH_SHORT).show();
             return;
         }
-        i.putExtra(context.getString(R.string.news_id), (long) ((Object[])((ParamLinearLayout) view).getObj())[1]);
-        i.putExtra(context.getString(R.string.rest_info_instance_key), ((MainActivity)context).restInfoInstance);
+        i.putExtra(Constants.news_id_key, (long) ((Object[])((ParamLinearLayout) view).getObj())[1]);
+        i.putExtra(Constants.rest_info_instance_key, ((MainActivity)context).restInfoInstance);
         context.startActivity(i);
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup vg, int i) {
-        View v = LayoutInflater.from(vg.getContext()).inflate(R.layout.item, vg, false);
+        View v = LayoutInflater.from(vg.getContext()).inflate(R.layout.news_item, vg, false);
         return new ViewHolder(v);
     }
 
@@ -93,7 +94,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
         // load image
         Glide
             .with(context)
-            .load(context.getString(R.string.restBasePath) + news.get(i).getResourcePath() + "/" + news.get(i).getLogoImgName())
+            .load(Constants.restBasePath + news.get(i).getResourcePath() + "/" + news.get(i).getLogoImgName())
             //.centerCrop()
             .placeholder(R.drawable.placeholder_126)
             .error(R.drawable.placeholder_126)

@@ -1,6 +1,7 @@
 package it.unipi.sam.app.util;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Map;
 
 import lombok.NoArgsConstructor;
@@ -10,9 +11,11 @@ public class RestInfo implements Serializable {
     private String news;
     private String peoplePath;
     private String teamsPath;
-    private String[] teamCodes;
+    private ArrayList<Map<String,String>> femaleTeamTags;
+    private ArrayList<Map<String,String>> maleTeamTags;
     private Map<String, String> keyWords;
     private Map<String, Map<String, Object>> lastModified;
+
 
     public Map<String, Map<String, Object>> getLastModified() {
         return lastModified;
@@ -42,11 +45,18 @@ public class RestInfo implements Serializable {
         this.teamsPath = teamsPath;
     }
 
-    public String[] getTeamCodes() {
-        return teamCodes;
+    public ArrayList<Map<String, String>> getFemaleTeamTags() {
+        return femaleTeamTags;
     }
-    public void setTeamCodes(String[] teamCodes) {
-        this.teamCodes = teamCodes;
+    public void setFemaleTeamTags(ArrayList<Map<String, String>> femaleTeamTags) {
+        this.femaleTeamTags = femaleTeamTags;
+    }
+
+    public ArrayList<Map<String, String>> getMaleTeamTags() {
+        return maleTeamTags;
+    }
+    public void setMaleTeamTags(ArrayList<Map<String, String>> maleTeamTags) {
+        this.maleTeamTags = maleTeamTags;
     }
 
     public Map<String, String> getKeyWords() {

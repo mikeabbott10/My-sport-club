@@ -11,6 +11,7 @@ import java.util.Map;
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.activities.DownloadActivity;
 import it.unipi.sam.app.databinding.ActivityOverviewBinding;
+import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.MyBroadcastListener;
 import it.unipi.sam.app.util.OverviewActivityAlphaHandler;
@@ -70,13 +71,13 @@ public class OverviewActivity extends DownloadActivity implements AppBarLayout.O
      * @return
      */
     public String getCoverImagePath(String partialPath, Map<String, Object> lastModifiedEntry){
-        String basePath = getString(R.string.restBasePath) + partialPath + "/";
+        String basePath = Constants.restBasePath + partialPath + "/";
         String imagePath = null;
         if(lastModifiedEntry!=null){
-            imagePath = basePath + lastModifiedEntry.get(getString(R.string.cover_image));
+            imagePath = basePath + lastModifiedEntry.get(Constants.coverImage);
         }
         if(imagePath == null)
-            imagePath = basePath + restInfoInstance.getKeyWords().get(getString(R.string.cover_image));
+            imagePath = basePath + restInfoInstance.getKeyWords().get(Constants.coverImage);
         return imagePath;
     }
 
@@ -87,13 +88,13 @@ public class OverviewActivity extends DownloadActivity implements AppBarLayout.O
      * @return
      */
     public String getProfileImagePath(String partialPath, Map<String, Object> lastModifiedEntry){
-        String basePath = getString(R.string.restBasePath) + partialPath + "/";
+        String basePath = Constants.restBasePath + partialPath + "/";
         String imagePath = null;
         if(lastModifiedEntry!=null){
-            imagePath = basePath + lastModifiedEntry.get(getString(R.string.profile_image));
+            imagePath = basePath + lastModifiedEntry.get(Constants.profileImage);
         }
         if(imagePath == null)
-            imagePath = basePath + restInfoInstance.getKeyWords().get(getString(R.string.profile_image));
+            imagePath = basePath + restInfoInstance.getKeyWords().get(Constants.profileImage);
         return imagePath;
     }
 }

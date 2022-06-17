@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.util.concurrent.ConcurrentHashMap;
 
 import it.unipi.sam.app.R;
+import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.DownloadBroadcastReceiver;
@@ -46,7 +47,7 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
-            restInfoInstance = (RestInfo) getIntent().getSerializableExtra(getString(R.string.rest_info_instance_key));
+            restInfoInstance = (RestInfo) getIntent().getSerializableExtra(Constants.rest_info_instance_key);
         }catch(Exception e){
             e.printStackTrace();
             restInfoInstance = null;
@@ -67,7 +68,11 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(receiver);
+        try {
+            unregisterReceiver(receiver);
+        }catch (RuntimeException e){
+            e.printStackTrace();
+        }
     }
 
     @Override

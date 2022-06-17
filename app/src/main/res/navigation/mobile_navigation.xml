@@ -21,7 +21,7 @@
         android:id="@+id/nav_maschile"
         android:name="it.unipi.sam.app.ui.male.MaleFragment"
         android:label="@string/menu_maschile"
-        tools:layout="@layout/fragment_male" />
+        tools:layout="@layout/fragment_team" />
 
     <fragment
         android:id="@+id/nav_contatti"

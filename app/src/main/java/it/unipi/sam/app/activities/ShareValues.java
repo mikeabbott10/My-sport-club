@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 
 import it.unipi.sam.app.R;
+import it.unipi.sam.app.util.Constants;
 
 
 public class ShareValues extends Activity {
@@ -16,7 +17,7 @@ public class ShareValues extends Activity {
         super.onCreate(savedInstanceState);
         int activityPurpose = getIntent().getIntExtra("PURPOSE",0);
         if (activityPurpose == SHARE_NEWS_PURPOSE) {
-            long news_id = getIntent().getLongExtra(getString(R.string.news_id),-1);
+            long news_id = getIntent().getLongExtra(Constants.news_id_key,-1);
             shareMe("https", "volleycecina.it", "news", Long.toString(news_id));
         }//else
             //Log.d(TAG,"no valid extra");

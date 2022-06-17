@@ -13,6 +13,7 @@ import java.util.Map;
 
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.TeamInfoContentBinding;
+import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.JacksonUtil;
@@ -34,7 +35,8 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onCreate", null);
-        teamCode = getIntent().getStringExtra(getString(R.string.team_code));
+
+        teamCode = getIntent().getStringExtra(Constants.teamCode);
         if(teamCode ==null){
             DebugUtility.showSimpleSnackbar(binding.getRoot(), "No team selected, please go back.", 5000);
             return;
@@ -44,7 +46,7 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
             return;
         }
         thisTeamPartialPath = restInfoInstance.getTeamsPath() + teamCode;
-        urlTeamBasePath = getString(R.string.restBasePath) + thisTeamPartialPath + "/";
+        urlTeamBasePath = Constants.restBasePath + thisTeamPartialPath + "/";
         thisLastModifiedEntry = restInfoInstance.getLastModified().get(thisTeamPartialPath);
 
         startRequestsForPopulatingActivityLayout();
@@ -93,10 +95,10 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         Map<String, Object> riiMap = restInfoInstance.getLastModified().get(thisTeamPartialPath);
         ResourcePreferenceWrapper teamInfoJsonPreference = null;
         if(riiMap!=null) {
-            teamInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.teams)+teamCode+OVERVIEW_INFO_JSON,
-                    (Long) riiMap.get(getString(R.string.info_file)));
+            teamInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, Constants.teams_key+teamCode+OVERVIEW_INFO_JSON,
+                    (Long) riiMap.get(Constants.infoFile));
         }else{
-            teamInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.teams)+teamCode+OVERVIEW_INFO_JSON,
+            teamInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, Constants.teams_key+teamCode+OVERVIEW_INFO_JSON,
                     null);
         }
 
@@ -107,7 +109,7 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         }else {
             DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getTeam. From net", null);
             enqueueRequest(
-                    new DMRequestWrapper(urlTeamBasePath + restInfoInstance.getKeyWords().get(getString(R.string.info_file)),
+                    new DMRequestWrapper(urlTeamBasePath + restInfoInstance.getKeyWords().get(Constants.infoFile),
                             "randomTitle", "randomDescription", false, false, OVERVIEW_INFO_JSON,
                             false, null, null)
             );
@@ -131,7 +133,7 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         }
         binding.toolbarMainTextviewTitle.setText(t.getCurrentLeague());
         binding.mainTextviewTitle.setText(t.getCurrentLeague());
-        String s = getString(R.string.coach_title) + t.getCoach().get(getString(R.string.res_name));
+        String s = getString(R.string.coach_title) + t.getCoach().get(Constants.resource_name);
         binding.mainTextviewDescription.setText(s);
 
         if(teamInfoContentBinding==null)
@@ -143,31 +145,31 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
 
         // players views
         for (int i=0; i<t.getPlayers().size(); i++) {
-            String currPlayerPath = t.getPlayers().get(i).get(getString(R.string.res_path));
+            String currPlayerPath = t.getPlayers().get(i).get(Constants.resource_path);
             assert currPlayerPath != null;
             if(!currPlayerPath.equals("")) {
-                //String currPlayerName = t.getPlayers().get(i).get(getString(R.string.res_name));
-                ParamImageView iv=new ParamImageView(this);
+                //String currPlayerName = t.getPlayers().get(i).get(Constants.resource_name);
+                ParamImageView iv = new ParamImageView(this);
                 iv.setPadding(10,10,10,10);
                 iv.setObject(currPlayerPath);
                 iv.setOnClickListener(this);
                 String partialPath = restInfoInstance.getPeoplePath() + currPlayerPath;
                 Glide
-                        .with(this)
-                        .load( getProfileImagePath(partialPath, restInfoInstance.getLastModified().get(partialPath)) )
-                        .centerCrop()
-                        .placeholder(R.drawable.person_placeholder)
-                        .error(R.drawable.person_placeholder)
-                        .into(iv);
+                    .with(this)
+                    .load( getProfileImagePath(partialPath, restInfoInstance.getLastModified().get(partialPath)) )
+                    .centerCrop()
+                    .placeholder(R.drawable.person_placeholder)
+                    .error(R.drawable.person_placeholder)
+                    .into(iv);
                 teamInfoContentBinding.playersGrid.addView(iv);
             }
         }
 
         // coach view
-        String coachPath = t.getCoach().get(getString(R.string.res_path));
+        String coachPath = t.getCoach().get(Constants.resource_path);
         assert coachPath != null;
         if(!coachPath.equals("")) {
-            //String coachName = t.getCoach().get(getString(R.string.res_name));
+            //String coachName = t.getCoach().get(Constants.resource_name);
             ParamImageView iv =new ParamImageView(this);
             iv.setPadding(10,10,10,10);
             iv.setObject(coachPath);
@@ -184,10 +186,10 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         }
 
         // staff views
-        String secondCoachPath = t.getSecondCoach().get(getString(R.string.res_path));
+        String secondCoachPath = t.getSecondCoach().get(Constants.resource_path);
         assert secondCoachPath != null;
         if(!secondCoachPath.equals("")) {
-            //String secondCoachName = t.getSecondCoach().get(getString(R.string.res_name));
+            //String secondCoachName = t.getSecondCoach().get(Constants.resource_name);
             ParamImageView iv =new ParamImageView(this);
             iv.setPadding(10,10,10,10);
             iv.setObject(secondCoachPath);
@@ -205,10 +207,10 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
 
         // dirigenti views
         for (int i=0; i<t.getAssistantManager().size(); i++) {
-            String currManagerPath = t.getAssistantManager().get(i).get(getString(R.string.res_path));
+            String currManagerPath = t.getAssistantManager().get(i).get(Constants.resource_path);
             assert currManagerPath != null;
             if(!currManagerPath.equals("")) {
-                //String currManagerName = t.getAssistantManager().get(i).get(getString(R.string.res_name));
+                //String currManagerName = t.getAssistantManager().get(i).get(Constants.resource_name);
                 ParamImageView iv=new ParamImageView(this);
                 iv.setPadding(10,10,10,10);
                 iv.setObject(currManagerPath);
@@ -230,7 +232,7 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
 
         // update resource preference if needed
         if(updateResourcePreference)
-            SharedPreferenceUtility.setResourceUri(this, getString(R.string.teams)+teamCode+type, uri, lastModifiedTimestamp, dm_resource_id);
+            SharedPreferenceUtility.setResourceUri(this, Constants.teams_key+teamCode+type, uri, lastModifiedTimestamp, dm_resource_id);
     }
 
     @Override
@@ -239,6 +241,7 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         // on same API 25 emulator view!=teamInfoContentBinding.leagueDescription
         // but view.getId()==teamInfoContentBinding.leagueDescription.getId()
         // on the contrary of other used emulators and devices
+
         // DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, TAG, "teamInfoContentBinding.leagueDescription.getObj():"+teamInfoContentBinding.leagueDescription.getObj(), null);
 
         if(view.getId()==teamInfoContentBinding.leagueDescription.getId() && teamInfoContentBinding.leagueDescription.getObj()!=null){
@@ -246,8 +249,8 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
                     Uri.parse((String) teamInfoContentBinding.leagueDescription.getObj())));
         }else if(view instanceof ParamImageView){
             Intent i = new Intent(this, PeopleOverviewActivity.class);
-            i.putExtra(getString(R.string.people_code), (String) ((ParamImageView) view).getObj());
-            i.putExtra(getString(R.string.rest_info_instance_key), restInfoInstance);
+            i.putExtra(Constants.peopleCode, (String) ((ParamImageView) view).getObj());
+            i.putExtra(Constants.rest_info_instance_key, restInfoInstance);
             startActivity(i);
         }
     }

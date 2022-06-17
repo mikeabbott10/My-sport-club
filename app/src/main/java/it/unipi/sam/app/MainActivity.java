@@ -1,6 +1,5 @@
 package it.unipi.sam.app;
 
-import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -49,21 +48,24 @@ import java.util.Map;
 
 import it.unipi.sam.app.activities.DownloadActivity;
 import it.unipi.sam.app.activities.ScreenSlidePagerActivity;
-import it.unipi.sam.app.activities.overview.TeamOverviewActivity;
 import it.unipi.sam.app.databinding.ActivityMainBinding;
+import it.unipi.sam.app.ui.female.FemaleTeamsViewModel;
+import it.unipi.sam.app.ui.male.MaleTeamsViewModel;
 import it.unipi.sam.app.ui.news.NewsViewModel;
+import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.ItemViewModel;
 import it.unipi.sam.app.util.JacksonUtil;
 import it.unipi.sam.app.util.ResourcePreferenceWrapper;
+import it.unipi.sam.app.util.RestInfo;
 import it.unipi.sam.app.util.SharedPreferenceUtility;
 import it.unipi.sam.app.util.VCNews;
 
 //TODO:
-// 1. completare pagina teams
+// 3. inserire in settore maschile/femminile le squadre (unico viewmodel? con restInfoInstance come livedata)
+// 0. nelle pagine teams e people inserire back button in alto a sx
 // 2. fare pagina contatti
-// 3. inserire in settore maschile/femminile le squadre
 // 4. implementare preferiti
 
 public class MainActivity extends DownloadActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -75,19 +77,23 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     private ActivityMainBinding binding;
     private CollapsingToolbarLayout toolBarLayout;
 
-    private ItemViewModel viewModel;
+    private FemaleTeamsViewModel femaleViewModel;
+    private MaleTeamsViewModel maleViewModel;
+    private NewsViewModel newsViewModel;
 
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private VCNews[] vcn_arr;
-    private List<VCNews> vc_news = null;
-    private NewsViewModel newsViewModel;
+    public List<VCNews> vc_news = new ArrayList<>();
     private AlertDialog domainApprovationDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onCreate", null);
+
+        if(savedInstanceState!=null)
+            restInfoInstance = (RestInfo) savedInstanceState.getSerializable(Constants.rest_info_instance_key);
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarMain.toolbar);
@@ -97,9 +103,11 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
 
         // ask for restInfo
         // rest info file is always downloaded at least once
-        getRestInfoFile(new DMRequestWrapper(getString(R.string.restBasePath) + getString(R.string.first_rest_req_path),
-                "notUseful", "notUseful", false, false, REST_INFO_JSON,
-                false, null, null));
+        if(restInfoInstance==null){
+            getRestInfoFile(new DMRequestWrapper(Constants.restBasePath + Constants.firstRestReqPath,
+                    "notUseful", "notUseful", false, false, REST_INFO_JSON,
+                    false, null, null));
+        }
 
         binding.navView.setNavigationItemSelectedListener(this);
         binding.appBarMain.fab.setOnClickListener(this);
@@ -125,8 +133,10 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         NavigationUI.setupWithNavController(navigationView, navController);
 
         newsViewModel = new ViewModelProvider(this).get(NewsViewModel.class);
+        femaleViewModel = new ViewModelProvider(this).get(FemaleTeamsViewModel.class);
+        maleViewModel = new ViewModelProvider(this).get(MaleTeamsViewModel.class);
 
-        viewModel = new ViewModelProvider(this).get(ItemViewModel.class);
+        ItemViewModel viewModel = new ViewModelProvider(this).get(ItemViewModel.class);
         viewModel.getSelectedItem().observe(this, this);
 
         // pull-to-refresh
@@ -148,6 +158,13 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //todo: outState.putParcelable(restInfoInstance);
+        outState.putSerializable(Constants.rest_info_instance_key, restInfoInstance);
+    }
+
     private void getRestInfoFile(DMRequestWrapper dmRequestWrapper) {
         enqueueRequest(dmRequestWrapper);
     }
@@ -155,8 +172,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
     }
 
     @Override
@@ -180,18 +196,11 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
             return;
         }
         if(view.getId() == R.id.fab){
-            // TODO: togliere
-            if(viewModel.getSelectedItem().getValue().getText().equals(getString(R.string.menu_contatti))){
-                Intent i = new Intent(this, TeamOverviewActivity.class);
-                i.putExtra(getString(R.string.team_code), restInfoInstance.getTeamCodes()[1]);
-                i.putExtra(getString(R.string.rest_info_instance_key), restInfoInstance);
-                startActivity(i);
-            }else{
-                Intent i = new Intent(this, TeamOverviewActivity.class);
-                i.putExtra(getString(R.string.team_code), restInfoInstance.getTeamCodes()[0]);
-                i.putExtra(getString(R.string.rest_info_instance_key), restInfoInstance);
-                startActivity(i);
-            }
+            // TODO: vai ai preferiti
+            /*Intent i = new Intent(this, PeopleOverviewActivity.class);
+            i.putExtra(Constants.peopleCode, (String) ((ParamLinearLayout) view).getObj());
+            i.putExtra(Constants.rest_info_instance_key, restInfoInstance);
+            startActivity(i);*/
         }
     }
 
@@ -203,9 +212,9 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                 // DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "handleResponseUri. NEWS_JSON", null);
                 // update resource preference if needed
                 if(updateResourcePreference)
-                    SharedPreferenceUtility.setResourceUri(this, getString(R.string.news)+type, uriString, lastModifiedTimestamp, dm_resource_id);
+                    SharedPreferenceUtility.setResourceUri(this, Constants.news_key+type, uriString, lastModifiedTimestamp, dm_resource_id);
 
-                if(!updateResourcePreference && vc_news!=null){
+                if(!updateResourcePreference && vc_news.size()>0){
                     // se non devo salvare la Preference e vc_news è già una lista con elementi,
                     // allora è inutile aggiornare vc_news con sè stessa
                     binding.appBarMain.swiperefresh.setRefreshing(false);
@@ -226,14 +235,14 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                         }
                         Intent i = new Intent(this, ScreenSlidePagerActivity.class);
                         try {
-                            i.putExtra(getString(R.string.news), (ArrayList<VCNews>) vc_news);
+                            i.putExtra(Constants.news_key, (ArrayList<VCNews>) vc_news);
                         } catch (ClassCastException e) {
                             e.printStackTrace();
                             Toast.makeText(this, "ERROR 03. Retry later.", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        i.putExtra(getString(R.string.news_id), calledNewsId);
-                        i.putExtra(getString(R.string.rest_info_instance_key), restInfoInstance);
+                        i.putExtra(Constants.news_id_key, calledNewsId);
+                        i.putExtra(Constants.rest_info_instance_key, restInfoInstance);
                         startActivity(i);
                     }
                     // populate news in news fragment
@@ -247,9 +256,15 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                 break;
             case REST_INFO_JSON:
                 if(restInfoInstance!=null) {
+                    // after swipe to refresh
                     getVolleyCecinaNews();
+                    if(!restInfoInstance.getFemaleTeamTags().equals(femaleViewModel.getTeamsList().getValue()))
+                        femaleViewModel.setTeamsList( restInfoInstance.getFemaleTeamTags() );
+                    if(!restInfoInstance.getMaleTeamTags().equals(maleViewModel.getTeamsList().getValue()))
+                        maleViewModel.setTeamsList( restInfoInstance.getMaleTeamTags() );
                 }else
                     binding.appBarMain.swiperefresh.setRefreshing(false);
+
                 break;
         }
     }
@@ -269,10 +284,10 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     }
 
     private void getVolleyCecinaNews() {
-        Map<String, Object> riiMap = restInfoInstance.getLastModified().get( getString(R.string.news) );
+        Map<String, Object> riiMap = restInfoInstance.getLastModified().get( Constants.news_key );
         ResourcePreferenceWrapper newsJsonPreference = null;
         if(riiMap!=null)
-            newsJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.news)+NEWS_JSON, (Long) riiMap.get( getString(R.string.news) ));
+            newsJsonPreference = SharedPreferenceUtility.getResourceUri(this, Constants.news_key+NEWS_JSON, (Long) riiMap.get( Constants.news_key ));
 
         DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. newsJsonPreference:"+newsJsonPreference, null);
         if(newsJsonPreference!=null && newsJsonPreference.getUri()!=null) {
@@ -282,7 +297,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         }else {
             DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getVolleyCecinaNews. From net", null);
             enqueueRequest(
-                    new DMRequestWrapper(getString(R.string.restBasePath) + restInfoInstance.getNews(),
+                    new DMRequestWrapper(Constants.restBasePath + restInfoInstance.getNews(),
                             "randomTitle", "randomDescription", false, false, NEWS_JSON,
                             false, null, null)
             );
@@ -295,7 +310,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     @Override
     public void onRefresh() {
         // ask for rest info
-        getRestInfoFile(new DMRequestWrapper(getString(R.string.restBasePath) + getString(R.string.first_rest_req_path),
+        getRestInfoFile(new DMRequestWrapper(Constants.restBasePath + Constants.firstRestReqPath,
                 "notUseful", "notUseful", false, false, REST_INFO_JSON,
                 false, null, null));
     }
@@ -339,6 +354,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         // Perform an action with the latest item data
         toolBarLayout.setTitle(item.getText());
 
+        binding.appBarMain.swiperefresh.setEnabled(true);
         if(item.getText().equals(getString(R.string.menu_contatti))){
             // show fab
             //binding.appBarMain.fab.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.white));
@@ -356,21 +372,22 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
             );
             binding.appBarMain.fab.setImageResource(R.drawable.ic_filled_red_heart);
             binding.appBarMain.fab.setVisibility(View.VISIBLE);
-        }else{
+        }else if(item.getText().equals(getString(R.string.menu_settings))){
             binding.appBarMain.fab.setVisibility(View.GONE);
-        }
+            binding.appBarMain.swiperefresh.setEnabled(false);
+        }else
+            binding.appBarMain.fab.setVisibility(View.GONE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.S)
     private void requestDomainApprovation() {
-        @SuppressLint("InflateParams")
         View v = getLayoutInflater().inflate(R.layout.dialog_show_again, null);
         CheckBox cb = v.findViewById(R.id.checkBox);
         cb.setOnCheckedChangeListener(this);
         domainApprovationDialog = new AlertDialog.Builder(MainActivity.this)
                 .setMessage(R.string.approvazione_dominio)
-                .setTitle("Approvazione del dominio")
-                .setView(v) // add the
+                .setTitle(getString(R.string.domain_approvation))
+                .setView(v) // add the checkbox
                 .setCancelable(false)
                 .setPositiveButton("", this)
                 .setNegativeButton("", this)

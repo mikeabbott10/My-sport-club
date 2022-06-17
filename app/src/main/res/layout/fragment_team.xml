@@ -5,10 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.news.NewsFragment">
+    tools:context=".ui.male.MaleFragment">
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/news_placeholder"
+        android:id="@+id/teams_placeholder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -22,7 +22,7 @@
             app:contentPadding="16dp" >
 
             <ImageView
-                android:id="@+id/info_placeholder_image"
+                android:id="@+id/teams_placeholder_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
@@ -34,11 +34,10 @@
     </androidx.core.widget.NestedScrollView>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/news_recycler_view"
+        android:id="@+id/teams_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/ominodiferro"
         android:backgroundTint="#06000000"
         />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

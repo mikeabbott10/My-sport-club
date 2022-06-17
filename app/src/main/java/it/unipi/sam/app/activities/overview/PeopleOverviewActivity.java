@@ -16,6 +16,7 @@ import java.util.Map;
 
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.PersonInfoContentBinding;
+import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.JacksonUtil;
@@ -38,7 +39,7 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        personCode = getIntent().getStringExtra(getString(R.string.people_code));
+        personCode = getIntent().getStringExtra(Constants.peopleCode);
         if(personCode ==null){
             DebugUtility.showSimpleSnackbar(binding.getRoot(), "No one selected, please go back.", 5000);
             return;
@@ -49,7 +50,7 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
         }
 
         thisPersonPartialPath = restInfoInstance.getPeoplePath() + personCode;
-        urlPersonBasePath = getString(R.string.restBasePath) + thisPersonPartialPath + "/";
+        urlPersonBasePath = Constants.restBasePath + thisPersonPartialPath + "/";
         thisLastModifiedEntry = restInfoInstance.getLastModified().get(thisPersonPartialPath);
 
         personInfoContentBinding = PersonInfoContentBinding.inflate(getLayoutInflater());
@@ -101,10 +102,10 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
         Map<String, Object> riiMap = restInfoInstance.getLastModified().get( thisPersonPartialPath );
         ResourcePreferenceWrapper personInfoJsonPreference = null;
         if(riiMap!=null) {
-            personInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.people)+personCode+OVERVIEW_INFO_JSON,
-                    (Long) riiMap.get(getString(R.string.info_file)));
+            personInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, Constants.people_key+personCode+OVERVIEW_INFO_JSON,
+                    (Long) riiMap.get(Constants.infoFile));
         }else{
-            personInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, getString(R.string.people)+personCode+OVERVIEW_INFO_JSON,
+            personInfoJsonPreference = SharedPreferenceUtility.getResourceUri(this, Constants.people_key+personCode+OVERVIEW_INFO_JSON,
                     null);
         }
 
@@ -115,7 +116,7 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
         }else {
             DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "getPerson. From net", null);
             enqueueRequest(
-                    new DMRequestWrapper(urlPersonBasePath + restInfoInstance.getKeyWords().get(getString(R.string.info_file)),
+                    new DMRequestWrapper(urlPersonBasePath + restInfoInstance.getKeyWords().get(Constants.infoFile),
                             "randomTitle", "randomDescription", false, false, OVERVIEW_INFO_JSON,
                             false, null, null)
             );
@@ -175,7 +176,7 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
 
         // update resource preference if needed
         if(updateResourcePreference)
-            SharedPreferenceUtility.setResourceUri(this, getString(R.string.people)+personCode+type, uri, lastModifiedTimestamp, dm_resource_id);
+            SharedPreferenceUtility.setResourceUri(this, Constants.people_key+personCode+type, uri, lastModifiedTimestamp, dm_resource_id);
     }
 
     @Override

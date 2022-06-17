@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<it.unipi.sam.app.util.graphics.ParamLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="4dp">
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv"
+        android:backgroundTint="#22ffffff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#00ffffff"
+            >
+
+            <ImageView
+                android:id="@+id/cv_image"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/placeholder_126"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/gradient"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:textAppearanceLarge"
+
+                android:id="@+id/cv_name"
+                android:layout_alignParentBottom="true"
+                android:ellipsize="end"
+                android:background="@drawable/text_horizontal_white_gradient"
+                android:maxLines="1"
+                android:maxLength="80"
+                />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</it.unipi.sam.app.util.graphics.ParamLinearLayout>
