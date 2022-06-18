@@ -1,7 +1,6 @@
 package it.unipi.sam.app.ui.male;
 
 import android.annotation.SuppressLint;
-import android.content.ClipData;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,15 +20,15 @@ import java.util.Map;
 
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.FragmentTeamBinding;
-import it.unipi.sam.app.util.TeamsRecyclerViewAdapter;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.ItemViewModel;
+import it.unipi.sam.app.util.TeamsRecyclerViewAdapter;
 
 public class MaleFragment extends Fragment implements Observer< List<Map<String, String>> > {
     private FragmentTeamBinding binding;
 
     private ItemViewModel viewModel;
-    private ClipData.Item item;
+    private String item;
     private String TAG = "FRFRMaleFragment";
     private MaleTeamsViewModel maleViewModel;
     private TeamsRecyclerViewAdapter adapter;
@@ -43,7 +42,7 @@ public class MaleFragment extends Fragment implements Observer< List<Map<String,
         View root = binding.getRoot();
 
         // nota requireActivity() : same scope as in the activity is required or different ViewModel!
-        item = new ClipData.Item(requireActivity().getString(R.string.menu_maschile));
+        item = requireActivity().getString(R.string.menu_maschile);
         viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
         final RecyclerView recycleView = binding.teamsRecyclerView;

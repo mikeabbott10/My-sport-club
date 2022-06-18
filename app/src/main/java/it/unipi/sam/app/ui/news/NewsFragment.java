@@ -1,16 +1,12 @@
 package it.unipi.sam.app.ui.news;
 
 import android.annotation.SuppressLint;
-import android.content.ClipData;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,9 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import it.unipi.sam.app.MainActivity;
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.FragmentNewsBinding;
 import it.unipi.sam.app.util.DebugUtility;
@@ -33,7 +27,7 @@ public class NewsFragment extends Fragment implements Observer<List<VCNews>> {
     private FragmentNewsBinding binding;
 
     private ItemViewModel viewModel;
-    private ClipData.Item item;
+    private String item;
     private NewsViewModel newsViewModel;
     private NewsRecyclerViewAdapter adapter;
 
@@ -46,7 +40,7 @@ public class NewsFragment extends Fragment implements Observer<List<VCNews>> {
         View root = binding.getRoot();
 
         // nota requireActivity() : same scope as in the activity is required or different ViewModel!
-        item = new ClipData.Item(requireActivity().getString(R.string.menu_notizie));
+        item = requireActivity().getString(R.string.menu_notizie);
         viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
         final RecyclerView recycleView = binding.newsRecyclerView;

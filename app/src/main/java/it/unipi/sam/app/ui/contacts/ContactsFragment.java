@@ -1,6 +1,5 @@
 package it.unipi.sam.app.ui.contacts;
 
-import android.content.ClipData;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +19,7 @@ public class ContactsFragment extends Fragment {
     private FragmentContactsBinding binding;
 
     private ItemViewModel viewModel;
-    private ClipData.Item item;
+    private String item;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -31,7 +30,7 @@ public class ContactsFragment extends Fragment {
         View root = binding.getRoot();
 
         // nota requireActivity() : same scope as in the activity is required or different ViewModel!
-        item = new ClipData.Item(requireActivity().getString(R.string.menu_contatti));
+        item = requireActivity().getString(R.string.menu_contatti);
         viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
         final TextView textView = binding.textGallery;

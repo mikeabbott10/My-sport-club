@@ -1,6 +1,5 @@
 package it.unipi.sam.app;
 
-import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -63,13 +62,15 @@ import it.unipi.sam.app.util.SharedPreferenceUtility;
 import it.unipi.sam.app.util.VCNews;
 
 //TODO:
-// 3. inserire in settore maschile/femminile le squadre (unico viewmodel? con restInfoInstance come livedata)
+// 3.0 rendere Parcelable restInfoInstance
+// 3.1 inserire in settore maschile/femminile le squadre (unico viewmodel? con restInfoInstance come livedata)
 // 0. nelle pagine teams e people inserire back button in alto a sx
 // 2. fare pagina contatti
 // 4. implementare preferiti
+// 5. scelta preferiti o news come primo fragment (sharedpreferences + preferenceScreen)
 
 public class MainActivity extends DownloadActivity implements NavigationView.OnNavigationItemSelectedListener,
-                                                View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, Observer<ClipData.Item>,
+                                                View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, Observer<String>,
                                                 DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener {
     private static final String TAG = "AAAAMainActivity";
 
@@ -346,16 +347,16 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     }
 
     /**
-     * Callback on ClipData.Item item changes
+     * Callback on String item changes
      * @param item
      */
     @Override
-    public void onChanged(ClipData.Item item) {
+    public void onChanged(String item) {
         // Perform an action with the latest item data
-        toolBarLayout.setTitle(item.getText());
+        toolBarLayout.setTitle(item);
 
         binding.appBarMain.swiperefresh.setEnabled(true);
-        if(item.getText().equals(getString(R.string.menu_contatti))){
+        if(item.equals(getString(R.string.menu_contatti))){
             // show fab
             //binding.appBarMain.fab.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.white));
             ImageViewCompat.setImageTintList(
@@ -364,7 +365,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
             );
             binding.appBarMain.fab.setImageResource(android.R.drawable.ic_dialog_email);
             binding.appBarMain.fab.setVisibility(View.VISIBLE);
-        }else if(item.getText().equals(getString(R.string.menu_notizie))){
+        }else if(item.equals(getString(R.string.menu_notizie))){
             //binding.appBarMain.fab.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.main_color));
             ImageViewCompat.setImageTintList(
                     binding.appBarMain.fab,
@@ -372,7 +373,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
             );
             binding.appBarMain.fab.setImageResource(R.drawable.ic_filled_red_heart);
             binding.appBarMain.fab.setVisibility(View.VISIBLE);
-        }else if(item.getText().equals(getString(R.string.menu_settings))){
+        }else if(item.equals(getString(R.string.menu_settings))){
             binding.appBarMain.fab.setVisibility(View.GONE);
             binding.appBarMain.swiperefresh.setEnabled(false);
         }else

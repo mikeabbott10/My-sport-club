@@ -19,6 +19,7 @@
     <color name="trasp2_heading_color">#1251a47a</color>
     <color name="paragraph_color">#000000</color>
     <color name="search_bg_color">#086ed5</color>
+    <color name="colored_ball_color">#22A2DD</color>
 
     <!-- Android style -->
     <color name="android_green">#A4C639</color>

@@ -1,6 +1,5 @@
 package it.unipi.sam.app.ui.settings;
 
-import android.content.ClipData;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -14,7 +13,7 @@ import it.unipi.sam.app.util.ItemViewModel;
 
 public class MyPreferenceFragment extends PreferenceFragmentCompat {
     private ItemViewModel viewModel;
-    private ClipData.Item item;
+    private String item;
 
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
@@ -27,7 +26,7 @@ public class MyPreferenceFragment extends PreferenceFragmentCompat {
             domainVerificationCategory.setTitle(getString(R.string.domainverification_title) + " (" + getString(R.string.not_supported) + ")");
 
         }
-        item = new ClipData.Item(requireActivity().getString(R.string.menu_settings));
+        item = requireActivity().getString(R.string.menu_settings);
         viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
     }
 

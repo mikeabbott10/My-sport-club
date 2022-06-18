@@ -29,7 +29,7 @@ public class FemaleFragment extends Fragment implements Observer< List<Map<Strin
     private FragmentTeamBinding binding;
 
     private ItemViewModel viewModel;
-    private ClipData.Item item;
+    private String item;
     private String TAG = "FRFRFemaleFragment";
     private FemaleTeamsViewModel femaleViewModel;
     private TeamsRecyclerViewAdapter adapter;
@@ -43,7 +43,7 @@ public class FemaleFragment extends Fragment implements Observer< List<Map<Strin
                 new ViewModelProvider(requireActivity()).get(FemaleTeamsViewModel.class);
 
         // nota requireActivity() : same scope as in the activity is required or different ViewModel!
-        item = new ClipData.Item(requireActivity().getString(R.string.menu_femminile));
+        item = requireActivity().getString(R.string.menu_femminile);
         viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
         final RecyclerView recycleView = binding.teamsRecyclerView;

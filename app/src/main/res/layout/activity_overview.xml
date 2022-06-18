@@ -5,6 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/team_background"
+    android:scaleType="fitXY"
+    android:backgroundTint="#06000000"
     tools:context=".activities.overview.OverviewActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -18,9 +21,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
-            <!--
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            -->
 
             <ImageView
                 android:id="@+id/toolbar_logo"
@@ -78,7 +78,7 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:scrollbars="none"
         app:behavior_overlapTop="20dp">
