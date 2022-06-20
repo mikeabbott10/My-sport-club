@@ -34,7 +34,6 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
 
     private ColorMatrixColorFilter cf;
     private String thisPersonPartialPath;
-    private Map<String, Object> thisLastModifiedEntry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +50,7 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
 
         thisPersonPartialPath = restInfoInstance.getPeoplePath() + personCode;
         urlPersonBasePath = Constants.restBasePath + thisPersonPartialPath + "/";
-        thisLastModifiedEntry = restInfoInstance.getLastModified().get(thisPersonPartialPath);
+        Map<String, Object> thisLastModifiedEntry = restInfoInstance.getLastModified().get(thisPersonPartialPath);
 
         personInfoContentBinding = PersonInfoContentBinding.inflate(getLayoutInflater());
 
@@ -170,7 +169,7 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
             personInfoContentBinding.heightValueTv.setText(h);
         }
 
-        // todo: usa p.getTeam().get("name")
+        // todo: mostra team con: p.getTeam().get("name")
 
         binding.infoContainer.addView(personInfoContentBinding.getRoot());
 
@@ -181,6 +180,7 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
 
     @Override
     public void onClick(View view) {
+        super.onClick(view);
         if(view instanceof ParamImageView){
             startActivity(new Intent(Intent.ACTION_VIEW,
                     Uri.parse((String) ((ParamImageView)view).getObj())));

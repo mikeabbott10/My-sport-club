@@ -1,6 +1,9 @@
 package it.unipi.sam.app.util;
 
 public class Constants {
+    public static final int TIMESTAMP = 0;
+    public static final int PATH = 1;
+
     public static String restBasePath = "https://donow.cloud/volleycecina/";
     public static String firstRestReqPath = "restInfo.json";
 
@@ -19,17 +22,12 @@ public class Constants {
     public static String timestamp_key = "timestamp";
     public static String id_key = "_id";
     public static String dontaskfordomainverification_key = "dafdv"; // deve essere uguale a @string/dontaskfordomainverification_key
+    public static String dontshowcontactspopup_key = "dscp";
 
     // intent bundle keys
     public static String rest_info_instance_key = "rest_info_instance_key";
     public static String news_id_key = "newsid";
     public static String purpose_key = "PURPOSE";
-
-    public static String view_model_key = "vmk";
-    public static String news_view_model_key = "nvmk";
-    public static String layout_manager_key = "lmk";
-    public static String adapter_key = "ak";
-
 
     public static String resource_path = "path";
     public static String resource_name = "name";

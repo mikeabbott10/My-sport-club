@@ -24,7 +24,6 @@ public class MyPreferenceFragment extends PreferenceFragmentCompat {
             Preference domainVerificationCategory =  getPreferenceScreen().getPreference(0); // nota: 0 è l'indice della prima PreferenceCategory in PreferenceScreen
             domainVerificationCategory.setEnabled(false);
             domainVerificationCategory.setTitle(getString(R.string.domainverification_title) + " (" + getString(R.string.not_supported) + ")");
-
         }
         item = requireActivity().getString(R.string.menu_settings);
         viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
@@ -33,6 +32,6 @@ public class MyPreferenceFragment extends PreferenceFragmentCompat {
     @Override
     public void onResume() {
         super.onResume();
-        viewModel.selectItem(item);
+        viewModel.selectFragmentName(item);
     }
 }

@@ -1,7 +1,6 @@
 package it.unipi.sam.app.ui.female;
 
 import android.annotation.SuppressLint;
-import android.content.ClipData;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,9 +28,8 @@ public class FemaleFragment extends Fragment implements Observer< List<Map<Strin
     private FragmentTeamBinding binding;
 
     private ItemViewModel viewModel;
-    private String item;
+    private String currentFragmentName;
     private String TAG = "FRFRFemaleFragment";
-    private FemaleTeamsViewModel femaleViewModel;
     private TeamsRecyclerViewAdapter adapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -39,11 +37,8 @@ public class FemaleFragment extends Fragment implements Observer< List<Map<Strin
         binding = FragmentTeamBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        femaleViewModel =
-                new ViewModelProvider(requireActivity()).get(FemaleTeamsViewModel.class);
-
         // nota requireActivity() : same scope as in the activity is required or different ViewModel!
-        item = requireActivity().getString(R.string.menu_femminile);
+        currentFragmentName = requireActivity().getString(R.string.menu_femminile);
         viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
         final RecyclerView recycleView = binding.teamsRecyclerView;
@@ -52,14 +47,14 @@ public class FemaleFragment extends Fragment implements Observer< List<Map<Strin
         recycleView.setHasFixedSize(true);
         adapter = new TeamsRecyclerViewAdapter(new ArrayList<>(), getActivity());
         recycleView.setAdapter(adapter);
-        femaleViewModel.getTeamsList().observe(getViewLifecycleOwner(), this);
+        viewModel.getFemaleTeamsList().observe(getViewLifecycleOwner(), this);
         return root;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        viewModel.selectItem(item);
+        viewModel.selectFragmentName(currentFragmentName);
     }
 
     @Override
@@ -73,7 +68,7 @@ public class FemaleFragment extends Fragment implements Observer< List<Map<Strin
     public void onChanged(List<Map<String, String>> list) {
         DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "femaleViewModel.getTeamsList().observe . list:"+ list, null);
         if(list!=null) {
-            binding.teamsPlaceholder.setVisibility(View.GONE);
+            //binding.teamsPlaceholder.setVisibility(View.GONE);
             adapter.setTeams(list);
             // idk quante entries ci sono in più o in meno rispetto a prima (nè dove sono state inserite/eliminate).
             // E' quindi necessario un refresh dell'intero data set:

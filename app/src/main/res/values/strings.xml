@@ -90,8 +90,7 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
 
-    <string name="nav_header_title">volley.cecina.asd@fipav.li.it</string>
-    <string name="nav_header_subtitle">Via Fucini 1 – 57023 Cecina (Li)</string>
+
 
     <string name="menu_notizie">Notizie</string>
     <string name="menu_maschile">Settore maschile</string>
@@ -101,7 +100,7 @@
     <string name="coach">"Coach"</string>
     <string name="autore">"Autore: "</string>
     <string name="approvazione_dominio">Si vorrebbero aprire i link https://volleycecina.it con questa applicazione piuttosto che con il browser. \nProcedendo verrai indirizzato nelle impostazioni per concedere l\'approvazione del dominio. \nProcedere?</string>
-    <string name="dontshowagain">Non chiedere più</string>
+    <string name="dontshowagain">Non mostrare più</string>
     <string name="menu_settings">Impostazioni</string>
     <string name="approvazione_dominio_settings_title">Aggiungi link supportati da questa app</string>
     <string name="dontshowagain_settings_title">Non approvare il dominio all\'avvio</string>
@@ -122,6 +121,32 @@
     <!-- usata in xml/my_preferences.xml deve essere uguale a Constants.dontaskfordomainverification_key -->
     <string name="dontaskfordomainverification_key">dafdv</string>
     <string name="domain_approvation">Approvazione del dominio</string>
+    <string name="address_text">Indirizzo</string>
+    <string name="phone_text">Telefono</string>
+    <string name="email_text">E-mail</string>
+    <string name="website_text">Sito web</string>
+
+
+    <string name="telefono_sede">0586 631698</string>
+    <string name="email_fipav">volley.cecina.asd@fipav.li.it</string>
+    <string name="indirizzo_sede">Via Fucini 1 – 57023 Cecina (Li)</string>
+
+    <string name="sede_maps_link">https://goo.gl/maps/y1277rtd15XUkFJj8</string>
+    <string name="phone_call_link">tel://0586631698</string>
+    <string name="mailto_link">mailto:volley.cecina.asd@fipav.li.it</string>
+    <string name="website_url">https://volleycecina.it</string>
+    <string name="instagram_link">https://www.instagram.com/volleycecina</string>
+    <string name="facebook_link">https://www.facebook.com/cecinavolley</string>
+    <string name="instagram_text">Instagram</string>
+    <string name="instagram_name">Volley Cecina</string>
+    <string name="facebook_text">Facebook</string>
+
+    <string name="tap_again_to_maps">Doppio tap sull\'indirizzo per aprire le mappe</string>
+    <string name="tap_again_to_phone">Doppio tap sul numero per aprire i contatti</string>
+    <string name="tap_again_to_email">Doppio tap sull\'email per inviare una email</string>
+    <string name="tap_again_to_website">Doppio tap sul sito web per aprire il browser</string>
+    <string name="tap_again_to_instagram">Doppio tap sul nome del profilo per aprire Instagram</string>
+    <string name="tap_again_to_facebook">Doppio tap sul nome del profilo per aprire Facebook</string>
 
 
 </resources>

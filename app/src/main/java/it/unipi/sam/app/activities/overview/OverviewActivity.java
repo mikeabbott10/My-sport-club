@@ -1,6 +1,5 @@
 package it.unipi.sam.app.activities.overview;
 
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.view.View;
 
@@ -16,7 +15,7 @@ import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.MyBroadcastListener;
 import it.unipi.sam.app.util.OverviewActivityAlphaHandler;
 
-public class OverviewActivity extends DownloadActivity implements AppBarLayout.OnOffsetChangedListener, MyBroadcastListener {
+public class OverviewActivity extends DownloadActivity implements AppBarLayout.OnOffsetChangedListener, MyBroadcastListener, View.OnClickListener {
     private static final String TAG = "AAAOverviewActivity";
     protected ActivityOverviewBinding binding;
     protected float currentScrollingPercentage;
@@ -27,9 +26,10 @@ public class OverviewActivity extends DownloadActivity implements AppBarLayout.O
         binding = ActivityOverviewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.appBarLayout.addOnOffsetChangedListener(this);
-
         binding.overviewToolbar.inflateMenu(R.menu.menu_main);
+
+        binding.appBarLayout.addOnOffsetChangedListener(this);
+        binding.backBtn.setOnClickListener(this);
 
         OverviewActivityAlphaHandler.startAlphaAnimation(binding.toolbarMainTextviewTitle, 0, View.INVISIBLE);
     }
@@ -96,6 +96,14 @@ public class OverviewActivity extends DownloadActivity implements AppBarLayout.O
         if(imagePath == null)
             imagePath = basePath + restInfoInstance.getKeyWords().get(Constants.profileImage);
         return imagePath;
+    }
+
+    @Override
+    public void onClick(View view) {
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, view.toString(), null);
+        if(view.getId() == binding.backBtn.getId()){
+            this.onBackPressed();
+        }
     }
 }
 

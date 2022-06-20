@@ -1,13 +1,16 @@
 package it.unipi.sam.app.util;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class RestInfo implements Serializable {
+public class RestInfo implements Parcelable {
     private String news;
     private String peoplePath;
     private String teamsPath;
@@ -16,6 +19,70 @@ public class RestInfo implements Serializable {
     private Map<String, String> keyWords;
     private Map<String, Map<String, Object>> lastModified;
 
+
+    protected RestInfo(Parcel in) {
+        news = in.readString();
+        peoplePath = in.readString();
+        teamsPath = in.readString();
+
+        femaleTeamTags = new ArrayList<>();
+        final int femaleListSize = in.readInt(); // size of arraylist
+        for (int i = 0; i < femaleListSize; i++) {
+            final int mapLength = in.readInt(); // size of i-th map
+            Map<String, String> m = new HashMap<>();
+            for (int j = 0; j < mapLength; j++) {
+                m.put(in.readString(), in.readString());
+            }
+            femaleTeamTags.add(m);
+        }
+
+        maleTeamTags = new ArrayList<>();
+        final int maleListSize = in.readInt(); // size of arraylist
+        for (int i = 0; i < maleListSize; i++) {
+            final int mapLength = in.readInt(); // size of i-th map
+            Map<String, String> m = new HashMap<>();
+            for (int j = 0; j < mapLength; j++) {
+                m.put(in.readString(), in.readString());
+            }
+            maleTeamTags.add(m);
+        }
+
+        final int keyWordsMapLength = in.readInt(); // size of keywords map
+        keyWords = new HashMap<>();
+        for (int j = 0; j < keyWordsMapLength; j++) {
+            keyWords.put(in.readString(), in.readString());
+        }
+
+        final int lastModifiedMapLength = in.readInt(); // size of lastModified map
+        lastModified = new HashMap<>();
+        for (int i = 0; i < lastModifiedMapLength; i++) {
+            final String key = in.readString();
+            Map<String, Object> ithMap = new HashMap<>();
+            final int ithMapSize = in.readInt(); // size of i-th map
+            for (int j = 0; j < ithMapSize; j++) {
+                final String internalMapKey = in.readString();
+                final int internalMapValueType = in.readInt();
+                if(internalMapValueType == Constants.TIMESTAMP)
+                    ithMap.put(internalMapKey, in.readLong());
+                else if(internalMapValueType == Constants.PATH)
+                    ithMap.put(internalMapKey, in.readString());
+            }
+            lastModified.put(key, ithMap);
+        }
+
+    }
+
+    public static final Creator<RestInfo> CREATOR = new Creator<RestInfo>() {
+        @Override
+        public RestInfo createFromParcel(Parcel in) {
+            return new RestInfo(in);
+        }
+
+        @Override
+        public RestInfo[] newArray(int size) {
+            return new RestInfo[size];
+        }
+    };
 
     public Map<String, Map<String, Object>> getLastModified() {
         return lastModified;
@@ -64,5 +131,59 @@ public class RestInfo implements Serializable {
     }
     public void setKeyWords(Map<String, String> keyWords) {
         this.keyWords = keyWords;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(news);
+        parcel.writeString(peoplePath);
+        parcel.writeString(teamsPath);
+
+        parcel.writeInt(femaleTeamTags.size()); // size of arraylist
+        for (Map<String,String> m: femaleTeamTags) {
+            parcel.writeInt(m.size()); // size of i-th map
+            for (Map.Entry<String, String> entry : m.entrySet()) {
+                parcel.writeString(entry.getKey());
+                parcel.writeString(entry.getValue());
+            }
+        }
+
+        parcel.writeInt(maleTeamTags.size()); // size of arraylist
+        for (Map<String,String> m: maleTeamTags) {
+            parcel.writeInt(m.size()); // size of i-th map
+            for (Map.Entry<String, String> entry : m.entrySet()) {
+                parcel.writeString(entry.getKey());
+                parcel.writeString(entry.getValue());
+            }
+        }
+
+        parcel.writeInt(keyWords.size()); // size of keyWords map
+        for (Map.Entry<String, String> entry : keyWords.entrySet()) {
+            parcel.writeString(entry.getKey());
+            parcel.writeString(entry.getValue());
+        }
+
+        parcel.writeInt(lastModified.size()); // size of lastModified map
+        for (Map.Entry<String, Map<String,Object>> entry : lastModified.entrySet()) {
+            parcel.writeString(entry.getKey());
+            Map<String,Object> ithMap = entry.getValue();
+            parcel.writeInt(ithMap.size()); // size of i-th map
+            for (Map.Entry<String, Object> en : ithMap.entrySet()) {
+                parcel.writeString(en.getKey());
+                if(en.getValue() instanceof String){
+                    parcel.writeInt(Constants.PATH);
+                    parcel.writeString((String) en.getValue());
+                }else if(en.getValue() instanceof Long){
+                    parcel.writeInt(Constants.TIMESTAMP);
+                    parcel.writeLong((Long) en.getValue());
+                }
+            }
+        }
+
     }
 }

@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import it.unipi.sam.app.R;
@@ -41,7 +40,7 @@ public class ScreenSlidePagerActivity extends AppCompatActivity {
         int news_position = -1;
         long news_id;
         try{
-            news = (ArrayList<VCNews>) getIntent().getSerializableExtra(Constants.news_key);
+            news = getIntent().getParcelableArrayListExtra(Constants.news_key);
             news_id = getIntent().getLongExtra(Constants.news_id_key, -1);
             for (int index = 0; index<news.size(); ++index) {
                 if(news.get(index).getId() == news_id) {

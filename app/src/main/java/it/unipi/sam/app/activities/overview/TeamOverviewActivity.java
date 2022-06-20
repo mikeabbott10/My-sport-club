@@ -22,6 +22,7 @@ import it.unipi.sam.app.util.ResourcePreferenceWrapper;
 import it.unipi.sam.app.util.SharedPreferenceUtility;
 import it.unipi.sam.app.util.Team;
 import it.unipi.sam.app.util.graphics.ParamImageView;
+import it.unipi.sam.app.util.graphics.ParamTextView;
 
 public class TeamOverviewActivity extends OverviewActivity implements View.OnClickListener {
     private static final String TAG = "AAATeamOverviewActivity";
@@ -242,11 +243,11 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         // but view.getId()==teamInfoContentBinding.leagueDescription.getId()
         // on the contrary of other used emulators and devices
 
-        // DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, TAG, "teamInfoContentBinding.leagueDescription.getObj():"+teamInfoContentBinding.leagueDescription.getObj(), null);
-
-        if(view.getId()==teamInfoContentBinding.leagueDescription.getId() && teamInfoContentBinding.leagueDescription.getObj()!=null){
+        // DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, TAG, "teamInfoContentBinding.leagueDescription.getObj():"+((ParamTextView) view).getObj(), null);
+        super.onClick(view);
+        if(view.getId()==teamInfoContentBinding.leagueDescription.getId() && ((ParamTextView) view).getObj()!=null){
             startActivity(new Intent(Intent.ACTION_VIEW,
-                    Uri.parse((String) teamInfoContentBinding.leagueDescription.getObj())));
+                    Uri.parse((String) ((ParamTextView) view).getObj())));
         }else if(view instanceof ParamImageView){
             Intent i = new Intent(this, PeopleOverviewActivity.class);
             i.putExtra(Constants.peopleCode, (String) ((ParamImageView) view).getObj());

@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.verify.domain.DomainVerificationManager;
 import android.content.pm.verify.domain.DomainVerificationUserState;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,8 +20,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.widget.ImageViewCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -48,44 +44,34 @@ import java.util.Map;
 import it.unipi.sam.app.activities.DownloadActivity;
 import it.unipi.sam.app.activities.ScreenSlidePagerActivity;
 import it.unipi.sam.app.databinding.ActivityMainBinding;
-import it.unipi.sam.app.ui.female.FemaleTeamsViewModel;
-import it.unipi.sam.app.ui.male.MaleTeamsViewModel;
-import it.unipi.sam.app.ui.news.NewsViewModel;
 import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.ItemViewModel;
 import it.unipi.sam.app.util.JacksonUtil;
 import it.unipi.sam.app.util.ResourcePreferenceWrapper;
-import it.unipi.sam.app.util.RestInfo;
 import it.unipi.sam.app.util.SharedPreferenceUtility;
 import it.unipi.sam.app.util.VCNews;
 
 //TODO:
-// 3.0 rendere Parcelable restInfoInstance
-// 3.1 inserire in settore maschile/femminile le squadre (unico viewmodel? con restInfoInstance come livedata)
-// 0. nelle pagine teams e people inserire back button in alto a sx
 // 2. fare pagina contatti
 // 4. implementare preferiti
 // 5. scelta preferiti o news come primo fragment (sharedpreferences + preferenceScreen)
 
 public class MainActivity extends DownloadActivity implements NavigationView.OnNavigationItemSelectedListener,
-                                                View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, Observer<String>,
-                                                DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener {
+        View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, Observer<String>,
+        DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener {
     private static final String TAG = "AAAAMainActivity";
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
     private CollapsingToolbarLayout toolBarLayout;
 
-    private FemaleTeamsViewModel femaleViewModel;
-    private MaleTeamsViewModel maleViewModel;
-    private NewsViewModel newsViewModel;
-
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private VCNews[] vcn_arr;
     public List<VCNews> vc_news = new ArrayList<>();
     private AlertDialog domainApprovationDialog;
+    private ItemViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +79,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onCreate", null);
 
         if(savedInstanceState!=null)
-            restInfoInstance = (RestInfo) savedInstanceState.getSerializable(Constants.rest_info_instance_key);
+            restInfoInstance = savedInstanceState.getParcelable(Constants.rest_info_instance_key);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -116,13 +102,11 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         // start refreshing status
         binding.appBarMain.swiperefresh.setRefreshing(true);
 
-        DrawerLayout drawer = binding.drawerLayout;
-        NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_notizie, R.id.nav_femminile, R.id.nav_maschile, R.id.nav_contatti, R.id.nav_settings)
-                .setOpenableLayout(drawer)
+                .setOpenableLayout(binding.drawerLayout)
                 .build();
         NavHostFragment navHostFragment =
                 (NavHostFragment) getSupportFragmentManager()
@@ -131,14 +115,10 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         NavController navController = navHostFragment.getNavController();
         //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
+        NavigationUI.setupWithNavController(binding.navView, navController);
 
-        newsViewModel = new ViewModelProvider(this).get(NewsViewModel.class);
-        femaleViewModel = new ViewModelProvider(this).get(FemaleTeamsViewModel.class);
-        maleViewModel = new ViewModelProvider(this).get(MaleTeamsViewModel.class);
-
-        ItemViewModel viewModel = new ViewModelProvider(this).get(ItemViewModel.class);
-        viewModel.getSelectedItem().observe(this, this);
+        viewModel = new ViewModelProvider(this).get(ItemViewModel.class);
+        viewModel.getSelectedFragmentName().observe(this, this);
 
         // pull-to-refresh
         binding.appBarMain.swiperefresh.setOnRefreshListener(this);
@@ -162,8 +142,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        //todo: outState.putParcelable(restInfoInstance);
-        outState.putSerializable(Constants.rest_info_instance_key, restInfoInstance);
+        outState.putParcelable(Constants.rest_info_instance_key, restInfoInstance);
     }
 
     private void getRestInfoFile(DMRequestWrapper dmRequestWrapper) {
@@ -248,7 +227,7 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                     }
                     // populate news in news fragment
                     Collections.sort(vc_news); // date sort
-                    newsViewModel.setVcNewsList(vc_news);
+                    viewModel.setVcNewsList(vc_news);
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                     DebugUtility.showSimpleSnackbar(binding.getRoot(), "ERROR 00. Please retry later.", 5000);
@@ -259,10 +238,10 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                 if(restInfoInstance!=null) {
                     // after swipe to refresh
                     getVolleyCecinaNews();
-                    if(!restInfoInstance.getFemaleTeamTags().equals(femaleViewModel.getTeamsList().getValue()))
-                        femaleViewModel.setTeamsList( restInfoInstance.getFemaleTeamTags() );
-                    if(!restInfoInstance.getMaleTeamTags().equals(maleViewModel.getTeamsList().getValue()))
-                        maleViewModel.setTeamsList( restInfoInstance.getMaleTeamTags() );
+                    if(!restInfoInstance.getFemaleTeamTags().equals(viewModel.getFemaleTeamsList().getValue()))
+                        viewModel.setFemaleTeamsList( restInfoInstance.getFemaleTeamTags() );
+                    if(!restInfoInstance.getMaleTeamTags().equals(viewModel.getFemaleTeamsList().getValue()))
+                        viewModel.setMaleTeamsList( restInfoInstance.getMaleTeamTags() );
                 }else
                     binding.appBarMain.swiperefresh.setRefreshing(false);
 
@@ -356,28 +335,16 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
         toolBarLayout.setTitle(item);
 
         binding.appBarMain.swiperefresh.setEnabled(true);
-        if(item.equals(getString(R.string.menu_contatti))){
-            // show fab
-            //binding.appBarMain.fab.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.white));
-            ImageViewCompat.setImageTintList(
-                    binding.appBarMain.fab,
-                    ColorStateList.valueOf(Color.BLACK)
-            );
-            binding.appBarMain.fab.setImageResource(android.R.drawable.ic_dialog_email);
-            binding.appBarMain.fab.setVisibility(View.VISIBLE);
-        }else if(item.equals(getString(R.string.menu_notizie))){
-            //binding.appBarMain.fab.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.main_color));
-            ImageViewCompat.setImageTintList(
-                    binding.appBarMain.fab,
-                    ColorStateList.valueOf(Color.RED)
-            );
+        if(item.equals(getString(R.string.menu_notizie))){
             binding.appBarMain.fab.setImageResource(R.drawable.ic_filled_red_heart);
             binding.appBarMain.fab.setVisibility(View.VISIBLE);
-        }else if(item.equals(getString(R.string.menu_settings))){
-            binding.appBarMain.fab.setVisibility(View.GONE);
+            return;
+        }else if(item.equals(getString(R.string.menu_contatti))){
             binding.appBarMain.swiperefresh.setEnabled(false);
-        }else
-            binding.appBarMain.fab.setVisibility(View.GONE);
+        }else  if(item.equals(getString(R.string.menu_settings))){
+            binding.appBarMain.swiperefresh.setEnabled(false);
+        }
+        binding.appBarMain.fab.setVisibility(View.GONE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.S)

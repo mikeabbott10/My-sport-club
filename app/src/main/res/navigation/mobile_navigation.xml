@@ -15,7 +15,7 @@
         android:id="@+id/nav_femminile"
         android:name="it.unipi.sam.app.ui.female.FemaleFragment"
         android:label="@string/menu_femminile"
-        tools:layout="@layout/fragment_female" />
+        tools:layout="@layout/fragment_team" />
 
     <fragment
         android:id="@+id/nav_maschile"

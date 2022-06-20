@@ -8,4 +8,5 @@
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">166dp</dimen>
     <dimen name="abc_action_bar_content_inset_material">16dp</dimen>
+    <dimen name="back_btn_margin_left">10dp</dimen>
 </resources>

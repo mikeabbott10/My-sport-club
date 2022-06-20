@@ -27,20 +27,17 @@ public class NewsFragment extends Fragment implements Observer<List<VCNews>> {
     private FragmentNewsBinding binding;
 
     private ItemViewModel viewModel;
-    private String item;
-    private NewsViewModel newsViewModel;
+    private String currentFragmentName;
     private NewsRecyclerViewAdapter adapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        newsViewModel =
-                new ViewModelProvider(requireActivity()).get(NewsViewModel.class);
 
         binding = FragmentNewsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         // nota requireActivity() : same scope as in the activity is required or different ViewModel!
-        item = requireActivity().getString(R.string.menu_notizie);
+        currentFragmentName = requireActivity().getString(R.string.menu_notizie);
         viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
         final RecyclerView recycleView = binding.newsRecyclerView;
@@ -49,14 +46,14 @@ public class NewsFragment extends Fragment implements Observer<List<VCNews>> {
         recycleView.setHasFixedSize(true);
         adapter = new NewsRecyclerViewAdapter(new ArrayList<>(), getActivity());
         recycleView.setAdapter(adapter);
-        newsViewModel.getVcNewsList().observe(getViewLifecycleOwner(), this);
+        viewModel.getVcNewsList().observe(getViewLifecycleOwner(), this);
         return root;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        viewModel.selectItem(item);
+        viewModel.selectFragmentName(currentFragmentName);
     }
 
     @Override
@@ -70,7 +67,6 @@ public class NewsFragment extends Fragment implements Observer<List<VCNews>> {
     public void onChanged(List<VCNews> list) {
         DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "newsViewModel.getNews().observe . list:"+ list, null);
         if(list!=null) {
-            binding.newsPlaceholder.setVisibility(View.GONE);
             adapter.setNews(list);
             // idk quante entries ci sono in più o in meno rispetto a prima (nè dove sono state inserite/eliminate).
             // E' quindi necessario un refresh dell'intero data set:

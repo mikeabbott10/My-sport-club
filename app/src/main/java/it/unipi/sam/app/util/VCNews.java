@@ -1,11 +1,12 @@
 package it.unipi.sam.app.util;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class VCNews implements Serializable, Comparable<VCNews>{
+public class VCNews implements Parcelable, Comparable<VCNews>{
     private String tag;
     private String title;
     private String author;
@@ -19,6 +20,34 @@ public class VCNews implements Serializable, Comparable<VCNews>{
     private String relatedGameName;
     private String relatedGameHomeSets;
     private String relatedGameAwaySets;
+
+    protected VCNews(Parcel in) {
+        tag = in.readString();
+        title = in.readString();
+        author = in.readString();
+        date = in.readLong();
+        id = in.readLong();
+        resourcePath = in.readString();
+        logoImgName = in.readString();
+        coverImgName = in.readString();
+        imageDescription = in.readString();
+        description = in.readString();
+        relatedGameName = in.readString();
+        relatedGameHomeSets = in.readString();
+        relatedGameAwaySets = in.readString();
+    }
+
+    public static final Creator<VCNews> CREATOR = new Creator<VCNews>() {
+        @Override
+        public VCNews createFromParcel(Parcel in) {
+            return new VCNews(in);
+        }
+
+        @Override
+        public VCNews[] newArray(int size) {
+            return new VCNews[size];
+        }
+    };
 
     public String getTag() {
         return tag;
@@ -114,5 +143,27 @@ public class VCNews implements Serializable, Comparable<VCNews>{
     @Override
     public int compareTo(VCNews vcNews) {
         return this.date > vcNews.getDate() ? -1 : 1;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(tag);
+        parcel.writeString(title);
+        parcel.writeString(author);
+        parcel.writeLong(date);
+        parcel.writeLong(id);
+        parcel.writeString(resourcePath);
+        parcel.writeString(logoImgName);
+        parcel.writeString(coverImgName);
+        parcel.writeString(imageDescription);
+        parcel.writeString(description);
+        parcel.writeString(relatedGameName);
+        parcel.writeString(relatedGameHomeSets);
+        parcel.writeString(relatedGameAwaySets);
     }
 }

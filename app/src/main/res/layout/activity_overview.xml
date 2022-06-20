@@ -76,6 +76,19 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+
+    <ImageView
+        android:id="@+id/back_btn"
+        android:layout_width="35dp"
+        android:layout_height="?attr/actionBarSize"
+        android:padding="5dp"
+        android:src="@drawable/ic_back"
+        android:layout_marginLeft="@dimen/back_btn_margin_left"
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@null"
+        tools:ignore="RtlHardcoded" />
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -145,4 +158,5 @@
         app:startXPosition="2dp"
         app:civ_border_color="@android:color/white"
         app:civ_border_width="2dp"/>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

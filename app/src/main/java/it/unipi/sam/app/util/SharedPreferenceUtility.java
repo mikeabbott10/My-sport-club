@@ -10,6 +10,19 @@ import androidx.preference.PreferenceManager;
 public class SharedPreferenceUtility {
     private static final String TAG = "CLCLSharedPreference";
 
+    // show contacts popup
+    public static boolean getDontShowContactsPopup(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        //SharedPreferences prefs = ctx.getSharedPreferences(ctx.getString(R.string.dontshowcontactspopup_key), MODE_PRIVATE);
+        return prefs.getBoolean(Constants.dontshowcontactspopup_key, false);
+    }
+    public static void setDontShowContactsPopup(Context ctx, boolean dontShowPopup) {
+        SharedPreferences.Editor spEditor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
+        //SharedPreferences.Editor spEditor = ctx.getSharedPreferences(ctx.getString(R.string.dontshowcontactspopup_key), MODE_PRIVATE).edit();
+        spEditor.putBoolean(Constants.dontshowcontactspopup_key, dontShowPopup);
+        spEditor.apply();
+    }
+
     // show screen at start
     public static boolean getDontAskForDomainVerification(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
