@@ -7,14 +7,22 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class Person {
-    public String name;
-    public String role;
-    public int number;
-    public String nation;
-    public int birthYear;
-    public int height;
-    public Map<String,String> team;
-    public ArrayList<String> social;
+    private String tag;
+    private String name;
+    private String role;
+    private int number;
+    private String nation;
+    private int birthYear;
+    private int height;
+    private Map<String,String> team;
+    private ArrayList<String> social;
+
+    public String getTag() {
+        return tag;
+    }
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
     public String getName() {
         return name;
@@ -71,5 +79,4 @@ public class Person {
     public void setSocial(ArrayList<String> social) {
         this.social = social;
     }
-
 }

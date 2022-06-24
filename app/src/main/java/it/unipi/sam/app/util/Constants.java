@@ -10,6 +10,9 @@ public class Constants {
     public static String teamCode = "team_code";
     public static String peopleCode = "people_code";
 
+    public static String teamInstance = "ti";
+    public static String personInstance = "pi";
+
     public static String coverImage = "cover_image";
     public static String presentationImage = "presentation_image";
     public static String profileImage = "profile_image";
@@ -32,4 +35,7 @@ public class Constants {
     public static String resource_path = "path";
     public static String resource_name = "name";
     public static String resource_tag = "tag";
+
+    // Room
+    public static String database_name = "VolleyCecinaFavorites";
 }

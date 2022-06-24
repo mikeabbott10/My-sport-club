@@ -20,6 +20,7 @@ import java.util.Map;
 
 import it.unipi.sam.app.MainActivity;
 import it.unipi.sam.app.R;
+import it.unipi.sam.app.activities.BasicActivity;
 import it.unipi.sam.app.activities.overview.TeamOverviewActivity;
 import it.unipi.sam.app.util.graphics.ParamLinearLayout;
 
@@ -77,17 +78,21 @@ public class TeamsRecyclerViewAdapter extends RecyclerView.Adapter<TeamsRecycler
     public void onBindViewHolder(TeamsRecyclerViewAdapter.ViewHolder viewHolder, int i) {
         viewHolder.name.setText(teams.get(i).get(Constants.resource_name));
         // load image
-        if( ((MainActivity)context).restInfoInstance != null)
-        Glide
-                .with(context)
-                .load(Constants.restBasePath + ((MainActivity)context).restInfoInstance.getTeamsPath() + teams.get(i).get(Constants.resource_tag) + "/"
-                        + ((MainActivity)context).restInfoInstance.getKeyWords().get(Constants.presentationImage))
-                //.centerCrop()
-                .placeholder(R.drawable.placeholder_126)
-                .error(R.drawable.placeholder_126)
-                .into(viewHolder.image);
-        ((ParamLinearLayout) viewHolder.itemView ).setObject(teams.get(i).get(Constants.resource_tag));
-        viewHolder.itemView.setOnClickListener(this);
+        if( ((MainActivity)context).restInfoInstance != null){
+            String partialPath = ((MainActivity)context).restInfoInstance.getTeamsPath() + teams.get(i).get(Constants.resource_tag);
+            String presentationImagePath = ((BasicActivity)context).getPresentationImagePath(partialPath,
+                                                    ((MainActivity)context).restInfoInstance.getLastModified().get(partialPath));
+            Glide
+                    .with(context)
+                    .load( presentationImagePath )
+                            //+ ((MainActivity)context).restInfoInstance.getKeyWords().get(Constants.presentationImage))
+                    //.centerCrop()
+                    .placeholder(R.drawable.placeholder_126)
+                    .error(R.drawable.placeholder_126)
+                    .into(viewHolder.image);
+            ((ParamLinearLayout) viewHolder.itemView ).setObject(teams.get(i).get(Constants.resource_tag));
+            viewHolder.itemView.setOnClickListener(this);
+        }
         //DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, "AAAA", "pos: "+i, null);
     }
 

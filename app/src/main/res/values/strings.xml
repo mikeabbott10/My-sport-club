@@ -147,6 +147,7 @@
     <string name="tap_again_to_website">Doppio tap sul sito web per aprire il browser</string>
     <string name="tap_again_to_instagram">Doppio tap sul nome del profilo per aprire Instagram</string>
     <string name="tap_again_to_facebook">Doppio tap sul nome del profilo per aprire Facebook</string>
+    <string name="menu_favoriti">Preferiti</string>
 
 
 </resources>

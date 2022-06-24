@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class Team {
+    private String tag;
     private ArrayList<Map<String, String>> players;
     private Map<String, String> coach;
     private Map<String, String> secondCoach;
@@ -14,6 +15,13 @@ public class Team {
     private String currentLeague;
     private String leagueDescription;
     private String leagueLink;
+
+    public String getTag() {
+        return tag;
+    }
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
     public String getCurrentLeague() {
         return currentLeague;
@@ -63,4 +71,5 @@ public class Team {
     public void setLeagueDescription(String leagueDescription) {
         this.leagueDescription = leagueDescription;
     }
+
 }

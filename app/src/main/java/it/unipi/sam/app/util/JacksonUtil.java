@@ -1,11 +1,13 @@
 package it.unipi.sam.app.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+
+import java.util.HashMap;
 
 public class JacksonUtil {
     /**
@@ -27,14 +29,32 @@ public class JacksonUtil {
     }
 
     public static String getStringFromObject(Object obj)
-            throws JsonMappingException, JsonProcessingException {
+            throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(obj);
     }
 
     public static Object getObjectFromString(String string, Class<?> clas)
-            throws JsonMappingException, JsonProcessingException {
+            throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(string, clas);
     }
+
+    public static Object getObjectMapObjectFromString(String string, TypeReference<HashMap<String, Object>> clas)
+            throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(string, clas);
+    }
+
+    /*public static Object getTeamMapObjectFromString(String string, TypeReference<HashMap<String, Team>> clas)
+            throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(string, clas);
+    }
+
+    public static Object getPeopleMapObjectFromString(String string, TypeReference<HashMap<String, Person>> clas)
+            throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(string, clas);
+    }*/
 }

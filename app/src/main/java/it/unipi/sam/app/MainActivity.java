@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -27,12 +26,12 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.room.Room;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -44,23 +43,29 @@ import java.util.Map;
 import it.unipi.sam.app.activities.DownloadActivity;
 import it.unipi.sam.app.activities.ScreenSlidePagerActivity;
 import it.unipi.sam.app.databinding.ActivityMainBinding;
+import it.unipi.sam.app.ui.favorites.RetriveFavoritesListener;
+import it.unipi.sam.app.ui.favorites.RetriveFavoritesRunnable;
 import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
+import it.unipi.sam.app.util.FavoritesWrapper;
 import it.unipi.sam.app.util.ItemViewModel;
 import it.unipi.sam.app.util.JacksonUtil;
 import it.unipi.sam.app.util.ResourcePreferenceWrapper;
 import it.unipi.sam.app.util.SharedPreferenceUtility;
 import it.unipi.sam.app.util.VCNews;
+import it.unipi.sam.app.util.room.AppDatabase;
+import it.unipi.sam.app.util.room.FavoritesConverter;
 
 //TODO:
-// 2. fare pagina contatti
-// 4. implementare preferiti
+// 1. ShareValues è necessaria??
+// 3. night mode
+// 2. fare mappa+geolocalizzazione in/da pagina contatti (poi toglierla dopo aver dato SAM)
+// 4. implementare preferiti -> usa ROOM per ottenere preferiti (Lezione 13 slide 37)
 // 5. scelta preferiti o news come primo fragment (sharedpreferences + preferenceScreen)
 
-public class MainActivity extends DownloadActivity implements NavigationView.OnNavigationItemSelectedListener,
-        View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, Observer<String>,
-        DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class MainActivity extends DownloadActivity implements SwipeRefreshLayout.OnRefreshListener, Observer<String>,
+        DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener, RetriveFavoritesListener {
     private static final String TAG = "AAAAMainActivity";
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -72,6 +77,9 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     public List<VCNews> vc_news = new ArrayList<>();
     private AlertDialog domainApprovationDialog;
     private ItemViewModel viewModel;
+
+    // room
+    public AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,16 +104,13 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
                     false, null, null));
         }
 
-        binding.navView.setNavigationItemSelectedListener(this);
-        binding.appBarMain.fab.setOnClickListener(this);
-
         // start refreshing status
         binding.appBarMain.swiperefresh.setRefreshing(true);
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_notizie, R.id.nav_femminile, R.id.nav_maschile, R.id.nav_contatti, R.id.nav_settings)
+                R.id.nav_notizie, R.id.nav_favoriti, R.id.nav_femminile, R.id.nav_maschile, R.id.nav_contatti, R.id.nav_settings)
                 .setOpenableLayout(binding.drawerLayout)
                 .build();
         NavHostFragment navHostFragment =
@@ -122,6 +127,13 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
 
         // pull-to-refresh
         binding.appBarMain.swiperefresh.setOnRefreshListener(this);
+
+        // ROOM
+        db = Room.databaseBuilder(this,
+                        AppDatabase.class, Constants.database_name)
+                .addTypeConverter(new FavoritesConverter()).build();
+        // launch thread to retrive favorites from db
+        new Thread(new RetriveFavoritesRunnable(this, db)).start();
 
         // domain verification
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -153,35 +165,6 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // TODO: doesn't work
-        if(item.getItemId()==R.id.emailTextView) {
-            // intent to mail apps
-            DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, TAG, "email selected", null);
-        }else if(item.getItemId()==R.id.indirizzoTextView){
-            // intent to map apps
-        }else if(item.getItemId()==R.id.logoView){
-            // animate logo
-        }
-        return true;
-    }
-
-    @Override
-    public void onClick(View view) {
-        if(restInfoInstance==null){
-            Snackbar.make(binding.getRoot(), "ERROR 04. Please retry later.", 5000).show();
-            return;
-        }
-        if(view.getId() == R.id.fab){
-            // TODO: vai ai preferiti
-            /*Intent i = new Intent(this, PeopleOverviewActivity.class);
-            i.putExtra(Constants.peopleCode, (String) ((ParamLinearLayout) view).getObj());
-            i.putExtra(Constants.rest_info_instance_key, restInfoInstance);
-            startActivity(i);*/
-        }
     }
 
     @Override
@@ -333,18 +316,12 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     public void onChanged(String item) {
         // Perform an action with the latest item data
         toolBarLayout.setTitle(item);
-
         binding.appBarMain.swiperefresh.setEnabled(true);
-        if(item.equals(getString(R.string.menu_notizie))){
-            binding.appBarMain.fab.setImageResource(R.drawable.ic_filled_red_heart);
-            binding.appBarMain.fab.setVisibility(View.VISIBLE);
-            return;
-        }else if(item.equals(getString(R.string.menu_contatti))){
+        if(item.equals(getString(R.string.menu_contatti))){
             binding.appBarMain.swiperefresh.setEnabled(false);
         }else  if(item.equals(getString(R.string.menu_settings))){
             binding.appBarMain.swiperefresh.setEnabled(false);
         }
-        binding.appBarMain.fab.setVisibility(View.GONE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.S)
@@ -424,5 +401,11 @@ public class MainActivity extends DownloadActivity implements NavigationView.OnN
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         SharedPreferenceUtility.setDontAskForDomainVerification(this, compoundButton.isChecked());
+    }
+
+    // RetriveFavoritesListener implementation
+    @Override
+    public void onFavoritesRetrived(List<FavoritesWrapper> favorites) {
+        viewModel.setFavoritesListList(favorites);
     }
 }

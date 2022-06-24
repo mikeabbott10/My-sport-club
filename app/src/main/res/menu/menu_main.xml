@@ -10,7 +10,7 @@
         app:showAsAction="never"
         android:title="Settings" />
 
-    <item android:id="@+id/menu_share"
+    <item android:id="@+id/menu_fav"
         android:icon="@drawable/ic_empty_heart"
         app:showAsAction="always"
         android:title="Favorite" />

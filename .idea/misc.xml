@@ -54,6 +54,7 @@
         <entry key="app/src/main/res/layout/dialog_show_again.xml" value="0.3509963768115942" />
         <entry key="app/src/main/res/layout/fragmenr_screen_slide_page.xml" value="0.3509963768115942" />
         <entry key="app/src/main/res/layout/fragment_contacts.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_favorites.xml" value="0.26403985507246375" />
         <entry key="app/src/main/res/layout/fragment_female.xml" value="0.3115942028985507" />
         <entry key="app/src/main/res/layout/fragment_gallery.xml" value="0.35989583333333336" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.35989583333333336" />
@@ -67,6 +68,7 @@
         <entry key="app/src/main/res/layout/news_card.xml" value="0.31929347826086957" />
         <entry key="app/src/main/res/layout/news_item.xml" value="0.2441123188405797" />
         <entry key="app/src/main/res/layout/person_info_content.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/person_item.xml" value="0.33" />
         <entry key="app/src/main/res/layout/preferences_category.xml" value="0.240625" />
         <entry key="app/src/main/res/layout/team_info_content.xml" value="0.35885416666666664" />
         <entry key="app/src/main/res/layout/teams_item.xml" value="0.25" />

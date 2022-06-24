@@ -65,7 +65,7 @@ public class NewsFragment extends Fragment implements Observer<List<VCNews>> {
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onChanged(List<VCNews> list) {
-        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "newsViewModel.getNews().observe . list:"+ list, null);
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "viewModel.getNews().observe . list:"+ list, null);
         if(list!=null) {
             adapter.setNews(list);
             // idk quante entries ci sono in più o in meno rispetto a prima (nè dove sono state inserite/eliminate).

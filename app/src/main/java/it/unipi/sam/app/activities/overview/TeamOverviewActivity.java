@@ -3,7 +3,11 @@ package it.unipi.sam.app.activities.overview;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+
+import androidx.room.Room;
 
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,9 +17,11 @@ import java.util.Map;
 
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.TeamInfoContentBinding;
+import it.unipi.sam.app.ui.favorites.SetFavoritesRunnable;
 import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
+import it.unipi.sam.app.util.FavoritesWrapper;
 import it.unipi.sam.app.util.JacksonUtil;
 import it.unipi.sam.app.util.OverviewActivityAlphaHandler;
 import it.unipi.sam.app.util.ResourcePreferenceWrapper;
@@ -23,6 +29,8 @@ import it.unipi.sam.app.util.SharedPreferenceUtility;
 import it.unipi.sam.app.util.Team;
 import it.unipi.sam.app.util.graphics.ParamImageView;
 import it.unipi.sam.app.util.graphics.ParamTextView;
+import it.unipi.sam.app.util.room.AppDatabase;
+import it.unipi.sam.app.util.room.FavoritesConverter;
 
 public class TeamOverviewActivity extends OverviewActivity implements View.OnClickListener {
     private static final String TAG = "AAATeamOverviewActivity";
@@ -31,6 +39,9 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
     protected TeamInfoContentBinding teamInfoContentBinding;
     private String thisTeamPartialPath;
     private Map<String, Object> thisLastModifiedEntry;
+
+    private AppDatabase db;
+    private Team thisTeam;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +76,10 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         binding.avatarImage.setBorderWidth(0);
         binding.avatarImage.setDisableCircularTransformation(true);
 
+        // ROOM
+        db = Room.databaseBuilder(this,
+                        AppDatabase.class, Constants.database_name)
+                .addTypeConverter(new FavoritesConverter()).build();
     }
 
     @Override
@@ -124,29 +139,28 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
             return;
         String content = getFileContentFromUri(uri);
         // perform jackson from file to object
-        Team t;
         try {
-            t = (Team) JacksonUtil.getObjectFromString(content, Team.class);
+            thisTeam = (Team) JacksonUtil.getObjectFromString(content, Team.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             DebugUtility.showSimpleSnackbar(binding.getRoot(), "ERROR 01. Please retry later.", 5000);
             return;
         }
-        binding.toolbarMainTextviewTitle.setText(t.getCurrentLeague());
-        binding.mainTextviewTitle.setText(t.getCurrentLeague());
-        String s = getString(R.string.coach_title) + t.getCoach().get(Constants.resource_name);
+        binding.toolbarMainTextviewTitle.setText(thisTeam.getCurrentLeague());
+        binding.mainTextviewTitle.setText(thisTeam.getCurrentLeague());
+        String s = getString(R.string.coach_title) + thisTeam.getCoach().get(Constants.resource_name);
         binding.mainTextviewDescription.setText(s);
 
         if(teamInfoContentBinding==null)
             teamInfoContentBinding = TeamInfoContentBinding.inflate(getLayoutInflater());
 
-        teamInfoContentBinding.leagueDescription.setText(t.getLeagueDescription());
-        teamInfoContentBinding.leagueDescription.setObject(t.getLeagueLink());
+        teamInfoContentBinding.leagueDescription.setText(thisTeam.getLeagueDescription());
+        teamInfoContentBinding.leagueDescription.setObject(thisTeam.getLeagueLink());
         teamInfoContentBinding.leagueDescription.setOnClickListener(this);
 
         // players views
-        for (int i=0; i<t.getPlayers().size(); i++) {
-            String currPlayerPath = t.getPlayers().get(i).get(Constants.resource_path);
+        for (int i = 0; i< thisTeam.getPlayers().size(); i++) {
+            String currPlayerPath = thisTeam.getPlayers().get(i).get(Constants.resource_path);
             assert currPlayerPath != null;
             if(!currPlayerPath.equals("")) {
                 //String currPlayerName = t.getPlayers().get(i).get(Constants.resource_name);
@@ -167,7 +181,7 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         }
 
         // coach view
-        String coachPath = t.getCoach().get(Constants.resource_path);
+        String coachPath = thisTeam.getCoach().get(Constants.resource_path);
         assert coachPath != null;
         if(!coachPath.equals("")) {
             //String coachName = t.getCoach().get(Constants.resource_name);
@@ -187,7 +201,7 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         }
 
         // staff views
-        String secondCoachPath = t.getSecondCoach().get(Constants.resource_path);
+        String secondCoachPath = thisTeam.getSecondCoach().get(Constants.resource_path);
         assert secondCoachPath != null;
         if(!secondCoachPath.equals("")) {
             //String secondCoachName = t.getSecondCoach().get(Constants.resource_name);
@@ -207,8 +221,8 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         }
 
         // dirigenti views
-        for (int i=0; i<t.getAssistantManager().size(); i++) {
-            String currManagerPath = t.getAssistantManager().get(i).get(Constants.resource_path);
+        for (int i = 0; i< thisTeam.getAssistantManager().size(); i++) {
+            String currManagerPath = thisTeam.getAssistantManager().get(i).get(Constants.resource_path);
             assert currManagerPath != null;
             if(!currManagerPath.equals("")) {
                 //String currManagerName = t.getAssistantManager().get(i).get(Constants.resource_name);
@@ -254,5 +268,19 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
             i.putExtra(Constants.rest_info_instance_key, restInfoInstance);
             startActivity(i);
         }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if(item.getItemId()==R.id.menu_fav){
+            // add or remove from favorites
+            Log.d("TAGGHE", item.toString());
+            if(thisTeam!=null)
+                new Thread(
+                        new SetFavoritesRunnable(db,
+                                new FavoritesWrapper(thisTeam))
+                ).start();
+        }
+        return false;
     }
 }

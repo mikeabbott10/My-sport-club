@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_news" />
 
     <fragment
+        android:id="@+id/nav_favoriti"
+        android:name="it.unipi.sam.app.ui.favorites.FavoritesFragment"
+        android:label="@string/menu_favoriti"
+        tools:layout="@layout/fragment_favorites" />
+
+    <fragment
         android:id="@+id/nav_femminile"
         android:name="it.unipi.sam.app.ui.female.FemaleFragment"
         android:label="@string/menu_femminile"

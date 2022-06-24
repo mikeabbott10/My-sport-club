@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -26,7 +25,7 @@ import it.unipi.sam.app.util.JacksonUtil;
 import it.unipi.sam.app.util.MyBroadcastListener;
 import it.unipi.sam.app.util.RestInfo;
 
-public class DownloadActivity extends AppCompatActivity implements MyBroadcastListener {
+public class DownloadActivity extends BasicActivity implements MyBroadcastListener {
     private static final String TAG = "AAADownloadActivity";
 
     //overall
@@ -39,8 +38,6 @@ public class DownloadActivity extends AppCompatActivity implements MyBroadcastLi
     protected DownloadBroadcastReceiver receiver;
     protected DownloadManager dm;
     protected ConcurrentHashMap<Long, Integer> idToResourceType;
-
-    public RestInfo restInfoInstance;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

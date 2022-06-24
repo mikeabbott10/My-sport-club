@@ -1,21 +1,22 @@
 package it.unipi.sam.app.activities.overview;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.material.appbar.AppBarLayout;
+import androidx.appcompat.widget.Toolbar;
 
-import java.util.Map;
+import com.google.android.material.appbar.AppBarLayout;
 
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.activities.DownloadActivity;
 import it.unipi.sam.app.databinding.ActivityOverviewBinding;
-import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.MyBroadcastListener;
 import it.unipi.sam.app.util.OverviewActivityAlphaHandler;
 
-public class OverviewActivity extends DownloadActivity implements AppBarLayout.OnOffsetChangedListener, MyBroadcastListener, View.OnClickListener {
+public class OverviewActivity extends DownloadActivity implements AppBarLayout.OnOffsetChangedListener, MyBroadcastListener,
+                                                                    View.OnClickListener, Toolbar.OnMenuItemClickListener {
     private static final String TAG = "AAAOverviewActivity";
     protected ActivityOverviewBinding binding;
     protected float currentScrollingPercentage;
@@ -27,6 +28,7 @@ public class OverviewActivity extends DownloadActivity implements AppBarLayout.O
         setContentView(binding.getRoot());
 
         binding.overviewToolbar.inflateMenu(R.menu.menu_main);
+        binding.overviewToolbar.setOnMenuItemClickListener(this);
 
         binding.appBarLayout.addOnOffsetChangedListener(this);
         binding.backBtn.setOnClickListener(this);
@@ -64,46 +66,18 @@ public class OverviewActivity extends DownloadActivity implements AppBarLayout.O
         binding.infoPlaceholderImage.setVisibility(View.GONE);
     }
 
-    /**
-     * Ottieni URL dell'immagine di copertina aggiornata.
-     * @param partialPath
-     * @param lastModifiedEntry
-     * @return
-     */
-    public String getCoverImagePath(String partialPath, Map<String, Object> lastModifiedEntry){
-        String basePath = Constants.restBasePath + partialPath + "/";
-        String imagePath = null;
-        if(lastModifiedEntry!=null){
-            imagePath = basePath + lastModifiedEntry.get(Constants.coverImage);
-        }
-        if(imagePath == null)
-            imagePath = basePath + restInfoInstance.getKeyWords().get(Constants.coverImage);
-        return imagePath;
-    }
-
-    /**
-     * Ottieni URL dell'immagine di profilo aggiornata.
-     * @param partialPath
-     * @param lastModifiedEntry
-     * @return
-     */
-    public String getProfileImagePath(String partialPath, Map<String, Object> lastModifiedEntry){
-        String basePath = Constants.restBasePath + partialPath + "/";
-        String imagePath = null;
-        if(lastModifiedEntry!=null){
-            imagePath = basePath + lastModifiedEntry.get(Constants.profileImage);
-        }
-        if(imagePath == null)
-            imagePath = basePath + restInfoInstance.getKeyWords().get(Constants.profileImage);
-        return imagePath;
-    }
-
     @Override
     public void onClick(View view) {
         DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, view.toString(), null);
         if(view.getId() == binding.backBtn.getId()){
             this.onBackPressed();
         }
+    }
+
+    // override in subtypes
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        return false;
     }
 }
 

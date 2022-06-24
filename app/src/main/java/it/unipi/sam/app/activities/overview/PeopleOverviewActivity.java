@@ -5,8 +5,12 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+
+import androidx.room.Room;
 
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,15 +20,19 @@ import java.util.Map;
 
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.PersonInfoContentBinding;
+import it.unipi.sam.app.ui.favorites.SetFavoritesRunnable;
 import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.DMRequestWrapper;
 import it.unipi.sam.app.util.DebugUtility;
+import it.unipi.sam.app.util.FavoritesWrapper;
 import it.unipi.sam.app.util.JacksonUtil;
 import it.unipi.sam.app.util.OverviewActivityAlphaHandler;
 import it.unipi.sam.app.util.Person;
 import it.unipi.sam.app.util.ResourcePreferenceWrapper;
 import it.unipi.sam.app.util.SharedPreferenceUtility;
 import it.unipi.sam.app.util.graphics.ParamImageView;
+import it.unipi.sam.app.util.room.AppDatabase;
+import it.unipi.sam.app.util.room.FavoritesConverter;
 
 public class PeopleOverviewActivity extends OverviewActivity implements View.OnClickListener {
     private static final String TAG = "AAAPeopleOverviewActivity";
@@ -34,6 +42,9 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
 
     private ColorMatrixColorFilter cf;
     private String thisPersonPartialPath;
+
+    private AppDatabase db;
+    private Person thisPerson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +67,12 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
 
         // load cover image
         Glide
-                .with(this)
-                .load( getCoverImagePath(thisPersonPartialPath, thisLastModifiedEntry) )
-                //.centerCrop()
-                .placeholder(R.drawable.placeholder_126)
-                .error(R.drawable.placeholder_126)
-                .into(binding.toolbarLogo);
+            .with(this)
+            .load( getCoverImagePath(thisPersonPartialPath, thisLastModifiedEntry) )
+            //.centerCrop()
+            .placeholder(R.drawable.placeholder_126)
+            .error(R.drawable.placeholder_126)
+            .into(binding.toolbarLogo);
 
         // load avatar image
         Glide
@@ -74,8 +85,13 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
 
         // init grey filter for disabling social buttons
         ColorMatrix matrix = new ColorMatrix();
-        matrix.setSaturation(0);  //0 means grayscale
+        matrix.setSaturation(0);  // 0 means grayscale
         cf = new ColorMatrixColorFilter(matrix);
+
+        // ROOM
+        db = Room.databaseBuilder(this,
+                        AppDatabase.class, Constants.database_name)
+                .addTypeConverter(new FavoritesConverter()).build();
     }
 
     @Override
@@ -130,42 +146,41 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
             return;
         String content = getFileContentFromUri(uri);
         // perform jackson from file to object
-        Person p;
         try {
-            p = (Person) JacksonUtil.getObjectFromString(content, Person.class);
+            thisPerson = (Person) JacksonUtil.getObjectFromString(content, Person.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             DebugUtility.showSimpleSnackbar(binding.getRoot(), "ERROR 06. Please retry later.", 5000);
             return;
         }
-        binding.toolbarMainTextviewTitle.setText(p.getName());
-        binding.mainTextviewTitle.setText(p.getName());
-        binding.mainTextviewDescription.setText(p.getRole());
+        binding.toolbarMainTextviewTitle.setText(thisPerson.getName());
+        binding.mainTextviewTitle.setText(thisPerson.getName());
+        binding.mainTextviewDescription.setText(thisPerson.getRole());
 
         // social views
-        for (int i = 0; i<p.getSocial().size(); ++i) {
+        for (int i = 0; i< thisPerson.getSocial().size(); ++i) {
             View c = personInfoContentBinding.socialRow.getChildAt(i);
-            if(p.getSocial().get(i).equals("")){
+            if(thisPerson.getSocial().get(i).equals("")){
                 // social not available, make the view grey
                 setLocked((ImageView) c);
             }else{
                 c.setVisibility(View.VISIBLE);
-                ((ParamImageView) c).setObject(p.getSocial().get(i));
+                ((ParamImageView) c).setObject(thisPerson.getSocial().get(i));
                 c.setOnClickListener(this);
             }
         }
 
         // player info
-        if(p.getNumber()!=-1) {
-            String num = "#" + p.getNumber() + " ";
+        if(thisPerson.getNumber()!=-1) {
+            String num = "#" + thisPerson.getNumber() + " ";
             personInfoContentBinding.numberTv.setText(num);
             personInfoContentBinding.numberTv1.setText(num);
         }
-        personInfoContentBinding.nationalityValueTv.setText(p.getNation());
-        String year = ""+p.getBirthYear();
+        personInfoContentBinding.nationalityValueTv.setText(thisPerson.getNation());
+        String year = ""+ thisPerson.getBirthYear();
         personInfoContentBinding.yearValueTv.setText(year);
-        if(p.getHeight()!=-1){
-            String h = p.getHeight() + "cm";
+        if(thisPerson.getHeight()!=-1){
+            String h = thisPerson.getHeight() + "cm";
             personInfoContentBinding.heightValueTv.setText(h);
         }
 
@@ -189,6 +204,20 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
 
     public void setLocked(ImageView v) {
         v.setColorFilter(cf);
-        v.setImageAlpha(128);   // 128 = 0.5
+        v.setImageAlpha(128);   // 128 is 0.5
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if(item.getItemId()==R.id.menu_fav){
+            // todo: add or remove from favorites
+            Log.d("TAGGHE", item.toString());
+            if(thisPerson!=null)
+                new Thread(
+                        new SetFavoritesRunnable(db,
+                                new FavoritesWrapper(thisPerson))
+                ).start();
+        }
+        return false;
     }
 }

@@ -63,7 +63,7 @@ public class MaleFragment extends Fragment implements Observer< List<Map<String,
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onChanged(List<Map<String, String>> list) {
-        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "maleViewModel.getTeamsList().observe . list:"+ list, null);
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "viewModel.getMaleTeamsList().observe . list:"+ list, null);
         if(list!=null) {
             //binding.teamsPlaceholder.setVisibility(View.GONE);
             adapter.setTeams(list);
