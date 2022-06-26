@@ -81,7 +81,7 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onCreate", null);
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onCreate()", null);
 
         if(savedInstanceState!=null)
             restInfoInstance = savedInstanceState.getParcelable(Constants.rest_info_instance_key);
@@ -125,11 +125,6 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         // pull-to-refresh
         binding.appBarMain.swiperefresh.setOnRefreshListener(this);
 
-        // ROOM
-        db = AppDatabase.getDatabase(getApplicationContext());
-        // launch thread to retrive favorites from db
-        new Thread(new RetriveFavoritesRunnable(this, db)).start();
-
         // domain verification
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             try {
@@ -144,6 +139,17 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onStart()", null);
+
+        // ROOM
+        db = AppDatabase.getDatabase(getApplicationContext());
+        // launch thread to retrive favorites from db
+        new Thread(new RetriveFavoritesRunnable(this, db)).start();
     }
 
     @Override
@@ -402,5 +408,6 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
     @Override
     public void onFavoritesRetrived(List<FavoritesWrapper> favorites) {
         viewModel.setFavoritesList(favorites);
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onFavoritesRetrived()", null);
     }
 }

@@ -3,7 +3,6 @@ package it.unipi.sam.app.ui.favorites;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -14,23 +13,22 @@ import it.unipi.sam.app.util.room.AppDatabase;
 import it.unipi.sam.app.util.room.FavoritesDAO;
 
 public class RetriveFavoritesRunnable implements Runnable {
+    //private static final String TAG = "CLCLRetriveFavoritesRunnable";
     private final Handler mHandler;
     private final AppDatabase mDb;
 
     public RetriveFavoritesRunnable(RetriveFavoritesListener rfl, AppDatabase db) {
         this.mDb = db;
         mHandler = new Handler(Looper.getMainLooper()){
+            @SuppressWarnings("unchecked")
             @Override public void handleMessage(@NonNull Message msg) {
                 if(rfl == null){
                     return;
                 }
-                Log.d("TAGGHE", msg.obj.toString());
-                try {
-                    List<FavoritesWrapper> l = (List<FavoritesWrapper>) msg.obj;
-                    rfl.onFavoritesRetrived(l);
-                }catch(ClassCastException e){
-                    e.printStackTrace();
-                }
+                //DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "msg.obj:" + msg.obj, null);
+                List<FavoritesWrapper> l = (List<FavoritesWrapper>) msg.obj;
+                rfl.onFavoritesRetrived(l);
+
             }
         };
     }

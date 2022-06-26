@@ -16,6 +16,7 @@ public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;
     public abstract FavoritesDAO favoritesDAO();
 
+    // singleton pattern
     public static AppDatabase getDatabase(Context context) {
         if (instance == null) {
             instance =

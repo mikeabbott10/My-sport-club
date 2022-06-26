@@ -46,6 +46,8 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onCreate()", null);
+
         personCode = getIntent().getStringExtra(Constants.peopleCode);
         if(personCode ==null){
             DebugUtility.showSimpleSnackbar(binding.getRoot(), "No one selected, please go back.", 5000);
@@ -92,6 +94,7 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
     @Override
     protected void onStart() {
         super.onStart();
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onStart()", null);
         if(urlPersonBasePath !=null && restInfoInstance != null)
             startRequestsForPopulatingActivityLayout();
     }

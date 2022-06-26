@@ -97,7 +97,6 @@ public class DownloadActivity extends BasicActivity implements MyBroadcastListen
             String uriString = c.getString(h);
             Integer resources_type = idToResourceType.get(id);
             if(status == DownloadManager.STATUS_SUCCESSFUL){
-                // dm.remove(id); // If there is a downloaded file, partial or complete, it is deleted.
                 long lastModifiedTimestamp = c.getLong(t);
                 if(resources_type==null) {
                     c.close();

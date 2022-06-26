@@ -1,22 +1,21 @@
 package it.unipi.sam.app.util;
 
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Date;
-
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
-import com.google.android.material.snackbar.Snackbar;
 
 public class DebugUtility {
     //debug

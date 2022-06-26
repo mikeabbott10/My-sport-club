@@ -31,6 +31,7 @@ public class FavoritesFragment extends Fragment implements Observer<List<Favorit
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onCreateView()", null);
         binding = FragmentFavoritesBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
