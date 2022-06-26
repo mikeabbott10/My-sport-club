@@ -47,9 +47,16 @@
                 android:id="@+id/cv_name"
                 android:layout_alignParentBottom="true"
                 android:ellipsize="end"
-                android:background="@drawable/text_horizontal_white_gradient"
                 android:maxLines="1"
                 android:maxLength="80"
+                android:background="@drawable/rounded_corners"
+                android:backgroundTint="@color/white"
+                android:padding="3dp"
+                android:textColor="@color/black"
+                android:shadowColor="@color/white"
+                android:shadowRadius="7"
+                android:shadowDx="2"
+                android:shadowDy="2"
                 />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>

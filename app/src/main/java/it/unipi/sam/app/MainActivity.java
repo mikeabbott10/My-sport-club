@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.verify.domain.DomainVerificationManager;
 import android.content.pm.verify.domain.DomainVerificationUserState;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -56,13 +59,12 @@ import it.unipi.sam.app.util.VCNews;
 import it.unipi.sam.app.util.room.AppDatabase;
 
 //TODO:
-// 1. ShareValues activity è necessaria??
-// 3. night mode
+// 3. night mode (person placeholder non cambia)
 // 2. fare mappa+geolocalizzazione in/da pagina contatti (poi toglierla dopo aver dato SAM)
 // 5. aggiungere possibilità di ricevere notifica quando una nuova notizia è stata pubblicata
 
 public class MainActivity extends DownloadActivity implements SwipeRefreshLayout.OnRefreshListener, Observer<String>,
-        DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener, RetriveFavoritesListener {
+        DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener, RetriveFavoritesListener, View.OnClickListener {
     private static final String TAG = "AAAAMainActivity";
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -82,7 +84,6 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onCreate()", null);
-
         if(savedInstanceState!=null)
             restInfoInstance = savedInstanceState.getParcelable(Constants.rest_info_instance_key);
 
@@ -93,16 +94,29 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         toolBarLayout = binding.appBarMain.toolbarLayout;
         toolBarLayout.setTitle(getString(R.string.menu_notizie));
 
+        // set day/night mode
+        boolean isNightMode = SharedPreferenceUtility.getNightMode(this);
+        if(isNightMode){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            binding.appBarMain.fab.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
+            binding.appBarMain.fab.setImageResource(R.drawable.ic_light_mode);
+        }else{
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            binding.appBarMain.fab.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+            binding.appBarMain.fab.setImageResource(R.drawable.ic_dark_mode);
+        }
+        binding.appBarMain.fab.setOnClickListener(this);
+
         // ask for restInfo
         // rest info file is always downloaded at least once
         if(restInfoInstance==null){
             getRestInfoFile(new DMRequestWrapper(Constants.restBasePath + Constants.firstRestReqPath,
                     "notUseful", "notUseful", false, false, REST_INFO_JSON,
                     false, null, null));
+            // start refreshing status
+            binding.appBarMain.swiperefresh.setRefreshing(true);
         }
 
-        // start refreshing status
-        binding.appBarMain.swiperefresh.setRefreshing(true);
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -126,7 +140,11 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         binding.appBarMain.swiperefresh.setOnRefreshListener(this);
 
         // domain verification
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        boolean alreadyAskedForDomainVerification = false;
+        if(savedInstanceState!=null){
+            alreadyAskedForDomainVerification = savedInstanceState.getBoolean(Constants.already_asked_for_domain_approvation_this_time);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alreadyAskedForDomainVerification) {
             try {
                 boolean isDomainVerified = isDomainVerified();
                 DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "isdomainverified: "+isDomainVerified, null);
@@ -156,6 +174,7 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(Constants.rest_info_instance_key, restInfoInstance);
+        outState.putBoolean(Constants.already_asked_for_domain_approvation_this_time, true);
     }
 
     private void getRestInfoFile(DMRequestWrapper dmRequestWrapper) {
@@ -409,5 +428,24 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
     public void onFavoritesRetrived(List<FavoritesWrapper> favorites) {
         viewModel.setFavoritesList(favorites);
         DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onFavoritesRetrived()", null);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.fab){
+            boolean wasNightMode = SharedPreferenceUtility.getNightMode(this);
+            SharedPreferenceUtility.setNightMode( this, !wasNightMode);
+            if(wasNightMode){
+                // ora switch to day mode
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                binding.appBarMain.fab.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+                binding.appBarMain.fab.setImageResource(R.drawable.ic_dark_mode);
+            }else{
+                // ora switch night mode
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                binding.appBarMain.fab.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
+                binding.appBarMain.fab.setImageResource(R.drawable.ic_light_mode);
+            }
+        }
     }
 }

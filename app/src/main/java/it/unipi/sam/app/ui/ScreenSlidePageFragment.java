@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import it.unipi.sam.app.R;
-import it.unipi.sam.app.activities.ShareValues;
 import it.unipi.sam.app.databinding.FragmentScreenSlidePageBinding;
 import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.VCNews;
@@ -68,10 +67,15 @@ public class ScreenSlidePageFragment extends Fragment implements View.OnClickLis
     }
 
     private void startShareNews(long news_id) {
-        Intent i = new Intent(requireActivity(), ShareValues.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.putExtra(Constants.purpose_key, ShareValues.SHARE_NEWS_PURPOSE);
-        i.putExtra(Constants.news_id_key, news_id);
-        startActivity(i);
+        shareMe("https", "volleycecina.it", "news", Long.toString(news_id));
+    }
+
+    private void shareMe(String scheme, String host, String path, String resource_id){
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_news_presentation_text));
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, scheme + "://" + host + "/" + path + "/" + resource_id);
+        startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.share_using)));
     }
 }

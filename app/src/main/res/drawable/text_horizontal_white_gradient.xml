@@ -7,7 +7,7 @@
                 android:startColor="#00ffffff"
                 android:endColor="@color/white"
                 android:centerColor="#00ffffff"
-                android:centerX="10%"/>
+                android:centerX="40%"/>
         </shape>
     </item>
     <item
@@ -17,7 +17,7 @@
                 android:startColor="@color/white"
                 android:endColor="#00ffffff"
                 android:centerColor="#00ffffff"
-                android:centerX="90%"/>
+                android:centerX="60%"/>
         </shape>
     </item>
 </layer-list>
