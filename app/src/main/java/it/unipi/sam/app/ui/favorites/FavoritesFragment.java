@@ -22,7 +22,7 @@ import it.unipi.sam.app.util.FavoritesWrapper;
 import it.unipi.sam.app.util.ItemViewModel;
 
 public class FavoritesFragment extends Fragment implements Observer<List<FavoritesWrapper>> {
-    private String TAG = "FRFRFavoritesFragment";
+    private final String TAG = "FRFRFavoritesFragment";
     private FragmentFavoritesBinding binding;
 
     private ItemViewModel viewModel;

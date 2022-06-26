@@ -11,12 +11,13 @@ import com.google.android.material.appbar.AppBarLayout;
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.activities.DownloadActivity;
 import it.unipi.sam.app.databinding.ActivityOverviewBinding;
+import it.unipi.sam.app.ui.favorites.SetFavoritesListener;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.MyBroadcastListener;
 import it.unipi.sam.app.util.OverviewActivityAlphaHandler;
 
 public class OverviewActivity extends DownloadActivity implements AppBarLayout.OnOffsetChangedListener, MyBroadcastListener,
-                                                                    View.OnClickListener, Toolbar.OnMenuItemClickListener {
+                                                                    View.OnClickListener, Toolbar.OnMenuItemClickListener, SetFavoritesListener {
     private static final String TAG = "AAAOverviewActivity";
     protected ActivityOverviewBinding binding;
     protected float currentScrollingPercentage;
@@ -79,5 +80,10 @@ public class OverviewActivity extends DownloadActivity implements AppBarLayout.O
     public boolean onMenuItemClick(MenuItem item) {
         return false;
     }
+
+    // override in subtypes
+    @Override
+    public void onFavoritesSetted(Object obj, int operation) {}
+
 }
 

@@ -5,12 +5,9 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-
-import androidx.room.Room;
 
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,6 +17,7 @@ import java.util.Map;
 
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.PersonInfoContentBinding;
+import it.unipi.sam.app.ui.favorites.RetriveFavoritesRunnable;
 import it.unipi.sam.app.ui.favorites.SetFavoritesRunnable;
 import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.DMRequestWrapper;
@@ -32,7 +30,6 @@ import it.unipi.sam.app.util.ResourcePreferenceWrapper;
 import it.unipi.sam.app.util.SharedPreferenceUtility;
 import it.unipi.sam.app.util.graphics.ParamImageView;
 import it.unipi.sam.app.util.room.AppDatabase;
-import it.unipi.sam.app.util.room.FavoritesConverter;
 
 public class PeopleOverviewActivity extends OverviewActivity implements View.OnClickListener {
     private static final String TAG = "AAAPeopleOverviewActivity";
@@ -89,9 +86,7 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
         cf = new ColorMatrixColorFilter(matrix);
 
         // ROOM
-        db = Room.databaseBuilder(this,
-                        AppDatabase.class, Constants.database_name)
-                .addTypeConverter(new FavoritesConverter()).build();
+        db = AppDatabase.getDatabase(getApplicationContext());
     }
 
     @Override
@@ -188,6 +183,14 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
 
         binding.infoContainer.addView(personInfoContentBinding.getRoot());
 
+        // set favorites icon
+        new Thread(new RetriveFavoritesRunnable(favorites -> {
+            if(favorites.contains(new FavoritesWrapper(thisPerson))){
+                binding.overviewToolbar.getMenu().getItem(0).setIcon(R.drawable.ic_filled_red_heart);
+            }else
+                binding.overviewToolbar.getMenu().getItem(0).setIcon(R.drawable.ic_empty_heart);
+        }, db)).start();
+
         // update resource preference if needed
         if(updateResourcePreference)
             SharedPreferenceUtility.setResourceUri(this, Constants.people_key+personCode+type, uri, lastModifiedTimestamp, dm_resource_id);
@@ -210,14 +213,24 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if(item.getItemId()==R.id.menu_fav){
-            // todo: add or remove from favorites
-            Log.d("TAGGHE", item.toString());
+            // add or remove from favorites
             if(thisPerson!=null)
                 new Thread(
                         new SetFavoritesRunnable(db,
-                                new FavoritesWrapper(thisPerson))
+                                new FavoritesWrapper(thisPerson),
+                                this, item
+                        )
                 ).start();
         }
         return false;
+    }
+
+    @Override
+    public void onFavoritesSetted(Object obj, int operation) {
+        if(operation==SetFavoritesRunnable.DELETED){
+            ((MenuItem)obj).setIcon(R.drawable.ic_empty_heart);
+        }else if(operation==SetFavoritesRunnable.INSERTED){
+            ((MenuItem)obj).setIcon(R.drawable.ic_filled_red_heart);
+        }
     }
 }

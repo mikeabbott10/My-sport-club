@@ -3,11 +3,8 @@ package it.unipi.sam.app.activities.overview;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-
-import androidx.room.Room;
 
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +14,7 @@ import java.util.Map;
 
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.TeamInfoContentBinding;
+import it.unipi.sam.app.ui.favorites.RetriveFavoritesRunnable;
 import it.unipi.sam.app.ui.favorites.SetFavoritesRunnable;
 import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.DMRequestWrapper;
@@ -30,7 +28,6 @@ import it.unipi.sam.app.util.Team;
 import it.unipi.sam.app.util.graphics.ParamImageView;
 import it.unipi.sam.app.util.graphics.ParamTextView;
 import it.unipi.sam.app.util.room.AppDatabase;
-import it.unipi.sam.app.util.room.FavoritesConverter;
 
 public class TeamOverviewActivity extends OverviewActivity implements View.OnClickListener {
     private static final String TAG = "AAATeamOverviewActivity";
@@ -38,7 +35,6 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
     private String teamCode;
     protected TeamInfoContentBinding teamInfoContentBinding;
     private String thisTeamPartialPath;
-    private Map<String, Object> thisLastModifiedEntry;
 
     private AppDatabase db;
     private Team thisTeam;
@@ -59,9 +55,8 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         }
         thisTeamPartialPath = restInfoInstance.getTeamsPath() + teamCode;
         urlTeamBasePath = Constants.restBasePath + thisTeamPartialPath + "/";
-        thisLastModifiedEntry = restInfoInstance.getLastModified().get(thisTeamPartialPath);
+        Map<String, Object> thisLastModifiedEntry = restInfoInstance.getLastModified().get(thisTeamPartialPath);
 
-        startRequestsForPopulatingActivityLayout();
 
         teamInfoContentBinding = TeamInfoContentBinding.inflate(getLayoutInflater());
         // load cover image
@@ -77,9 +72,9 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
         binding.avatarImage.setDisableCircularTransformation(true);
 
         // ROOM
-        db = Room.databaseBuilder(this,
-                        AppDatabase.class, Constants.database_name)
-                .addTypeConverter(new FavoritesConverter()).build();
+        db = AppDatabase.getDatabase(getApplicationContext());
+
+        startRequestsForPopulatingActivityLayout();
     }
 
     @Override
@@ -245,6 +240,14 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
 
         binding.infoContainer.addView(teamInfoContentBinding.getRoot());
 
+        // set favorites icon
+        new Thread(new RetriveFavoritesRunnable(favorites -> {
+            if(favorites.contains(new FavoritesWrapper(thisTeam))){
+                binding.overviewToolbar.getMenu().getItem(0).setIcon(R.drawable.ic_filled_red_heart);
+            }else
+                binding.overviewToolbar.getMenu().getItem(0).setIcon(R.drawable.ic_empty_heart);
+        }, db)).start();
+
         // update resource preference if needed
         if(updateResourcePreference)
             SharedPreferenceUtility.setResourceUri(this, Constants.teams_key+teamCode+type, uri, lastModifiedTimestamp, dm_resource_id);
@@ -274,13 +277,24 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
     public boolean onMenuItemClick(MenuItem item) {
         if(item.getItemId()==R.id.menu_fav){
             // add or remove from favorites
-            Log.d("TAGGHE", item.toString());
             if(thisTeam!=null)
                 new Thread(
                         new SetFavoritesRunnable(db,
-                                new FavoritesWrapper(thisTeam))
+                                new FavoritesWrapper(thisTeam),
+                                this, item
+                        )
                 ).start();
         }
         return false;
     }
+
+    @Override
+    public void onFavoritesSetted(Object obj, int operation) {
+        if(operation==SetFavoritesRunnable.DELETED){
+            ((MenuItem)obj).setIcon(R.drawable.ic_empty_heart);
+        }else if(operation==SetFavoritesRunnable.INSERTED){
+            ((MenuItem)obj).setIcon(R.drawable.ic_filled_red_heart);
+        }
+    }
+
 }

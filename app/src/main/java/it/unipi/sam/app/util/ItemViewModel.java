@@ -56,7 +56,7 @@ public class ItemViewModel extends ViewModel {
         // Get the LiveData, setting the default value if it doesn't already have a value set.
         return savedStateHandle.getLiveData(favoritesKey, new ArrayList<>());
     }
-    public void setFavoritesListList(List<FavoritesWrapper> l){
+    public void setFavoritesList(List<FavoritesWrapper> l){
         savedStateHandle.set(favoritesKey, l);
     }
 

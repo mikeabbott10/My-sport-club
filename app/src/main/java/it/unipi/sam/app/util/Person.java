@@ -1,12 +1,16 @@
 package it.unipi.sam.app.util;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class Person {
+public class Person implements Parcelable {
     private String tag;
     private String name;
     private String role;
@@ -16,6 +20,36 @@ public class Person {
     private int height;
     private Map<String,String> team;
     private ArrayList<String> social;
+
+    protected Person(Parcel in) {
+        tag = in.readString();
+        name = in.readString();
+        role = in.readString();
+        number = in.readInt();
+        nation = in.readString();
+        birthYear = in.readInt();
+        height = in.readInt();
+
+        final int teamMapLength = in.readInt(); // size of team map
+        team = new HashMap<>();
+        for (int j = 0; j < teamMapLength; j++) {
+            team.put(in.readString(), in.readString());
+        }
+
+        social = in.createStringArrayList();
+    }
+
+    public static final Creator<Person> CREATOR = new Creator<Person>() {
+        @Override
+        public Person createFromParcel(Parcel in) {
+            return new Person(in);
+        }
+
+        @Override
+        public Person[] newArray(int size) {
+            return new Person[size];
+        }
+    };
 
     public String getTag() {
         return tag;
@@ -78,5 +112,29 @@ public class Person {
     }
     public void setSocial(ArrayList<String> social) {
         this.social = social;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(tag);
+        parcel.writeString(name);
+        parcel.writeString(role);
+        parcel.writeInt(number);
+        parcel.writeString(nation);
+        parcel.writeInt(birthYear);
+        parcel.writeInt(height);
+
+        parcel.writeInt(team.size()); // size of team map
+        for (Map.Entry<String, String> entry : team.entrySet()) {
+            parcel.writeString(entry.getKey());
+            parcel.writeString(entry.getValue());
+        }
+
+        parcel.writeStringList(social);
     }
 }

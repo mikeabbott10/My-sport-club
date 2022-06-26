@@ -3,6 +3,7 @@ package it.unipi.sam.app.util;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Entity(tableName = "favorites") //, ignoredColumns = {"FAVORITE_NEWS", "FAVORITE_TEAM", "FAVORITE_PERSON"})
-public class FavoritesWrapper implements Parcelable {
+public class FavoritesWrapper implements Parcelable, Comparable<FavoritesWrapper> {
     @Ignore
     public static final int FAVORITE_NEWS = 0;
     @Ignore
@@ -103,5 +104,52 @@ public class FavoritesWrapper implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(id);
         parcel.writeParcelable(news, i);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(!(obj instanceof FavoritesWrapper)){
+            return false;
+        }
+        FavoritesWrapper otherFavWrap = (FavoritesWrapper) obj;
+        int thisInstanceOf = this.getInstance();
+        if(this.getInstance() != otherFavWrap.getInstance())
+            return false;
+        switch(thisInstanceOf){
+            case FAVORITE_NEWS:{
+                return this.news.getId()==otherFavWrap.getNews().getId() && this.news.getDate()==otherFavWrap.getNews().getDate();
+            }
+            case FAVORITE_TEAM:{
+                return this.team.getTag().equals(otherFavWrap.getTeam().getTag());
+            }
+            case FAVORITE_PERSON:{
+                return this.person.getTag().equals(otherFavWrap.getPerson().getTag());
+            }
+        }
+        return super.equals(obj);
+    }
+
+    @Override
+    public int compareTo(FavoritesWrapper favoritesWrapper) {
+        switch(this.getInstance()) {
+            case FavoritesWrapper.FAVORITE_PERSON: {
+                if(favoritesWrapper.getInstance() != FAVORITE_PERSON)
+                    return -1;
+                return this.person.getName().compareTo(favoritesWrapper.getPerson().getName());
+            }
+            case FavoritesWrapper.FAVORITE_TEAM: {
+                if(favoritesWrapper.getInstance() == FAVORITE_PERSON)
+                    return 1;
+                if(favoritesWrapper.getInstance() == FAVORITE_TEAM)
+                    return this.team.getCurrentLeague().compareTo(favoritesWrapper.getTeam().getCurrentLeague());
+                return -1;
+            }
+            case FavoritesWrapper.FAVORITE_NEWS:{
+                if(favoritesWrapper.getInstance() != FAVORITE_NEWS)
+                    return 1;
+                return this.news.date > favoritesWrapper.getNews().date ? -1 : 1;
+            }
+        }
+        return 0;
     }
 }

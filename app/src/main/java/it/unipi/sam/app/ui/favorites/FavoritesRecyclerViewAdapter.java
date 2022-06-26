@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import it.unipi.sam.app.MainActivity;
@@ -52,6 +53,7 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
     Context context;
     List<FavoritesWrapper> favorites;
     public void setFavorites(List<FavoritesWrapper> favorites) {
+        Collections.sort(favorites);
         this.favorites = favorites;
     }
 
@@ -61,8 +63,8 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
     }
 
     @Override
-    public int getItemCount() {
-        return favorites.size();
+    public int getItemViewType(int i) {
+        return favorites.get(i).getInstance();
     }
 
     @Override
@@ -114,11 +116,10 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
         }
     }
 
-    @NonNull
-    @Override
-    public FavoritesRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup vg, int i) {
+    @NonNull @Override
+    public FavoritesRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup vg, int viewType) {
         View v = LayoutInflater.from(vg.getContext()).inflate(R.layout.news_item, vg, false);
-        switch(favorites.get(i).getInstance()) {
+        switch(viewType) {
             case FavoritesWrapper.FAVORITE_TEAM: {
                 v = LayoutInflater.from(vg.getContext()).inflate(R.layout.teams_item, vg, false);
                 return new FavoritesRecyclerViewAdapter.ViewHolder(v);
@@ -137,7 +138,7 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
         FavoritesWrapper fav = favorites.get(i);
         if(fav==null) return;
 
-        switch(fav.getInstance()){
+        switch(viewHolder.getItemViewType()/*fav.getInstance()*/){
             case FavoritesWrapper.FAVORITE_NEWS:
                 viewHolder.name.setText(fav.getNews().getTitle());
                 viewHolder.desc.setText(Html.fromHtml(fav.getNews().getDescription()));
@@ -202,13 +203,17 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
         }
 
         viewHolder.itemView.setOnClickListener(this);
-
         //DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, "AAAA", "pos: "+i, null);
     }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    @Override
+    public int getItemCount() {
+        return favorites.size();
     }
 
 }

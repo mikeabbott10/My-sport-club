@@ -25,7 +25,12 @@ public class RetriveFavoritesRunnable implements Runnable {
                     return;
                 }
                 Log.d("TAGGHE", msg.obj.toString());
-                rfl.onFavoritesRetrived((List<FavoritesWrapper>) msg.obj);
+                try {
+                    List<FavoritesWrapper> l = (List<FavoritesWrapper>) msg.obj;
+                    rfl.onFavoritesRetrived(l);
+                }catch(ClassCastException e){
+                    e.printStackTrace();
+                }
             }
         };
     }
@@ -35,14 +40,9 @@ public class RetriveFavoritesRunnable implements Runnable {
         // ottengo preferiti
         FavoritesDAO favoritesDAO = mDb.favoritesDAO();
         List<FavoritesWrapper> favorites = favoritesDAO.getAll();
-        sendMessageToHandler(0,0,favorites);
-    }
 
-    private void sendMessageToHandler(int arg1, int arg2, Object obj){
-        Message incomingMessage = new Message();
-        incomingMessage.arg1 = arg1;
-        incomingMessage.arg2 = arg2;
-        incomingMessage.obj = obj;
-        mHandler.sendMessage(incomingMessage);
+        Message msg = new Message();
+        msg.obj = favorites;
+        mHandler.sendMessage(msg);
     }
 }

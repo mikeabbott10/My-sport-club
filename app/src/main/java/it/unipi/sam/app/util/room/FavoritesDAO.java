@@ -14,8 +14,11 @@ public interface FavoritesDAO {
     @Insert
     void insertAll(FavoritesWrapper... favWrappers);
 
+    /*//custom delete
+    @Query("DELETE FROM favorites WHERE id = :favoritesWrapperId")
+    void delete(int favoritesWrapperId);*/
     @Delete
-    void delete(FavoritesWrapper favoritesWrapper);
+    Integer delete(FavoritesWrapper favoritesWrapper);
 
     @Query("SELECT * FROM favorites")
     List<FavoritesWrapper> getAll();

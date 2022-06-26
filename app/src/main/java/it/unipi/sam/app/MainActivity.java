@@ -26,7 +26,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.room.Room;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -55,14 +54,12 @@ import it.unipi.sam.app.util.ResourcePreferenceWrapper;
 import it.unipi.sam.app.util.SharedPreferenceUtility;
 import it.unipi.sam.app.util.VCNews;
 import it.unipi.sam.app.util.room.AppDatabase;
-import it.unipi.sam.app.util.room.FavoritesConverter;
 
 //TODO:
-// 1. ShareValues è necessaria??
+// 1. ShareValues activity è necessaria??
 // 3. night mode
 // 2. fare mappa+geolocalizzazione in/da pagina contatti (poi toglierla dopo aver dato SAM)
-// 4. implementare preferiti -> usa ROOM per ottenere preferiti (Lezione 13 slide 37)
-// 5. scelta preferiti o news come primo fragment (sharedpreferences + preferenceScreen)
+// 5. aggiungere possibilità di ricevere notifica quando una nuova notizia è stata pubblicata
 
 public class MainActivity extends DownloadActivity implements SwipeRefreshLayout.OnRefreshListener, Observer<String>,
         DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener, RetriveFavoritesListener {
@@ -129,9 +126,7 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         binding.appBarMain.swiperefresh.setOnRefreshListener(this);
 
         // ROOM
-        db = Room.databaseBuilder(this,
-                        AppDatabase.class, Constants.database_name)
-                .addTypeConverter(new FavoritesConverter()).build();
+        db = AppDatabase.getDatabase(getApplicationContext());
         // launch thread to retrive favorites from db
         new Thread(new RetriveFavoritesRunnable(this, db)).start();
 
@@ -406,6 +401,6 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
     // RetriveFavoritesListener implementation
     @Override
     public void onFavoritesRetrived(List<FavoritesWrapper> favorites) {
-        viewModel.setFavoritesListList(favorites);
+        viewModel.setFavoritesList(favorites);
     }
 }
