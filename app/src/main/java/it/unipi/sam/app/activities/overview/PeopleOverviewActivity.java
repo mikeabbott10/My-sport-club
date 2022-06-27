@@ -62,6 +62,7 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
         urlPersonBasePath = Constants.restBasePath + thisPersonPartialPath + "/";
         Map<String, Object> thisLastModifiedEntry = restInfoInstance.getLastModified().get(thisPersonPartialPath);
 
+
         personInfoContentBinding = PersonInfoContentBinding.inflate(getLayoutInflater());
 
         // load cover image

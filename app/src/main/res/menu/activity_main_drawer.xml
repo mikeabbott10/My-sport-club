@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
@@ -28,5 +29,11 @@
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
             android:title="@string/menu_settings" />
+        <item
+            android:id="@+id/nav_nightmode"
+            android:icon="@drawable/ic_light_mode"
+            android:title="@string/night_mode"
+            app:actionLayout="@layout/layout_switch"
+            />
     </group>
 </menu>

@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.verify.domain.DomainVerificationManager;
 import android.content.pm.verify.domain.DomainVerificationUserState;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +20,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -59,8 +58,8 @@ import it.unipi.sam.app.util.VCNews;
 import it.unipi.sam.app.util.room.AppDatabase;
 
 //TODO:
-// 3. night mode (person placeholder non cambia)
-// 2. fare mappa+geolocalizzazione in/da pagina contatti (poi toglierla dopo aver dato SAM)
+// 3. night mode frizza la UI
+// 4. disabilita scroll in people activity
 // 5. aggiungere possibilità di ricevere notifica quando una nuova notizia è stata pubblicata
 
 public class MainActivity extends DownloadActivity implements SwipeRefreshLayout.OnRefreshListener, Observer<String>,
@@ -95,15 +94,23 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         toolBarLayout.setTitle(getString(R.string.menu_notizie));
 
         // set day/night mode
+        SwitchCompat drawerSwitch = binding.navView.getMenu().findItem(R.id.nav_nightmode).getActionView().findViewById(R.id.nightmode_switch);
+        drawerSwitch.setOnCheckedChangeListener(this);
         boolean isNightMode = SharedPreferenceUtility.getNightMode(this);
         if(isNightMode){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            binding.appBarMain.fab.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
-            binding.appBarMain.fab.setImageResource(R.drawable.ic_light_mode);
+            drawerSwitch.setChecked(true);
         }else{
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            binding.appBarMain.fab.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-            binding.appBarMain.fab.setImageResource(R.drawable.ic_dark_mode);
+            drawerSwitch.setChecked(false);
+        }
+
+        // set notification enabled/disabled
+        if(SharedPreferenceUtility.getNotificationEnabled(this)){
+            // notifiche abilitate
+            binding.appBarMain.fab.setImageResource(R.drawable.ic_no_notification);
+        }else{
+            binding.appBarMain.fab.setImageResource(R.drawable.ic_active_notification);
         }
         binding.appBarMain.fab.setOnClickListener(this);
 
@@ -337,11 +344,24 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         // Perform an action with the latest item data
         toolBarLayout.setTitle(item);
         binding.appBarMain.swiperefresh.setEnabled(true);
+        if(item.equals(getString(R.string.menu_notizie))){
+            if(SharedPreferenceUtility.getNotificationEnabled(this)){
+                // notifiche abilitate
+                binding.appBarMain.fab.setImageResource(R.drawable.ic_no_notification);
+            }else{
+                binding.appBarMain.fab.setImageResource(R.drawable.ic_active_notification);
+            }
+            binding.appBarMain.fab.setVisibility(View.VISIBLE);
+            return;
+        }
+
         if(item.equals(getString(R.string.menu_contatti))){
             binding.appBarMain.swiperefresh.setEnabled(false);
         }else  if(item.equals(getString(R.string.menu_settings))){
             binding.appBarMain.swiperefresh.setEnabled(false);
         }
+
+        binding.appBarMain.fab.setVisibility(View.GONE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.S)
@@ -414,13 +434,25 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
     }
 
     /**
-     * Listen to the changes of the checkbox inside AlertDialog
+     * Listen to the changes of the checkbox inside AlertDialog and the nightmode switch
      * @param compoundButton
-     * @param b
+     * @param isChecked
      */
     @Override
-    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        SharedPreferenceUtility.setDontAskForDomainVerification(this, compoundButton.isChecked());
+    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        if(compoundButton.getId() == R.id.nightmode_switch){
+            if (isChecked) {
+                // do stuff
+                SharedPreferenceUtility.setNightMode( this, true);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                // do other stuff
+                SharedPreferenceUtility.setNightMode( this, false);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
+        }else {
+            SharedPreferenceUtility.setDontAskForDomainVerification(this, compoundButton.isChecked());
+        }
     }
 
     // RetriveFavoritesListener implementation
@@ -433,18 +465,14 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.fab){
-            boolean wasNightMode = SharedPreferenceUtility.getNightMode(this);
-            SharedPreferenceUtility.setNightMode( this, !wasNightMode);
-            if(wasNightMode){
-                // ora switch to day mode
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                binding.appBarMain.fab.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-                binding.appBarMain.fab.setImageResource(R.drawable.ic_dark_mode);
+            boolean wasNotificationEnabled = SharedPreferenceUtility.getNotificationEnabled(this);
+            SharedPreferenceUtility.setNotificationEnabled( this, !wasNotificationEnabled);
+            if(wasNotificationEnabled){
+                // ora switch to no notification
+                binding.appBarMain.fab.setImageResource(R.drawable.ic_active_notification);
             }else{
-                // ora switch night mode
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                binding.appBarMain.fab.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
-                binding.appBarMain.fab.setImageResource(R.drawable.ic_light_mode);
+                // ora switch to active notification
+                binding.appBarMain.fab.setImageResource(R.drawable.ic_no_notification);
             }
         }
     }

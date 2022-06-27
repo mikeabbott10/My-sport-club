@@ -70,7 +70,8 @@
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         app:backgroundTint="@color/white"
-        app:srcCompat="@drawable/ic_light_mode"
+        app:srcCompat="@drawable/ic_active_notification"
+
         app:borderWidth="0dp"
         tools:ignore="ContentDescription" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

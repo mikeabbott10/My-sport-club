@@ -1,4 +1,5 @@
 package it.unipi.sam.app.util;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,7 +11,18 @@ import androidx.preference.PreferenceManager;
 public class SharedPreferenceUtility {
     private static final String TAG = "CLCLSharedPreference";
 
-    // show contacts popup
+    // night mode
+    public static boolean getNotificationEnabled(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getBoolean(Constants.notification_enabled_key, false);
+    }
+    public static void setNotificationEnabled(Context ctx, boolean enable) {
+        SharedPreferences.Editor spEditor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
+        spEditor.putBoolean(Constants.notification_enabled_key, enable);
+        spEditor.apply();
+    }
+
+    // night mode
     public static boolean getNightMode(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getBoolean(Constants.nightmode_key, false);
@@ -121,6 +133,4 @@ public class SharedPreferenceUtility {
         }
         return false;
     }
-
-
 }

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="customDarkLightIconColor">@color/black</color>
+
     <color name="ic_close_adaptive_background">#9B0000</color>
     <color name="ic_ok_adaptive_background">#25C487</color>
     <color name="ic_share_adaptive_background">#EEEEEF</color>
