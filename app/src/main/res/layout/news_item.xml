@@ -40,6 +40,7 @@
                 android:maxLines="1"
                 android:maxLength="80"
                 android:textSize="18sp"
+                android:textColor="@color/customDarkLightIconColor"
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -51,6 +52,7 @@
                 android:maxLines="4"
                 android:maxLength="400"
                 android:textSize="15sp"
+                android:textColor="@color/customDarkLightIconColor"
                 />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>

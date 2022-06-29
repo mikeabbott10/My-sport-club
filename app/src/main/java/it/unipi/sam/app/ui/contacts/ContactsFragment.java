@@ -1,7 +1,6 @@
 package it.unipi.sam.app.ui.contacts;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -80,13 +79,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         binding.img4.setAlpha((float) 0.3);
         binding.img5.setAlpha((float) 0.3);
 
-        binding.maintv.setTextColor(Color.GRAY);
-        binding.maintv1.setTextColor(Color.GRAY);
-        binding.maintv2.setTextColor(Color.GRAY);
-        binding.maintv3.setTextColor(Color.GRAY);
-        binding.maintv4.setTextColor(Color.GRAY);
-        binding.maintv5.setTextColor(Color.GRAY);
-
         if(view.getId() == binding.addressLayout.getId()){
             binding.img.setAlpha((float) 1.0);
             if(currentContactsEntry==GOOGLE_MAPS){
@@ -98,9 +90,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                         Uri.parse(getString(R.string.sede_maps_link))));*/
             }else{
                 currentContactsEntry = GOOGLE_MAPS;
-                binding.maintv.setTextColor(Color.BLACK);
                 binding.maintv.startAnimation(AnimationUtils.loadAnimation(requireActivity(),
-                        R.anim.blink));
+                        R.anim.shake));
                 // se posso ancora mostrare la snackbar: mostra snackbar
                 if( ! SharedPreferenceUtility.getDontShowContactsPopup(requireActivity())){
                     Snackbar sb = Snackbar.make(binding.getRoot(), getString(R.string.tap_again_to_maps), 2000);
@@ -115,9 +106,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                         Uri.parse(getString(R.string.phone_call_link))));
             }else{
                 currentContactsEntry = PHONE;
-                binding.maintv1.setTextColor(Color.BLACK);
                 binding.maintv1.startAnimation(AnimationUtils.loadAnimation(requireActivity(),
-                        R.anim.blink));
+                        R.anim.shake));
                 // se posso ancora mostrare la snackbar: mostra snackbar
                 if( ! SharedPreferenceUtility.getDontShowContactsPopup(requireActivity())){
                     Snackbar sb = Snackbar.make(binding.getRoot(), getString(R.string.tap_again_to_phone), 2000);
@@ -132,9 +122,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                         Uri.parse(getString(R.string.mailto_link))));
             }else{
                 currentContactsEntry = EMAIL;
-                binding.maintv2.setTextColor(Color.BLACK);
                 binding.maintv2.startAnimation(AnimationUtils.loadAnimation(requireActivity(),
-                        R.anim.blink));
+                        R.anim.shake));
                 // se posso ancora mostrare la snackbar: mostra snackbar
                 if( ! SharedPreferenceUtility.getDontShowContactsPopup(requireActivity())){
                     Snackbar sb = Snackbar.make(binding.getRoot(), getString(R.string.tap_again_to_email), 2000);
@@ -149,9 +138,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                         Uri.parse(getString(R.string.website_url))));
             }else{
                 currentContactsEntry = WEBSITE;
-                binding.maintv3.setTextColor(Color.BLACK);
                 binding.maintv3.startAnimation(AnimationUtils.loadAnimation(requireActivity(),
-                        R.anim.blink));
+                        R.anim.shake));
                 // se posso ancora mostrare la snackbar: mostra snackbar
                 if( ! SharedPreferenceUtility.getDontShowContactsPopup(requireActivity())){
                     Snackbar sb = Snackbar.make(binding.getRoot(), getString(R.string.tap_again_to_website), 2000);
@@ -166,9 +154,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                         Uri.parse(getString(R.string.instagram_link))));
             }else{
                 currentContactsEntry = INSTAGRAM;
-                binding.maintv4.setTextColor(Color.BLACK);
                 binding.maintv4.startAnimation(AnimationUtils.loadAnimation(requireActivity(),
-                        R.anim.blink));
+                        R.anim.shake));
                 // se posso ancora mostrare la snackbar: mostra snackbar
                 if( ! SharedPreferenceUtility.getDontShowContactsPopup(requireActivity())){
                     Snackbar sb = Snackbar.make(binding.getRoot(), getString(R.string.tap_again_to_instagram), 2000);
@@ -183,9 +170,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                         Uri.parse(getString(R.string.facebook_link))));
             }else{
                 currentContactsEntry = FACEBOOK;
-                binding.maintv5.setTextColor(Color.BLACK);
                 binding.maintv5.startAnimation(AnimationUtils.loadAnimation(requireActivity(),
-                        R.anim.blink));
+                        R.anim.shake));
                 // se posso ancora mostrare la snackbar: mostra snackbar
                 if( ! SharedPreferenceUtility.getDontShowContactsPopup(requireActivity())){
                     Snackbar sb = Snackbar.make(binding.getRoot(), getString(R.string.tap_again_to_facebook), 2000);

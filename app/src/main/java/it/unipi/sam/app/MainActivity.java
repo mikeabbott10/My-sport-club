@@ -61,6 +61,8 @@ import it.unipi.sam.app.util.room.AppDatabase;
 // 3. night mode frizza la UI
 // 4. disabilita scroll in people activity
 // 5. aggiungere possibilità di ricevere notifica quando una nuova notizia è stata pubblicata
+// 6. accelerometro/giroscopio in funzione avanzata "Allenamento"
+// 7. cronometro in funzione avanzata "Cronometro"
 
 public class MainActivity extends DownloadActivity implements SwipeRefreshLayout.OnRefreshListener, Observer<String>,
         DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener, RetriveFavoritesListener, View.OnClickListener {
@@ -78,13 +80,25 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
 
     // room
     public AppDatabase db;
+    private boolean favoritesRetrived = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // set day/night mode
+        boolean isNightMode = SharedPreferenceUtility.getNightMode(this);
+        if(isNightMode){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }/*else{
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }*/
+
         super.onCreate(savedInstanceState);
         DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onCreate()", null);
-        if(savedInstanceState!=null)
+        if(savedInstanceState!=null){
             restInfoInstance = savedInstanceState.getParcelable(Constants.rest_info_instance_key);
+            favoritesRetrived = savedInstanceState.getBoolean(Constants.favorites_already_retrived_key);
+        }else
+            favoritesRetrived = false;
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -95,15 +109,8 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
 
         // set day/night mode
         SwitchCompat drawerSwitch = binding.navView.getMenu().findItem(R.id.nav_nightmode).getActionView().findViewById(R.id.nightmode_switch);
+        drawerSwitch.setChecked(isNightMode);
         drawerSwitch.setOnCheckedChangeListener(this);
-        boolean isNightMode = SharedPreferenceUtility.getNightMode(this);
-        if(isNightMode){
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            drawerSwitch.setChecked(true);
-        }else{
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            drawerSwitch.setChecked(false);
-        }
 
         // set notification enabled/disabled
         if(SharedPreferenceUtility.getNotificationEnabled(this)){
@@ -128,7 +135,8 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_notizie, R.id.nav_favoriti, R.id.nav_femminile, R.id.nav_maschile, R.id.nav_contatti, R.id.nav_settings)
+                R.id.nav_notizie, R.id.nav_favoriti, R.id.nav_femminile, R.id.nav_maschile,
+                R.id.nav_contatti, R.id.nav_advanced_functions, R.id.nav_settings)
                 .setOpenableLayout(binding.drawerLayout)
                 .build();
         NavHostFragment navHostFragment =
@@ -173,8 +181,10 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
 
         // ROOM
         db = AppDatabase.getDatabase(getApplicationContext());
-        // launch thread to retrive favorites from db
-        new Thread(new RetriveFavoritesRunnable(this, db)).start();
+        // launch thread to retrive favorites from db (if favorites've been not retrived yet)
+        //if(!favoritesRetrived)
+            new Thread(new RetriveFavoritesRunnable(this, db)).start();
+        favoritesRetrived = true;
     }
 
     @Override
@@ -182,6 +192,7 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         super.onSaveInstanceState(outState);
         outState.putParcelable(Constants.rest_info_instance_key, restInfoInstance);
         outState.putBoolean(Constants.already_asked_for_domain_approvation_this_time, true);
+        outState.putBoolean(Constants.favorites_already_retrived_key, favoritesRetrived);
     }
 
     private void getRestInfoFile(DMRequestWrapper dmRequestWrapper) {
@@ -355,9 +366,9 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
             return;
         }
 
-        if(item.equals(getString(R.string.menu_contatti))){
-            binding.appBarMain.swiperefresh.setEnabled(false);
-        }else  if(item.equals(getString(R.string.menu_settings))){
+        if(item.equals(getString(R.string.menu_contatti)) || item.equals(getString(R.string.menu_settings))
+                    || item.equals(getString(R.string.menu_favoriti))
+                    || item.equals(getString(R.string.menu_avanzate))) {
             binding.appBarMain.swiperefresh.setEnabled(false);
         }
 

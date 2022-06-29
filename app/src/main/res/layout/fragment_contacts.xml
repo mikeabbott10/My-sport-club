@@ -38,7 +38,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@id/img"
                 android:ellipsize="end"
-                android:textColor="@color/gray"
+                android:textColor="@color/customDarkLightIconColor"
                 android:maxLength="80"
                 android:maxLines="1"
                 android:text="@string/indirizzo_sede"
@@ -48,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/maintv"
-                android:layout_toEndOf="@+id/img"
+                android:layout_toEndOf="@id/img"
                 android:ellipsize="end"
                 android:maxLength="50"
                 android:maxLines="1"
@@ -83,11 +83,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@id/img1"
-                android:textColor="@color/gray"
                 android:ellipsize="end"
                 android:maxLength="80"
                 android:maxLines="1"
                 android:text="@string/telefono_sede"
+                android:textColor="@color/customDarkLightIconColor"
                 android:textSize="18sp" />
 
             <TextView
@@ -128,11 +128,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@id/img2"
-                android:textColor="@color/gray"
                 android:ellipsize="end"
                 android:maxLength="80"
                 android:maxLines="1"
                 android:text="@string/email_fipav"
+                android:textColor="@color/customDarkLightIconColor"
                 android:textSize="18sp" />
 
             <TextView
@@ -172,11 +172,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@id/img3"
-                android:textColor="@color/gray"
                 android:ellipsize="end"
                 android:maxLength="80"
                 android:maxLines="1"
                 android:text="@string/website_url"
+                android:textColor="@color/customDarkLightIconColor"
                 android:textSize="18sp" />
 
             <TextView
@@ -216,11 +216,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@id/img4"
-                android:textColor="@color/gray"
                 android:ellipsize="end"
                 android:maxLength="80"
                 android:maxLines="1"
                 android:text="@string/instagram_name"
+                android:textColor="@color/customDarkLightIconColor"
                 android:textSize="18sp" />
 
             <TextView
@@ -260,11 +260,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@id/img5"
-                android:textColor="@color/gray"
                 android:ellipsize="end"
                 android:maxLength="80"
                 android:maxLines="1"
                 android:text="@string/instagram_name"
+                android:textColor="@color/customDarkLightIconColor"
                 android:textSize="18sp" />
 
             <TextView

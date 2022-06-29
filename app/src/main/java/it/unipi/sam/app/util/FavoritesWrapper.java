@@ -49,6 +49,8 @@ public class FavoritesWrapper implements Parcelable, Comparable<FavoritesWrapper
     protected FavoritesWrapper(Parcel in) {
         id = in.readInt();
         news = in.readParcelable(VCNews.class.getClassLoader());
+        team = in.readParcelable(Team.class.getClassLoader());
+        person = in.readParcelable(Person.class.getClassLoader());
     }
 
     public static final Creator<FavoritesWrapper> CREATOR = new Creator<FavoritesWrapper>() {
@@ -104,6 +106,8 @@ public class FavoritesWrapper implements Parcelable, Comparable<FavoritesWrapper
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(id);
         parcel.writeParcelable(news, i);
+        parcel.writeParcelable(team, i);
+        parcel.writeParcelable(person, i);
     }
 
     @Override

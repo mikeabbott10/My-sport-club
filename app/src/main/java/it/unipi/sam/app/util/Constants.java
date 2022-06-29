@@ -29,7 +29,9 @@ public class Constants {
     public static String nightmode_key = "nm";
     public static String notification_enabled_key = "nek";
 
+    //savedInstanceState
     public static String already_asked_for_domain_approvation_this_time = "aafdatt";
+    public static String favorites_already_retrived_key = "fark";
 
     // intent bundle keys
     public static String rest_info_instance_key = "rest_info_instance_key";

@@ -35,6 +35,8 @@ import it.unipi.sam.app.util.VCNews;
 import it.unipi.sam.app.util.graphics.ParamLinearLayout;
 
 public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<FavoritesRecyclerViewAdapter.ViewHolder> implements View.OnClickListener {
+    private static final int SEPARATOR = 99;
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         TextView name;
@@ -50,21 +52,76 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
         }
     }
 
+
     Context context;
-    List<FavoritesWrapper> favorites;
-    public void setFavorites(List<FavoritesWrapper> favorites) {
+    List<Object> mFavorites;
+    private String personSeparator, teamSeparator, newsSeparator;
+
+    public void setmFavorites(List<FavoritesWrapper> favorites) {
         Collections.sort(favorites);
-        this.favorites = favorites;
+        this.mFavorites = new ArrayList<>((List<Object>) (List) favorites);
+        if(favorites.size()==0)
+            return;
+        int timesToSubstract = 0;
+        // nota: non aggiunge il primo separatore (posizione 0)
+        for(int i = 1; i< favorites.size(); ++i){
+            int currentType = favorites.get(i).getInstance(); // can be FavoritesWrapper.FAVORITE_PERSON, FavoritesWrapper.FAVORITE_TEAM, FavoritesWrapper.FAVORITE_NEWS
+            int prevFavType = favorites.get(i-1).getInstance();
+            if(prevFavType==FavoritesWrapper.FAVORITE_NEWS)
+                break;
+            if(prevFavType != currentType){
+                switch(currentType){
+                    case FavoritesWrapper.FAVORITE_PERSON:{
+                        mFavorites.add(i-timesToSubstract++, personSeparator);
+                        break;
+                    }
+                    case FavoritesWrapper.FAVORITE_TEAM:{
+                        mFavorites.add(i-timesToSubstract++, teamSeparator);
+                        break;
+
+                    }
+                    case FavoritesWrapper.FAVORITE_NEWS:{
+                        mFavorites.add(i-timesToSubstract++, newsSeparator);
+                        break;
+
+                    }
+                }
+            }
+        }
+        // ora aggiungo il primo separatore (posizione 0)
+        switch(favorites.get(0).getInstance()){
+            case FavoritesWrapper.FAVORITE_PERSON:{
+                mFavorites.add(0, personSeparator);
+                break;
+            }
+            case FavoritesWrapper.FAVORITE_TEAM:{
+                mFavorites.add(0, teamSeparator);
+                break;
+
+            }
+            case FavoritesWrapper.FAVORITE_NEWS:{
+                mFavorites.add(0, newsSeparator);
+                break;
+
+            }
+        }
     }
 
     public FavoritesRecyclerViewAdapter(List<FavoritesWrapper> favorites, Context ctx){
-        this.favorites = favorites;
+        this.mFavorites = new ArrayList<>((List<Object>) (List) favorites);
         context = ctx;
+
+        personSeparator = context.getString(R.string.people);
+        teamSeparator = context.getString(R.string.team);
+        newsSeparator = context.getString(R.string.news);
     }
 
     @Override
     public int getItemViewType(int i) {
-        return favorites.get(i).getInstance();
+        Object obj = mFavorites.get(i);
+        if(obj instanceof String)
+            return SEPARATOR;
+        return ((FavoritesWrapper)obj).getInstance();
     }
 
     @Override
@@ -117,25 +174,37 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
     }
 
     @NonNull @Override
-    public FavoritesRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup vg, int viewType) {
-        View v = LayoutInflater.from(vg.getContext()).inflate(R.layout.news_item, vg, false);
+    public FavoritesRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup vg, int viewType) {
         switch(viewType) {
-            case FavoritesWrapper.FAVORITE_TEAM: {
-                v = LayoutInflater.from(vg.getContext()).inflate(R.layout.teams_item, vg, false);
+            case SEPARATOR:{
+                View v = LayoutInflater.from(vg.getContext()).inflate(R.layout.separator_item, vg, false);
                 return new FavoritesRecyclerViewAdapter.ViewHolder(v);
             }
             case FavoritesWrapper.FAVORITE_PERSON: {
-                v = LayoutInflater.from(vg.getContext()).inflate(R.layout.person_item, vg, false);
+                View v = LayoutInflater.from(vg.getContext()).inflate(R.layout.person_item, vg, false);
                 return new FavoritesRecyclerViewAdapter.ViewHolder(v);
             }
-            // case FavoritesWrapper.FAVORITE_NEWS: è il caso default
+            case FavoritesWrapper.FAVORITE_TEAM: {
+                View v = LayoutInflater.from(vg.getContext()).inflate(R.layout.teams_item, vg, false);
+                return new FavoritesRecyclerViewAdapter.ViewHolder(v);
+            }
+            case FavoritesWrapper.FAVORITE_NEWS:{
+                View v = LayoutInflater.from(vg.getContext()).inflate(R.layout.news_item, vg, false);
+                return new FavoritesRecyclerViewAdapter.ViewHolder(v);
+            }
         }
-        return new FavoritesRecyclerViewAdapter.ViewHolder(v);
+        assert false;
+        return null;
     }
 
     @Override
     public void onBindViewHolder(@NonNull FavoritesRecyclerViewAdapter.ViewHolder viewHolder, int i) {
-        FavoritesWrapper fav = favorites.get(i);
+        Object obj = mFavorites.get(i);
+        if(obj instanceof String) {
+            viewHolder.name.setText((String) obj);
+            return;
+        }
+        FavoritesWrapper fav = (FavoritesWrapper) mFavorites.get(i);
         if(fav==null) return;
 
         switch(viewHolder.getItemViewType()/*fav.getInstance()*/){
@@ -167,8 +236,6 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
                                         partialPath,
                                         ((MainActivity)context).restInfoInstance.getLastModified().get(partialPath))
                         )
-                                /*Constants.restBasePath + ((MainActivity)context).restInfoInstance.getTeamsPath() + teamCode + "/"
-                                + ((MainActivity)context).restInfoInstance.getKeyWords().get(Constants.presentationImage))*/
                         //.centerCrop()
                         .placeholder(R.drawable.placeholder_126)
                         .error(R.drawable.placeholder_126)
@@ -190,9 +257,6 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
                                     partialPath,
                                     ((MainActivity)context).restInfoInstance.getLastModified().get(partialPath))
                     )
-
-                            /*Constants.restBasePath + ((MainActivity)context).restInfoInstance.getPeoplePath() + personCode + "/"
-                            + ((MainActivity)context).restInfoInstance.getKeyWords().get(Constants.profileImage))*/
                     //.centerCrop()
                     .placeholder(R.drawable.placeholder_126)
                     .error(R.drawable.placeholder_126)
@@ -213,7 +277,7 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
 
     @Override
     public int getItemCount() {
-        return favorites.size();
+        return mFavorites.size();
     }
 
 }

@@ -141,14 +141,24 @@
     <string name="instagram_name">Volley Cecina</string>
     <string name="facebook_text">Facebook</string>
 
-    <string name="tap_again_to_maps">Doppio tap sull\'indirizzo per aprire le mappe</string>
-    <string name="tap_again_to_phone">Doppio tap sul numero per aprire i contatti</string>
-    <string name="tap_again_to_email">Doppio tap sull\'email per inviare una email</string>
-    <string name="tap_again_to_website">Doppio tap sul sito web per aprire il browser</string>
-    <string name="tap_again_to_instagram">Doppio tap sul nome del profilo per aprire Instagram</string>
-    <string name="tap_again_to_facebook">Doppio tap sul nome del profilo per aprire Facebook</string>
+    <string name="tap_again_to_maps">Premi ancora sull\'indirizzo per aprire le mappe</string>
+    <string name="tap_again_to_phone">Premi ancora sul numero per aprire i contatti</string>
+    <string name="tap_again_to_email">Premi ancora sull\'email per inviare una email</string>
+    <string name="tap_again_to_website">Premi ancora sul sito web per aprire il browser</string>
+    <string name="tap_again_to_instagram">Premi ancora sul nome del profilo per aprire Instagram</string>
+    <string name="tap_again_to_facebook">Premi ancora sul nome del profilo per aprire Facebook</string>
     <string name="menu_favoriti">Preferiti</string>
     <string name="night_mode">Night mode</string>
+
+    <string name="menu_avanzate">Funzioni avanzate</string>
+    <string name="cronometro">Cronometro</string>
+    <string name="cronometro_desc">Utilizza il cronometro</string>
+    <string name="allenamento_rincorsa">Tracking del movimento</string>
+    <string name="allenamento_rincorsa_desc">Utilizza il dispositivo come tracker</string>
+    <string name="rincorsa_tracker_desc">Utilizza il dispositivo come tracker durante l\'esecuzione della rincorsa</string>
+    <string name="people">Persone</string>
+    <string name="team">Squadre</string>
+    <string name="news">Notizie</string>
 
 
 </resources>

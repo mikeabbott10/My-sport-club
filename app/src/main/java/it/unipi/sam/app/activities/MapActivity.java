@@ -27,8 +27,10 @@ import it.unipi.sam.app.util.SharedPreferenceUtility;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-// Implement OnMapReadyCallback.
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+    private static final int NO_PERMISSIONS = 0;
+    private static final int PERMISSIONS_NO_LOCATION = 1;
+
     ActivityMapBinding binding;
     private LatLng ll;
 
@@ -39,11 +41,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
      */
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
-    /**
-     * Flag indicating whether a requested permission has been denied after returning in {@link
-     * #onRequestPermissionsResult(int, String[], int[])}.
-     */
-    private boolean permissionDenied = false;
+    private GoogleMap globalGoogleMapInstance = null;
+    private int locationEnabled = NO_PERMISSIONS;
+    private final Object mapLock = new Object();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,17 +92,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapSettings.setAllGesturesEnabled(true);
         mapSettings.setCompassEnabled(true);
 
-        //if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-        //                                                                    != PackageManager.PERMISSION_GRANTED
-        //        && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-        //                                                                    != PackageManager.PERMISSION_GRANTED) {
-            googleMap.setMyLocationEnabled(true);
-        //}
-        googleMap.setOnMyLocationButtonClickListener(this);
-        googleMap.setOnMyLocationClickListener(this);
-
         // Move the camera to the map coordinates and zoom in closer.
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ll,15));
+
+        synchronized (mapLock) {
+            if (locationEnabled == PERMISSIONS_NO_LOCATION) {
+                globalGoogleMapInstance.setMyLocationEnabled(true);
+                globalGoogleMapInstance.setOnMyLocationButtonClickListener(this);
+                globalGoogleMapInstance.setOnMyLocationClickListener(this);
+            } else // still no permission
+                globalGoogleMapInstance = googleMap;
+        }
     }
 
     // Location
@@ -114,11 +114,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
+    @SuppressLint("MissingPermission")
     @AfterPermissionGranted(LOCATION_PERMISSION_REQUEST_CODE)
     public void requestLocationPermission() {
         String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
         if(EasyPermissions.hasPermissions(this, perms)) {
-            Snackbar.make(binding.getRoot(), "Permission granted", 2000).show();
+            //Snackbar.make(binding.getRoot(), "Permission granted", 2000).show();
+            synchronized (mapLock) {
+                if (globalGoogleMapInstance != null) {
+                    globalGoogleMapInstance.setMyLocationEnabled(true);
+                    globalGoogleMapInstance.setOnMyLocationButtonClickListener(this);
+                    globalGoogleMapInstance.setOnMyLocationClickListener(this);
+                } else {
+                    locationEnabled = PERMISSIONS_NO_LOCATION;
+                }
+            }
         }
         else {
             EasyPermissions.requestPermissions(this, "Please grant the location permission", LOCATION_PERMISSION_REQUEST_CODE, perms);

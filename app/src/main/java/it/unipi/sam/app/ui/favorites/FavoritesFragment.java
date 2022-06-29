@@ -68,7 +68,7 @@ public class FavoritesFragment extends Fragment implements Observer<List<Favorit
     public void onChanged(List<FavoritesWrapper> list) {
         DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "viewModel.getFavoritesList().observe . list:"+ list, null);
         if(list!=null) {
-            adapter.setFavorites(list);
+            adapter.setmFavorites(list);
             // idk quante entries ci sono in più o in meno rispetto a prima (nè dove sono state inserite/eliminate).
             // E' quindi necessario un refresh dell'intero data set:
             adapter.notifyDataSetChanged();

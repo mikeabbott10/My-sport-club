@@ -2,7 +2,8 @@
     android:width="56.924dp"
     android:height="56.924dp"
     android:viewportWidth="56.924"
-    android:viewportHeight="56.924">
+    android:viewportHeight="56.924"
+    android:tint="@color/customDarkLightIconColor">
   <path
       android:pathData="M54.858,27.747m-2.066,0a2.066,2.066 0,1 1,4.132 0a2.066,2.066 0,1 1,-4.132 0"
       android:fillColor="#010002"/>
