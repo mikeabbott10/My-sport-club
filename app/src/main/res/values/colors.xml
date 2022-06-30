@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="customDarkLightIconColor">@color/black</color>
+    <color name="inverseCustomDarkLightIconColor">@color/white</color>
     <color name="alphaCustomDarkLightIconColor">#11000000</color>
+    <color name="middleAlphaCustomDarkLightIconColor">#55000000</color>
+    <color name="lessAlphaCustomDarkLightIconColor">#77000000</color>
 
     <color name="ic_close_adaptive_background">#9B0000</color>
     <color name="ic_ok_adaptive_background">#25C487</color>
@@ -18,6 +21,7 @@
     <color name="main_color">#ec2425</color>
     <color name="trasp_main_color">#ec2425bb</color>
     <color name="dark_red">#be2020</color>
+    <color name="trasp_dark_red">#ecbe2020</color>
     <color name="trasp_heading_color">#1252A4bb</color>
     <color name="trasp2_heading_color">#1251a47a</color>
     <color name="paragraph_color">#000000</color>

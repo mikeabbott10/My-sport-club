@@ -37,32 +37,49 @@ import it.unipi.sam.app.util.graphics.ParamLinearLayout;
 public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<FavoritesRecyclerViewAdapter.ViewHolder> implements View.OnClickListener {
     private static final int SEPARATOR = 99;
 
+    private int insertedSeparators;
+    public int getInsertedSeparators() {
+        return insertedSeparators;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         TextView name;
         TextView desc;
         ImageView image;
+        boolean isSeparator;
 
+        ViewHolder(View itemView, boolean isSeparator) {
+            super(itemView);
+            cv = itemView.findViewById(R.id.cv);
+            name = itemView.findViewById(R.id.cv_name);
+            desc = itemView.findViewById(R.id.cv_description);
+            image = itemView.findViewById(R.id.cv_image);
+            this.isSeparator = isSeparator;
+        }
         ViewHolder(View itemView) {
             super(itemView);
             cv = itemView.findViewById(R.id.cv);
             name = itemView.findViewById(R.id.cv_name);
             desc = itemView.findViewById(R.id.cv_description);
             image = itemView.findViewById(R.id.cv_image);
+            isSeparator = false;
         }
     }
 
 
     Context context;
-    List<Object> mFavorites;
+    List<Object> mFavorites; // lista fisica (comprende i separatori)
+    protected List<FavoritesWrapper> onlyFavorites; // lista logica
     private String personSeparator, teamSeparator, newsSeparator;
 
     public void setmFavorites(List<FavoritesWrapper> favorites) {
         Collections.sort(favorites);
+        onlyFavorites = new ArrayList<>(favorites);
         this.mFavorites = new ArrayList<>((List<Object>) (List) favorites);
         if(favorites.size()==0)
             return;
-        int timesToSubstract = 0;
+        insertedSeparators = 0; // rappresenta il numero di separatori inseriti
         // nota: non aggiunge il primo separatore (posizione 0)
         for(int i = 1; i< favorites.size(); ++i){
             int currentType = favorites.get(i).getInstance(); // can be FavoritesWrapper.FAVORITE_PERSON, FavoritesWrapper.FAVORITE_TEAM, FavoritesWrapper.FAVORITE_NEWS
@@ -72,16 +89,16 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
             if(prevFavType != currentType){
                 switch(currentType){
                     case FavoritesWrapper.FAVORITE_PERSON:{
-                        mFavorites.add(i-timesToSubstract++, personSeparator);
+                        mFavorites.add(i-insertedSeparators++, personSeparator);
                         break;
                     }
                     case FavoritesWrapper.FAVORITE_TEAM:{
-                        mFavorites.add(i-timesToSubstract++, teamSeparator);
+                        mFavorites.add(i-insertedSeparators++, teamSeparator);
                         break;
 
                     }
                     case FavoritesWrapper.FAVORITE_NEWS:{
-                        mFavorites.add(i-timesToSubstract++, newsSeparator);
+                        mFavorites.add(i-insertedSeparators++, newsSeparator);
                         break;
 
                     }
@@ -105,7 +122,31 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
 
             }
         }
+        insertedSeparators++;
     }
+
+    /*public void removeItem(int pos) {
+        if(pos==0) return; // non può essere il primo separatore
+        try {
+            int posToRemove = -1;
+            // se la view precedente e quella successiva a quella eliminata sono separatori, togli il separatore precedente
+            if (pos + 1 < mFavorites.size() && mFavorites.get(pos + 1) instanceof String
+                    || pos + 1 == mFavorites.size()) {
+                if (mFavorites.get(pos - 1) instanceof String) {
+                    insertedSeparators--;
+                    mFavorites.remove(pos - 1); // rimuovi separatore
+                    this.notifyItemRemoved(pos - 1);
+                    // ora la view eliminata ha indice pos-1 in quanto la view precedente è stata appena eliminata
+                    posToRemove = pos - 1;
+                }
+            } else
+                posToRemove = pos;
+            mFavorites.remove(posToRemove);
+            this.notifyItemRemoved(posToRemove);
+        }catch (RuntimeException e){
+            e.printStackTrace();
+        }
+    }*/
 
     public FavoritesRecyclerViewAdapter(List<FavoritesWrapper> favorites, Context ctx){
         this.mFavorites = new ArrayList<>((List<Object>) (List) favorites);
@@ -114,6 +155,7 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
         personSeparator = context.getString(R.string.people);
         teamSeparator = context.getString(R.string.team);
         newsSeparator = context.getString(R.string.news);
+        insertedSeparators = 0;
     }
 
     @Override
@@ -178,7 +220,7 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
         switch(viewType) {
             case SEPARATOR:{
                 View v = LayoutInflater.from(vg.getContext()).inflate(R.layout.separator_item, vg, false);
-                return new FavoritesRecyclerViewAdapter.ViewHolder(v);
+                return new FavoritesRecyclerViewAdapter.ViewHolder(v, true);
             }
             case FavoritesWrapper.FAVORITE_PERSON: {
                 View v = LayoutInflater.from(vg.getContext()).inflate(R.layout.person_item, vg, false);

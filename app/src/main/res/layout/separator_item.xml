@@ -27,17 +27,16 @@
                 tools:ignore="ContentDescription" />
 
             <TextView
+                android:id="@+id/cv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/cv_name"
                 android:layout_centerVertical="true"
                 android:ellipsize="end"
-                android:text="dsadsaadsasac"
-                android:textColor="@color/customDarkLightIconColor"
-                android:maxLines="1"
                 android:maxLength="80"
+                android:maxLines="1"
+                android:textColor="@color/customDarkLightIconColor"
                 android:textSize="18sp"
-                />
+                tools:ignore="RelativeOverlap" />
             <TextView
                 android:visibility="gone"
                 android:layout_width="0dp"

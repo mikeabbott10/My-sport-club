@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.verify.domain.DomainVerificationManager;
 import android.content.pm.verify.domain.DomainVerificationUserState;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -21,6 +23,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -58,11 +61,13 @@ import it.unipi.sam.app.util.VCNews;
 import it.unipi.sam.app.util.room.AppDatabase;
 
 //TODO:
-// 3. night mode frizza la UI
-// 4. disabilita scroll in people activity
+// 1: rotazione schermo mainactivity riparte da Notizie col navigation errato (solo a volte in realtà...)
+//          non funziona manco on lastFragmentCode
+// 2: in night mode, partire col telefono landscape non carica i valori night
 // 5. aggiungere possibilità di ricevere notifica quando una nuova notizia è stata pubblicata
 // 6. accelerometro/giroscopio in funzione avanzata "Allenamento"
 // 7. cronometro in funzione avanzata "Cronometro"
+// v1.1. disabilita scroll in people activity
 
 public class MainActivity extends DownloadActivity implements SwipeRefreshLayout.OnRefreshListener, Observer<String>,
         DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener, RetriveFavoritesListener, View.OnClickListener {
@@ -77,29 +82,40 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
     public List<VCNews> vc_news = new ArrayList<>();
     private AlertDialog domainApprovationDialog;
     private ItemViewModel viewModel;
+    private int lastFragmentCode = Constants.NEWS_FRAGMENT;
 
     // room
     public AppDatabase db;
-    private boolean favoritesRetrived = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onCreate()", null);
+
         // set day/night mode
         boolean isNightMode = SharedPreferenceUtility.getNightMode(this);
         if(isNightMode){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        }/*else{
+        }else{
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }*/
+        }
 
-        super.onCreate(savedInstanceState);
-        DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "onCreate()", null);
-        if(savedInstanceState!=null){
+        // get custom instance state or original instance state
+        boolean alreadyAskedForDomainVerification = false;
+        Bundle manuallyCreatedInstanceState = getIntent().getBundleExtra(Constants.manually_saved_instance_state);
+        if(manuallyCreatedInstanceState != null){
+            super.onCreate(manuallyCreatedInstanceState);
+            restInfoInstance = manuallyCreatedInstanceState.getParcelable(Constants.rest_info_instance_key);
+            alreadyAskedForDomainVerification = manuallyCreatedInstanceState.getBoolean(Constants.already_asked_for_domain_approvation_this_time);
+            lastFragmentCode = manuallyCreatedInstanceState.getInt(Constants.last_fragment_key);
+        }else if(savedInstanceState!=null){
+            super.onCreate(savedInstanceState);
             restInfoInstance = savedInstanceState.getParcelable(Constants.rest_info_instance_key);
-            favoritesRetrived = savedInstanceState.getBoolean(Constants.favorites_already_retrived_key);
+            alreadyAskedForDomainVerification = savedInstanceState.getBoolean(Constants.already_asked_for_domain_approvation_this_time);
+            lastFragmentCode = savedInstanceState.getInt(Constants.last_fragment_key);
         }else
-            favoritesRetrived = false;
+            super.onCreate(null);
 
+        // set binding, view and actionbar
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarMain.toolbar);
@@ -131,6 +147,8 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
             binding.appBarMain.swiperefresh.setRefreshing(true);
         }
 
+        // navigation view colors
+        setNavigationViewColors();
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -144,9 +162,12 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
                         .findFragmentById(R.id.nav_host_fragment_content_main);
         assert navHostFragment != null;
         NavController navController = navHostFragment.getNavController();
+        navController.setGraph(R.navigation.mobile_navigation);
         //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+        Log.d(TAG, "lastFragmentCode:"+lastFragmentCode);
+        navController.navigate( getIdFromOwnConstantCode(lastFragmentCode) );
 
         viewModel = new ViewModelProvider(this).get(ItemViewModel.class);
         viewModel.getSelectedFragmentName().observe(this, this);
@@ -155,10 +176,6 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         binding.appBarMain.swiperefresh.setOnRefreshListener(this);
 
         // domain verification
-        boolean alreadyAskedForDomainVerification = false;
-        if(savedInstanceState!=null){
-            alreadyAskedForDomainVerification = savedInstanceState.getBoolean(Constants.already_asked_for_domain_approvation_this_time);
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alreadyAskedForDomainVerification) {
             try {
                 boolean isDomainVerified = isDomainVerified();
@@ -174,6 +191,31 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         }
     }
 
+    private void setNavigationViewColors() {
+        ColorStateList text_csl = new ColorStateList(
+                new int[][] {
+                        new int[] {-android.R.attr.state_checked}, // unchecked
+                        new int[] { android.R.attr.state_checked}  // checked
+                },
+                new int[] {
+                        ContextCompat.getColor(this, R.color.customDarkLightIconColor), // unchecked
+                        ContextCompat.getColor(this, R.color.customDarkLightIconColor) // checked
+                }
+        );
+        ColorStateList icon_csl = new ColorStateList(
+                new int[][] {
+                        new int[] {-android.R.attr.state_checked}, // unchecked
+                        new int[] { android.R.attr.state_checked}  // checked
+                },
+                new int[] {
+                        ContextCompat.getColor(this, R.color.middleAlphaCustomDarkLightIconColor), // unchecked
+                        ContextCompat.getColor(this, R.color.customDarkLightIconColor) // checked
+                }
+        );
+        binding.navView.setItemTextColor(text_csl);
+        binding.navView.setItemIconTintList(icon_csl);
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -181,10 +223,9 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
 
         // ROOM
         db = AppDatabase.getDatabase(getApplicationContext());
-        // launch thread to retrive favorites from db (if favorites've been not retrived yet)
-        //if(!favoritesRetrived)
-            new Thread(new RetriveFavoritesRunnable(this, db)).start();
-        favoritesRetrived = true;
+        // launch thread to retrive favorites from db
+        // (always do it because of possible back navigation to this after favorites list changes)
+        new Thread(new RetriveFavoritesRunnable(this, db)).start();
     }
 
     @Override
@@ -192,7 +233,7 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         super.onSaveInstanceState(outState);
         outState.putParcelable(Constants.rest_info_instance_key, restInfoInstance);
         outState.putBoolean(Constants.already_asked_for_domain_approvation_this_time, true);
-        outState.putBoolean(Constants.favorites_already_retrived_key, favoritesRetrived);
+        outState.putInt(Constants.last_fragment_key, lastFragmentCode);
     }
 
     private void getRestInfoFile(DMRequestWrapper dmRequestWrapper) {
@@ -311,6 +352,7 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
     @Override
     public void onRefresh() {
         // ask for rest info
+        Log.d(TAG, "onRefresh()");
         getRestInfoFile(new DMRequestWrapper(Constants.restBasePath + Constants.firstRestReqPath,
                 "notUseful", "notUseful", false, false, REST_INFO_JSON,
                 false, null, null));
@@ -356,6 +398,7 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         toolBarLayout.setTitle(item);
         binding.appBarMain.swiperefresh.setEnabled(true);
         if(item.equals(getString(R.string.menu_notizie))){
+            lastFragmentCode = Constants.NEWS_FRAGMENT;
             if(SharedPreferenceUtility.getNotificationEnabled(this)){
                 // notifiche abilitate
                 binding.appBarMain.fab.setImageResource(R.drawable.ic_no_notification);
@@ -366,9 +409,23 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
             return;
         }
 
-        if(item.equals(getString(R.string.menu_contatti)) || item.equals(getString(R.string.menu_settings))
-                    || item.equals(getString(R.string.menu_favoriti))
-                    || item.equals(getString(R.string.menu_avanzate))) {
+        if(item.equals(getString(R.string.menu_favoriti))) {
+            lastFragmentCode = Constants.NEWS_FRAGMENT;
+            binding.appBarMain.swiperefresh.setEnabled(false);
+        }else if(item.equals(getString(R.string.menu_contatti))) {
+            lastFragmentCode = Constants.CONTACTS_FRAGMENT;
+            binding.appBarMain.swiperefresh.setEnabled(false);
+        }else if(item.equals(getString(R.string.menu_femminile))) {
+            lastFragmentCode = Constants.FEMALE_FRAGMENT;
+            binding.appBarMain.swiperefresh.setEnabled(false);
+        }else if(item.equals(getString(R.string.menu_maschile))) {
+            lastFragmentCode = Constants.MALE_FRAGMENT;
+            binding.appBarMain.swiperefresh.setEnabled(false);
+        }else if(item.equals(getString(R.string.menu_settings))){
+            lastFragmentCode = Constants.SETTINGS_FRAGMENT;
+            binding.appBarMain.swiperefresh.setEnabled(false);
+        }else if(item.equals(getString(R.string.menu_avanzate))) {
+            lastFragmentCode = Constants.ADVANCED_FRAGMENT;
             binding.appBarMain.swiperefresh.setEnabled(false);
         }
 
@@ -453,14 +510,11 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         if(compoundButton.getId() == R.id.nightmode_switch){
             if (isChecked) {
-                // do stuff
                 SharedPreferenceUtility.setNightMode( this, true);
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             } else {
-                // do other stuff
                 SharedPreferenceUtility.setNightMode( this, false);
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             }
+            transitionRecreate();
         }else {
             SharedPreferenceUtility.setDontAskForDomainVerification(this, compoundButton.isChecked());
         }
@@ -486,5 +540,33 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
                 binding.appBarMain.fab.setImageResource(R.drawable.ic_no_notification);
             }
         }
+    }
+
+    /**
+     * Custom activity recreate. Usata per ottenere uno switch più smooth tra dark e light mode
+     */
+    protected void transitionRecreate(){
+        Bundle bundle = new Bundle();
+        onSaveInstanceState(bundle); // manually save instance state because we call finish()
+        Intent intent = new Intent(this, getClass());
+        intent.putExtra(Constants.manually_saved_instance_state, bundle);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        finish();
+    }
+
+
+    protected int getIdFromOwnConstantCode(int constant){
+        switch(constant){
+            case Constants.NEWS_FRAGMENT:{return R.id.nav_notizie;}
+            case Constants.FAVORITES_FRAGMENT:{return R.id.nav_favoriti;}
+            case Constants.FEMALE_FRAGMENT:{return R.id.nav_femminile;}
+            case Constants.MALE_FRAGMENT:{return R.id.nav_maschile;}
+            case Constants.CONTACTS_FRAGMENT:{return R.id.nav_contatti;}
+            case Constants.SETTINGS_FRAGMENT:{return R.id.nav_settings;}
+            case Constants.ADVANCED_FRAGMENT:{return R.id.nav_advanced_functions;}
+        }
+        assert false;
+        return -1;
     }
 }

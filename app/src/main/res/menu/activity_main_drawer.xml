@@ -8,36 +8,52 @@
         <item
             android:id="@+id/nav_notizie"
             android:icon="@drawable/ic_news"
-            android:title="@string/menu_notizie" />
+            android:title="@string/menu_notizie"
+            app:itemIconTint="@color/customDarkLightIconColor"
+            app:itemTextColor="@color/customDarkLightIconColor"/>
         <item
             android:id="@+id/nav_favoriti"
             android:icon="@drawable/ic_filled_red_heart"
-            android:title="@string/menu_favoriti" />
+            android:title="@string/menu_favoriti"
+            app:itemIconTint="@color/customDarkLightIconColor"
+            app:itemTextColor="@color/customDarkLightIconColor"/>
         <item
             android:id="@+id/nav_femminile"
             android:icon="@drawable/ic_vc_img_ball"
-            android:title="@string/menu_femminile" />
+            android:title="@string/menu_femminile"
+            app:itemIconTint="@color/customDarkLightIconColor"
+            app:itemTextColor="@color/customDarkLightIconColor"/>
         <item
             android:id="@+id/nav_maschile"
             android:icon="@drawable/ic_vc_img_ball"
-            android:title="@string/menu_maschile" />
+            android:title="@string/menu_maschile"
+            app:itemIconTint="@color/customDarkLightIconColor"
+            app:itemTextColor="@color/customDarkLightIconColor"/>
         <item
             android:id="@+id/nav_contatti"
             android:icon="@drawable/ic_mail"
-            android:title="@string/menu_contatti" />
+            android:title="@string/menu_contatti"
+            app:itemIconTint="@color/customDarkLightIconColor"
+            app:itemTextColor="@color/customDarkLightIconColor"/>
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
-            android:title="@string/menu_settings" />
+            android:title="@string/menu_settings"
+            app:itemIconTint="@color/customDarkLightIconColor"
+            app:itemTextColor="@color/customDarkLightIconColor"/>
         <item
             android:id="@+id/nav_advanced_functions"
             android:icon="@drawable/ic_baseline_timer_24"
-            android:title="@string/menu_avanzate" />
+            android:title="@string/menu_avanzate"
+            app:itemIconTint="@color/customDarkLightIconColor"
+            app:itemTextColor="@color/customDarkLightIconColor"/>
         <item
             android:id="@+id/nav_nightmode"
             android:icon="@drawable/ic_light_mode"
             android:title="@string/night_mode"
             app:actionLayout="@layout/layout_switch"
+            app:itemIconTint="@color/customDarkLightIconColor"
+            app:itemTextColor="@color/customDarkLightIconColor"
             />
     </group>
 </menu>

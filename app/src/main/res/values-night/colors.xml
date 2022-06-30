@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="customDarkLightIconColor">@color/white</color>
+    <color name="inverseCustomDarkLightIconColor">@color/black</color>
     <color name="alphaCustomDarkLightIconColor">#11FFFFFF</color>
+    <color name="middleAlphaCustomDarkLightIconColor">#55FFFFFF</color>
+    <color name="lessAlphaCustomDarkLightIconColor">#77FFFFFF</color>
 </resources>

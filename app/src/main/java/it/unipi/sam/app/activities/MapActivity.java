@@ -97,9 +97,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         synchronized (mapLock) {
             if (locationEnabled == PERMISSIONS_NO_LOCATION) {
-                globalGoogleMapInstance.setMyLocationEnabled(true);
-                globalGoogleMapInstance.setOnMyLocationButtonClickListener(this);
-                globalGoogleMapInstance.setOnMyLocationClickListener(this);
+                googleMap.setMyLocationEnabled(true);
+                googleMap.setOnMyLocationButtonClickListener(this);
+                googleMap.setOnMyLocationClickListener(this);
             } else // still no permission
                 globalGoogleMapInstance = googleMap;
         }

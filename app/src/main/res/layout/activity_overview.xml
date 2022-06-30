@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/team_background"
     android:scaleType="fitXY"
-    android:backgroundTint="#06000000"
     tools:context=".activities.overview.OverviewActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -102,15 +101,6 @@
             android:layout_margin="8dp"
             app:cardElevation="8dp"
             app:contentPadding="16dp" >
-
-            <ImageView
-                android:id="@+id/info_placeholder_image"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:src="@drawable/info_placeholder"
-                tools:ignore="ContentDescription" />
 
         </androidx.cardview.widget.CardView>
     </androidx.core.widget.NestedScrollView>

@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/drawable-anydpi/ic_mail.xml" value="0.1925" />
         <entry key="app/src/main/res/drawable-anydpi/ic_news.xml" value="0.1925" />
         <entry key="app/src/main/res/drawable-anydpi/ic_no_notification.xml" value="0.2125" />
+        <entry key="app/src/main/res/drawable-anydpi/ic_open_new.xml" value="0.234" />
         <entry key="app/src/main/res/drawable-anydpi/ic_settings.xml" value="0.315" />
         <entry key="app/src/main/res/drawable-anydpi/person_placeholder.xml" value="0.25" />
         <entry key="app/src/main/res/drawable-mdpi/vertical_white_gradient.xml" value="0.305" />
@@ -20,6 +21,7 @@
         <entry key="app/src/main/res/drawable-night/person_placeholder.xml" value="0.1955" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.302" />
         <entry key="app/src/main/res/drawable/backgroud_draw.xml" value="0.2465" />
+        <entry key="app/src/main/res/drawable/delete_icon_bm.xml" value="0.225" />
         <entry key="app/src/main/res/drawable/discord.xml" value="0.305" />
         <entry key="app/src/main/res/drawable/email.xml" value="0.305" />
         <entry key="app/src/main/res/drawable/empty_background.xml" value="0.2875" />
@@ -29,6 +31,7 @@
         <entry key="app/src/main/res/drawable/green_gradient.xml" value="0.242" />
         <entry key="app/src/main/res/drawable/horizontal_white_gradient.xml" value="0.288" />
         <entry key="app/src/main/res/drawable/ic_ball.xml" value="0.305" />
+        <entry key="app/src/main/res/drawable/ic_baseline_delete_outline_24.xml" value="0.225" />
         <entry key="app/src/main/res/drawable/ic_baseline_desktop_windows_24.xml" value="0.2125" />
         <entry key="app/src/main/res/drawable/ic_baseline_email_24.xml" value="0.2125" />
         <entry key="app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.2125" />
@@ -47,6 +50,7 @@
         <entry key="app/src/main/res/drawable/ic_vc_img_colored_ball.xml" value="0.305" />
         <entry key="app/src/main/res/drawable/ic_vc_launcher_background.xml" value="0.2875" />
         <entry key="app/src/main/res/drawable/instagram.xml" value="0.2465" />
+        <entry key="app/src/main/res/drawable/less_alpha_rounded_corners.xml" value="0.234" />
         <entry key="app/src/main/res/drawable/ominodiferro.xml" value="0.306" />
         <entry key="app/src/main/res/drawable/oval_radial.xml" value="0.232" />
         <entry key="app/src/main/res/drawable/rounded_corners.xml" value="0.2465" />

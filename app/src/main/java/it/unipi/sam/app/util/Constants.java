@@ -4,14 +4,19 @@ public class Constants {
     public static final int TIMESTAMP = 0;
     public static final int PATH = 1;
 
+    public static final int NEWS_FRAGMENT = 10;
+    public static final int FAVORITES_FRAGMENT = 11;
+    public static final int FEMALE_FRAGMENT = 12;
+    public static final int MALE_FRAGMENT = 13;
+    public static final int CONTACTS_FRAGMENT = 14;
+    public static final int SETTINGS_FRAGMENT = 15;
+    public static final int ADVANCED_FRAGMENT = 16;
+
     public static String restBasePath = "https://donow.cloud/volleycecina/";
     public static String firstRestReqPath = "restInfo.json";
 
     public static String teamCode = "team_code";
     public static String peopleCode = "people_code";
-
-    public static String teamInstance = "ti";
-    public static String personInstance = "pi";
 
     public static String coverImage = "cover_image";
     public static String presentationImage = "presentation_image";
@@ -31,12 +36,12 @@ public class Constants {
 
     //savedInstanceState
     public static String already_asked_for_domain_approvation_this_time = "aafdatt";
-    public static String favorites_already_retrived_key = "fark";
+    public static String last_fragment_key = "lfk";
 
     // intent bundle keys
+    public static String manually_saved_instance_state = "msis";
     public static String rest_info_instance_key = "rest_info_instance_key";
     public static String news_id_key = "newsid";
-    public static String purpose_key = "PURPOSE";
 
     public static String resource_path = "path";
     public static String resource_name = "name";

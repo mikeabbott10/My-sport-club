@@ -64,7 +64,6 @@ public class OverviewActivity extends DownloadActivity implements AppBarLayout.O
     // override this in activities
     public void onJsonInformationReceived(long dm_resource_id, String uri, Integer type, long lastModifiedTimestamp, boolean updateResourcePreference) {
         DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "onJsonInformationReceived. Info ready at: "+ uri, null);
-        binding.infoPlaceholderImage.setVisibility(View.GONE);
     }
 
     @Override

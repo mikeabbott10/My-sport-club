@@ -9,6 +9,7 @@ import it.unipi.sam.app.util.RestInfo;
 
 public class BasicActivity extends AppCompatActivity {
     public RestInfo restInfoInstance;
+
     /**
      * Ottieni URL dell'immagine di copertina aggiornata.
      * @param partialPath
@@ -62,4 +63,70 @@ public class BasicActivity extends AppCompatActivity {
             imagePath = basePath + restInfoInstance.getKeyWords().get(Constants.presentationImage);
         return imagePath;
     }
+
+    /*
+    @Override
+    public void setSupportActionBar(@Nullable Toolbar toolbar) {
+        getDelegate().setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public void setContentView(View v) {
+        getDelegate().setContentView(v);
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        getDelegate().onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        getDelegate().onPostCreate(savedInstanceState);
+        super.onPostCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        getDelegate().onConfigurationChanged(newConfig);
+        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onStart() {
+        getDelegate().onStart();
+        super.onStart();
+    }
+
+    @Override
+    protected void onPostResume() {
+        getDelegate().onPostResume();
+        super.onPostResume();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        getDelegate().onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        getDelegate().setTitle(title);
+        super.setTitle(title);
+    }
+
+    @Override
+    protected void onStop() {
+        getDelegate().onStop();
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        getDelegate().onDestroy();
+        super.onDestroy();
+    }
+*/
 }

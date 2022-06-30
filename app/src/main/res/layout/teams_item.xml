@@ -50,13 +50,14 @@
                 android:maxLines="1"
                 android:maxLength="80"
                 android:textColor="@color/black"
-                android:background="@drawable/rounded_corners"
+                android:background="@drawable/less_alpha_rounded_corners"
                 android:backgroundTint="@color/white"
                 android:padding="3dp"
                 android:shadowColor="@color/white"
                 android:shadowRadius="7"
                 android:shadowDx="2"
                 android:shadowDy="2"
+                android:layout_margin="3dp"
                 />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
