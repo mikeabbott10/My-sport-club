@@ -61,9 +61,6 @@ import it.unipi.sam.app.util.VCNews;
 import it.unipi.sam.app.util.room.AppDatabase;
 
 //TODO:
-// 1: rotazione schermo mainactivity riparte da Notizie col navigation errato (solo a volte in realtà...)
-//          non funziona manco on lastFragmentCode
-// 2: in night mode, partire col telefono landscape non carica i valori night
 // 5. aggiungere possibilità di ricevere notifica quando una nuova notizia è stata pubblicata
 // 6. accelerometro/giroscopio in funzione avanzata "Allenamento"
 // 7. cronometro in funzione avanzata "Cronometro"
@@ -82,7 +79,6 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
     public List<VCNews> vc_news = new ArrayList<>();
     private AlertDialog domainApprovationDialog;
     private ItemViewModel viewModel;
-    private int lastFragmentCode = Constants.NEWS_FRAGMENT;
 
     // room
     public AppDatabase db;
@@ -106,12 +102,10 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
             super.onCreate(manuallyCreatedInstanceState);
             restInfoInstance = manuallyCreatedInstanceState.getParcelable(Constants.rest_info_instance_key);
             alreadyAskedForDomainVerification = manuallyCreatedInstanceState.getBoolean(Constants.already_asked_for_domain_approvation_this_time);
-            lastFragmentCode = manuallyCreatedInstanceState.getInt(Constants.last_fragment_key);
         }else if(savedInstanceState!=null){
             super.onCreate(savedInstanceState);
             restInfoInstance = savedInstanceState.getParcelable(Constants.rest_info_instance_key);
             alreadyAskedForDomainVerification = savedInstanceState.getBoolean(Constants.already_asked_for_domain_approvation_this_time);
-            lastFragmentCode = savedInstanceState.getInt(Constants.last_fragment_key);
         }else
             super.onCreate(null);
 
@@ -166,8 +160,6 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-        Log.d(TAG, "lastFragmentCode:"+lastFragmentCode);
-        navController.navigate( getIdFromOwnConstantCode(lastFragmentCode) );
 
         viewModel = new ViewModelProvider(this).get(ItemViewModel.class);
         viewModel.getSelectedFragmentName().observe(this, this);
@@ -233,7 +225,6 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         super.onSaveInstanceState(outState);
         outState.putParcelable(Constants.rest_info_instance_key, restInfoInstance);
         outState.putBoolean(Constants.already_asked_for_domain_approvation_this_time, true);
-        outState.putInt(Constants.last_fragment_key, lastFragmentCode);
     }
 
     private void getRestInfoFile(DMRequestWrapper dmRequestWrapper) {
@@ -314,6 +305,11 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
     @Override
     protected void handle404(long dm_resource_id, Integer type, String uriString) {
         super.handle404(dm_resource_id, type, uriString);
+        if(type==null){
+            DebugUtility.showSimpleSnackbar(binding.getRoot(), "ERROR 10. Please retry later.", 5000);
+            binding.appBarMain.swiperefresh.setRefreshing(false);
+            return;
+        }
         switch(type) {
             case NEWS_JSON:
                 DebugUtility.showSimpleSnackbar(binding.getRoot(), "ERROR 07. Please retry later.", 5000);
@@ -398,7 +394,6 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         toolBarLayout.setTitle(item);
         binding.appBarMain.swiperefresh.setEnabled(true);
         if(item.equals(getString(R.string.menu_notizie))){
-            lastFragmentCode = Constants.NEWS_FRAGMENT;
             if(SharedPreferenceUtility.getNotificationEnabled(this)){
                 // notifiche abilitate
                 binding.appBarMain.fab.setImageResource(R.drawable.ic_no_notification);
@@ -410,22 +405,16 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         }
 
         if(item.equals(getString(R.string.menu_favoriti))) {
-            lastFragmentCode = Constants.NEWS_FRAGMENT;
             binding.appBarMain.swiperefresh.setEnabled(false);
         }else if(item.equals(getString(R.string.menu_contatti))) {
-            lastFragmentCode = Constants.CONTACTS_FRAGMENT;
             binding.appBarMain.swiperefresh.setEnabled(false);
         }else if(item.equals(getString(R.string.menu_femminile))) {
-            lastFragmentCode = Constants.FEMALE_FRAGMENT;
             binding.appBarMain.swiperefresh.setEnabled(false);
         }else if(item.equals(getString(R.string.menu_maschile))) {
-            lastFragmentCode = Constants.MALE_FRAGMENT;
             binding.appBarMain.swiperefresh.setEnabled(false);
         }else if(item.equals(getString(R.string.menu_settings))){
-            lastFragmentCode = Constants.SETTINGS_FRAGMENT;
             binding.appBarMain.swiperefresh.setEnabled(false);
         }else if(item.equals(getString(R.string.menu_avanzate))) {
-            lastFragmentCode = Constants.ADVANCED_FRAGMENT;
             binding.appBarMain.swiperefresh.setEnabled(false);
         }
 
@@ -514,7 +503,7 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
             } else {
                 SharedPreferenceUtility.setNightMode( this, false);
             }
-            transitionRecreate();
+            recreate();
         }else {
             SharedPreferenceUtility.setDontAskForDomainVerification(this, compoundButton.isChecked());
         }
@@ -540,33 +529,5 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
                 binding.appBarMain.fab.setImageResource(R.drawable.ic_no_notification);
             }
         }
-    }
-
-    /**
-     * Custom activity recreate. Usata per ottenere uno switch più smooth tra dark e light mode
-     */
-    protected void transitionRecreate(){
-        Bundle bundle = new Bundle();
-        onSaveInstanceState(bundle); // manually save instance state because we call finish()
-        Intent intent = new Intent(this, getClass());
-        intent.putExtra(Constants.manually_saved_instance_state, bundle);
-        startActivity(intent);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        finish();
-    }
-
-
-    protected int getIdFromOwnConstantCode(int constant){
-        switch(constant){
-            case Constants.NEWS_FRAGMENT:{return R.id.nav_notizie;}
-            case Constants.FAVORITES_FRAGMENT:{return R.id.nav_favoriti;}
-            case Constants.FEMALE_FRAGMENT:{return R.id.nav_femminile;}
-            case Constants.MALE_FRAGMENT:{return R.id.nav_maschile;}
-            case Constants.CONTACTS_FRAGMENT:{return R.id.nav_contatti;}
-            case Constants.SETTINGS_FRAGMENT:{return R.id.nav_settings;}
-            case Constants.ADVANCED_FRAGMENT:{return R.id.nav_advanced_functions;}
-        }
-        assert false;
-        return -1;
     }
 }

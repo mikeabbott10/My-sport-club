@@ -159,6 +159,7 @@
     <string name="people">Persone</string>
     <string name="team">Squadre</string>
     <string name="news">Notizie</string>
+    <string name="no_favorites">Aggiungi un elemento ai preferiti aprendo la pagina relativa e premendo sul cuore.</string>
 
 
 </resources>

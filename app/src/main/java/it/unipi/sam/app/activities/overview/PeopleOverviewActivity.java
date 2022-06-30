@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Map;
 
@@ -218,13 +219,18 @@ public class PeopleOverviewActivity extends OverviewActivity implements View.OnC
     public boolean onMenuItemClick(MenuItem item) {
         if(item.getItemId()==R.id.menu_fav){
             // add or remove from favorites
-            if(thisPerson!=null)
-                new Thread(
-                        new SetFavoritesRunnable(db,
-                                new FavoritesWrapper(thisPerson),
-                                this, item
-                        )
-                ).start();
+            if(thisPerson!=null) {
+                try {
+                    SetFavoritesRunnable r =
+                            new SetFavoritesRunnable(db,
+                                    new FavoritesWrapper(thisPerson),
+                                    this, item
+                            );
+                    new Thread(r).start();
+                }catch (IllegalArgumentException e){
+                    Snackbar.make(binding.getRoot(), "ERROR 11: please retry later", 2000).show();
+                }
+            }
         }
         return false;
     }

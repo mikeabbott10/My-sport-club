@@ -3,6 +3,8 @@ package it.unipi.sam.app.util;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -172,5 +174,13 @@ public class Team implements Parcelable {
         parcel.writeString(currentLeague);
         parcel.writeString(leagueDescription);
         parcel.writeString(leagueLink);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Team{" +
+                "tag='" + tag + '\'' +
+                '}';
     }
 }

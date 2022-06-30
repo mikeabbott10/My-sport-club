@@ -19,9 +19,11 @@ public class SetFavoritesRunnable implements Runnable {
     public static final int DELETED = 0;
     public static final int INSERTED = 1;
 
-    public SetFavoritesRunnable(AppDatabase db, FavoritesWrapper favWrapper, SetFavoritesListener sfl, Object item) {
+    public SetFavoritesRunnable(AppDatabase db, FavoritesWrapper favWrapper, SetFavoritesListener sfl, Object item) throws IllegalArgumentException{
         this.mDb = db;
         this.favWrapper = favWrapper;
+        if(favWrapper.getInstance() == -1)
+            throw new IllegalArgumentException("Favorite object doesn't have a valid instance");
         mHandler = new Handler(Looper.getMainLooper()){
             @Override public void handleMessage(@NonNull Message msg) {
                 if(sfl == null){

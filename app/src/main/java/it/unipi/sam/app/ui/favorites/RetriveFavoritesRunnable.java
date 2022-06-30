@@ -27,6 +27,15 @@ public class RetriveFavoritesRunnable implements Runnable {
                 }
                 //DebugUtility.LogDThis(DebugUtility.IDENTITY_LOG, TAG, "msg.obj:" + msg.obj, null);
                 List<FavoritesWrapper> l = (List<FavoritesWrapper>) msg.obj;
+
+                // DEBUG: clean local instance list from errors (they still in the db)
+                /*for(int i = 0; i<l.size(); ++i){
+                    if(l.get(i).getInstance() == -1) {
+                        l.remove(i);
+                        i--;
+                    }
+                }*/
+
                 rfl.onFavoritesRetrived(l);
 
             }

@@ -3,6 +3,8 @@ package it.unipi.sam.app.util;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
@@ -165,5 +167,15 @@ public class VCNews implements Parcelable, Comparable<VCNews>{
         parcel.writeString(relatedGameName);
         parcel.writeString(relatedGameHomeSets);
         parcel.writeString(relatedGameAwaySets);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "VCNews{" +
+                "tag='" + tag + '\'' +
+                ", title='" + title + '\'' +
+                ", id=" + id +
+                '}';
     }
 }

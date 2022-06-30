@@ -3,6 +3,7 @@ package it.unipi.sam.app.util;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -72,7 +73,6 @@ public class FavoritesWrapper implements Parcelable, Comparable<FavoritesWrapper
             return FAVORITE_TEAM;
         if(person!=null)
             return FAVORITE_PERSON;
-        assert false;
         return -1;
     }
 
@@ -155,5 +155,16 @@ public class FavoritesWrapper implements Parcelable, Comparable<FavoritesWrapper
             }
         }
         return 0;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "FavoritesWrapper{" +
+                "id=" + id +
+                ", news=" + news +
+                ", team=" + team +
+                ", person=" + person +
+                '}';
     }
 }

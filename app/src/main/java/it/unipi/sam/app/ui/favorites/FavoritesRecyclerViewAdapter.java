@@ -186,7 +186,7 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
                     i.putExtra(Constants.news_key, singleton);
                 }catch (ClassCastException e){
                     e.printStackTrace();
-                    Toast.makeText(context, "ERROR 02. Retry later.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "ERROR 04. Retry later.", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 i.putExtra(Constants.news_id_key, news.getId());

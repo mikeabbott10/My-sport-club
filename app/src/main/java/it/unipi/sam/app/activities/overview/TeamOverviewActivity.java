@@ -9,6 +9,7 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Map;
 
@@ -277,13 +278,18 @@ public class TeamOverviewActivity extends OverviewActivity implements View.OnCli
     public boolean onMenuItemClick(MenuItem item) {
         if(item.getItemId()==R.id.menu_fav){
             // add or remove from favorites
-            if(thisTeam!=null)
-                new Thread(
-                        new SetFavoritesRunnable(db,
-                                new FavoritesWrapper(thisTeam),
-                                this, item
-                        )
-                ).start();
+            if(thisTeam!=null) {
+                try {
+                    SetFavoritesRunnable r =
+                            new SetFavoritesRunnable(db,
+                                    new FavoritesWrapper(thisTeam),
+                                    this, item
+                            );
+                    new Thread(r).start();
+                }catch (IllegalArgumentException e){
+                    Snackbar.make(binding.getRoot(), "ERROR 12: please retry later", 2000).show();
+                }
+            }
         }
         return false;
     }

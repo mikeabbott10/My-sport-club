@@ -3,6 +3,8 @@ package it.unipi.sam.app.util;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -136,5 +138,14 @@ public class Person implements Parcelable {
         }
 
         parcel.writeStringList(social);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Person{" +
+                "tag='" + tag + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 }
