@@ -61,10 +61,9 @@ import it.unipi.sam.app.util.VCNews;
 import it.unipi.sam.app.util.room.AppDatabase;
 
 //TODO:
-// 5. aggiungere possibilità di ricevere notifica quando una nuova notizia è stata pubblicata
-// 6. accelerometro/giroscopio in funzione avanzata "Allenamento"
-// 7. cronometro in funzione avanzata "Cronometro"
-// v1.1. disabilita scroll in people activity
+// fixare preferiti (separatori notizie e squadre sminchiate)
+// v1.1 start intent da funzioni avanzate (nuova app)
+// v1.1. popola people activity con roba social related
 
 public class MainActivity extends DownloadActivity implements SwipeRefreshLayout.OnRefreshListener, Observer<String>,
         DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener, RetriveFavoritesListener, View.OnClickListener {

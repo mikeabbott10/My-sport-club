@@ -3,7 +3,6 @@ package it.unipi.sam.app.ui.favorites;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -264,7 +263,6 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
                 ((ParamLinearLayout) viewHolder.itemView ).setObject(new Object[]{FavoritesWrapper.FAVORITE_NEWS, fav.getNews()});
                 break;
             case FavoritesWrapper.FAVORITE_TEAM: {
-                Log.d("TAGGHE", fav.getTeam().toString());
                 Team team = fav.getTeam();
                 String teamCode = team.getTag();
                 viewHolder.name.setText(team.getCurrentLeague());
@@ -321,5 +319,4 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
     public int getItemCount() {
         return mFavorites.size();
     }
-
 }

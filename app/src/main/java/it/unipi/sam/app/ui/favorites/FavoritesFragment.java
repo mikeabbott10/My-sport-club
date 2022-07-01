@@ -30,9 +30,12 @@ import java.util.function.Consumer;
 
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.FragmentFavoritesBinding;
+import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.FavoritesWrapper;
 import it.unipi.sam.app.util.ItemViewModel;
+import it.unipi.sam.app.util.OnSwipeCallbackListener;
+import it.unipi.sam.app.util.graphics.MyItemTouchHelperSCImpl;
 import it.unipi.sam.app.util.room.AppDatabase;
 
 public class FavoritesFragment extends Fragment implements Observer<List<FavoritesWrapper>>, SetFavoritesListener, RetriveFavoritesListener {
@@ -72,7 +75,7 @@ public class FavoritesFragment extends Fragment implements Observer<List<Favorit
         Drawable deleteIcon = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_baseline_delete_outline_24);
         assert deleteIcon != null;
         deleteIcon.setTint(deleteColor);
-        Bitmap deleteIconBitmap = convertToBitmap(deleteIcon, deleteIcon.getIntrinsicWidth(), deleteIcon.getIntrinsicHeight());
+        Bitmap deleteIconBitmap = Constants.convertToBitmap(deleteIcon, deleteIcon.getIntrinsicWidth(), deleteIcon.getIntrinsicHeight());
         Paint p = new Paint();
         ItemTouchHelper swipeHelper = new ItemTouchHelper(getItemTouchCallbacks(deleteIconBitmap, p));
         swipeHelper.attachToRecyclerView(binding.favoritesRecyclerView);
@@ -111,7 +114,7 @@ public class FavoritesFragment extends Fragment implements Observer<List<Favorit
             adapter.notifyDataSetChanged();
         }
         if(list==null || list.size()==0){
-            Snackbar.make(binding.getRoot(), getString(R.string.no_favorites), 6000).show();
+            Snackbar.make(binding.getRoot(), getString(R.string.no_favorites), 2000).show();
         }
 
     }
@@ -138,110 +141,81 @@ public class FavoritesFragment extends Fragment implements Observer<List<Favorit
      * @return
      */
     private ItemTouchHelper.SimpleCallback getItemTouchCallbacks(Bitmap deleteIconBitmap, Paint p) {
-        return
-                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-                    @Override
-                    public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                        // never called (no drag n drop)
-                        return true;
+        OnSwipeCallbackListener oscl = new OnSwipeCallbackListener() {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                if(viewModel.getFavoritesList().getValue() == null)
+                    return;
+                int pos = viewHolder.getAdapterPosition();
+                switch(viewHolder.getItemViewType()/*fav.getInstance()*/) {
+                    case FavoritesWrapper.FAVORITE_PERSON: {
+                        int prevPos = pos;
+                        pos--;
+                        try {
+                            SetFavoritesRunnable r =
+                                    new SetFavoritesRunnable(db,
+                                            new FavoritesWrapper(viewModel.getFavoritesList().getValue().get(pos).getPerson()),
+                                            FavoritesFragment.this, prevPos
+                                    );
+                            new Thread(r).start();
+                        }catch (IllegalArgumentException ignored){}
+                        break;
                     }
-
-                    @Override
-                    public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
-                        return .6f;
+                    case FavoritesWrapper.FAVORITE_TEAM: {
+                        //Log.d(TAG, "pos:"+pos+", insertedSeparators:"+adapter.getInsertedSeparators());
+                        int prevPos = pos;
+                        if(adapter.getInsertedSeparators()==1){
+                            // no people in list
+                            pos--;
+                        }else // persone e teams in list
+                            pos-=2;
+                        try {
+                            SetFavoritesRunnable r =
+                                    new SetFavoritesRunnable(db,
+                                            new FavoritesWrapper(viewModel.getFavoritesList().getValue().get(pos).getTeam()),
+                                            FavoritesFragment.this, prevPos
+                                    );
+                            new Thread(r).start();
+                        }catch (IllegalArgumentException ignored){}
+                        break;
                     }
-
-                    @Override
-                    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                        if(viewModel.getFavoritesList().getValue() == null)
-                            return;
-                        int pos = viewHolder.getAdapterPosition();
-                        switch(viewHolder.getItemViewType()/*fav.getInstance()*/) {
-                            case FavoritesWrapper.FAVORITE_PERSON: {
-                                int prevPos = pos;
-                                pos--;
-                                try {
-                                    SetFavoritesRunnable r =
-                                            new SetFavoritesRunnable(db,
-                                                    new FavoritesWrapper(viewModel.getFavoritesList().getValue().get(pos).getPerson()),
-                                                    FavoritesFragment.this, prevPos
-                                            );
-                                    new Thread(r).start();
-                                }catch (IllegalArgumentException ignored){}
-                                break;
-                            }
-                            case FavoritesWrapper.FAVORITE_TEAM: {
-                                //Log.d(TAG, "pos:"+pos+", insertedSeparators:"+adapter.getInsertedSeparators());
-                                int prevPos = pos;
-                                if(adapter.getInsertedSeparators()==1){
-                                    // no people in list
-                                    pos--;
-                                }else // persone e teams in list
-                                    pos-=2;
-                                try {
-                                    SetFavoritesRunnable r =
-                                            new SetFavoritesRunnable(db,
-                                                    new FavoritesWrapper(viewModel.getFavoritesList().getValue().get(pos).getTeam()),
-                                                    FavoritesFragment.this, prevPos
-                                            );
-                                    new Thread(r).start();
-                                }catch (IllegalArgumentException ignored){}
-                                break;
-                            }
-                            case FavoritesWrapper.FAVORITE_NEWS: {
-                                int prevPos = pos;
-                                pos -= adapter.getInsertedSeparators();
-                                try {
-                                    SetFavoritesRunnable r =
-                                            new SetFavoritesRunnable(db,
-                                                    new FavoritesWrapper(viewModel.getFavoritesList().getValue().get(pos).getNews()),
-                                                    FavoritesFragment.this, prevPos
-                                            );
-                                    new Thread(r).start();
-                                }catch (IllegalArgumentException ignored){}
-                                break;
-                            }
-                        }
-
+                    case FavoritesWrapper.FAVORITE_NEWS: {
+                        int prevPos = pos;
+                        pos -= adapter.getInsertedSeparators();
+                        try {
+                            SetFavoritesRunnable r =
+                                    new SetFavoritesRunnable(db,
+                                            new FavoritesWrapper(viewModel.getFavoritesList().getValue().get(pos).getNews()),
+                                            FavoritesFragment.this, prevPos
+                                    );
+                            new Thread(r).start();
+                        }catch (IllegalArgumentException ignored){}
+                        break;
                     }
+                }
+            }
 
-                    @Override
-                    public int getSwipeDirs(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-                        if ( ((FavoritesRecyclerViewAdapter.ViewHolder)viewHolder).isSeparator ) return 0;
-                        return super.getSwipeDirs(recyclerView, viewHolder);
-                    }
+            @Override
+            public float onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                View itemView = viewHolder.itemView;
+                float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                float width = height / 3;
 
-                    @Override
-                    public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-                        View itemView = viewHolder.itemView;
-                        float height = (float) itemView.getBottom() - (float) itemView.getTop();
-                        float width = height / 3;
+                RectF icon_dest = new RectF(
+                        (float) itemView.getLeft() + 70,
+                        (float) itemView.getTop() + width,
+                        (float) itemView.getLeft() + 70 + width,
+                        (float) itemView.getBottom() - width);
+                c.drawBitmap(deleteIconBitmap, null, icon_dest, p);
+                return dX/3;
+            }
 
-                        RectF icon_dest = new RectF(
-                                (float) itemView.getLeft() + 70,
-                                (float) itemView.getTop() + width,
-                                (float) itemView.getLeft() + 70 + width,
-                                (float) itemView.getBottom() - width);
-                        c.drawBitmap(deleteIconBitmap, null, icon_dest, p);
-
-                        super.onChildDraw(c, recyclerView, viewHolder, dX/3, dY, actionState, isCurrentlyActive);
-                    }
-                };
-    }
-
-    /**
-     * Drawable to Bitmap
-     * @param drawable
-     * @param widthPixels
-     * @param heightPixels
-     * @return
-     */
-    public Bitmap convertToBitmap(Drawable drawable, int widthPixels, int heightPixels) {
-        Bitmap mutableBitmap = Bitmap.createBitmap(widthPixels, heightPixels, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(mutableBitmap);
-        drawable.setBounds(0, 0, widthPixels, heightPixels);
-        drawable.draw(canvas);
-
-        return mutableBitmap;
+            @Override
+            public int getSwipeDirs(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                if ( ((FavoritesRecyclerViewAdapter.ViewHolder)viewHolder).isSeparator ) return 0;
+                return 1;
+            }
+        };
+        return new MyItemTouchHelperSCImpl(oscl, 0, ItemTouchHelper.RIGHT);
     }
 }

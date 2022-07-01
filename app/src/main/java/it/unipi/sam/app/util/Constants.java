@@ -1,5 +1,9 @@
 package it.unipi.sam.app.util;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+
 public class Constants {
     public static final int TIMESTAMP = 0;
     public static final int PATH = 1;
@@ -51,4 +55,21 @@ public class Constants {
     public static String database_name = "VolleyCecinaFavorites";
 
     public static final String lat_lon_marker_key = "llmk";
+
+
+    /**
+     * Drawable to Bitmap
+     * @param drawable
+     * @param widthPixels
+     * @param heightPixels
+     * @return
+     */
+    public static Bitmap convertToBitmap(Drawable drawable, int widthPixels, int heightPixels) {
+        Bitmap mutableBitmap = Bitmap.createBitmap(widthPixels, heightPixels, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(mutableBitmap);
+        drawable.setBounds(0, 0, widthPixels, heightPixels);
+        drawable.draw(canvas);
+
+        return mutableBitmap;
+    }
 }

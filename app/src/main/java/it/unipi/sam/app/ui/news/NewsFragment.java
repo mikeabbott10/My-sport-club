@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,7 @@ import it.unipi.sam.app.util.DebugUtility;
 import it.unipi.sam.app.util.ItemViewModel;
 import it.unipi.sam.app.util.VCNews;
 
-public class NewsFragment extends Fragment implements Observer<List<VCNews>> {
+public class NewsFragment extends Fragment implements Observer<List<VCNews>>{
     private String TAG = "FRFRNewsFragment";
     private FragmentNewsBinding binding;
 
@@ -40,13 +39,13 @@ public class NewsFragment extends Fragment implements Observer<List<VCNews>> {
         currentFragmentName = requireActivity().getString(R.string.menu_notizie);
         viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
-        final RecyclerView recycleView = binding.newsRecyclerView;
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        recycleView.setLayoutManager(llm);
-        recycleView.setHasFixedSize(true);
+        binding.newsRecyclerView.setLayoutManager(llm);
+        binding.newsRecyclerView.setHasFixedSize(true);
         adapter = new NewsRecyclerViewAdapter(new ArrayList<>(), getActivity());
-        recycleView.setAdapter(adapter);
+        binding.newsRecyclerView.setAdapter(adapter);
         viewModel.getVcNewsList().observe(getViewLifecycleOwner(), this);
+
         return root;
     }
 

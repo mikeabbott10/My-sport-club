@@ -12,14 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.snackbar.Snackbar;
 
-import it.unipi.sam.app.MainActivity;
 import it.unipi.sam.app.R;
-import it.unipi.sam.app.activities.MapActivity;
 import it.unipi.sam.app.databinding.FragmentContactsBinding;
-import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.ItemViewModel;
 import it.unipi.sam.app.util.SharedPreferenceUtility;
 
@@ -82,12 +78,12 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         if(view.getId() == binding.addressLayout.getId()){
             binding.img.setAlpha((float) 1.0);
             if(currentContactsEntry==GOOGLE_MAPS){
-                Intent i = new Intent(requireActivity(), MapActivity.class);
+                /*Intent i = new Intent(requireActivity(), MapActivity.class);
                 i.putExtra(Constants.lat_lon_marker_key, new LatLng(43.308197250876226, 10.522802259738558));
                 i.putExtra(Constants.rest_info_instance_key, ((MainActivity)requireActivity()).restInfoInstance);
-                startActivity(i);
-                /*startActivity(new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(getString(R.string.sede_maps_link))));*/
+                startActivity(i);*/
+                startActivity(new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(getString(R.string.sede_maps_link))));
             }else{
                 currentContactsEntry = GOOGLE_MAPS;
                 binding.maintv.startAnimation(AnimationUtils.loadAnimation(requireActivity(),
