@@ -129,8 +129,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     locationEnabled = PERMISSIONS_NO_LOCATION;
                 }
             }
-        }
-        else {
+        }else {
             EasyPermissions.requestPermissions(this, "Please grant the location permission", LOCATION_PERMISSION_REQUEST_CODE, perms);
         }
     }

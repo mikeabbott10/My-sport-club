@@ -62,7 +62,7 @@ import it.unipi.sam.app.util.room.AppDatabase;
 
 //TODO:
 // fixare preferiti (separatori notizie e squadre sminchiate)
-// v1.1 start intent da funzioni avanzate (nuova app)
+// permettere aggiunta news ai preferiti dalle news stesse (heart next to share btn)
 // v1.1. popola people activity con roba social related
 
 public class MainActivity extends DownloadActivity implements SwipeRefreshLayout.OnRefreshListener, Observer<String>,
@@ -147,7 +147,7 @@ public class MainActivity extends DownloadActivity implements SwipeRefreshLayout
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_notizie, R.id.nav_favoriti, R.id.nav_femminile, R.id.nav_maschile,
-                R.id.nav_contatti, R.id.nav_advanced_functions, R.id.nav_settings)
+                R.id.nav_contatti, R.id.nav_settings)
                 .setOpenableLayout(binding.drawerLayout)
                 .build();
         NavHostFragment navHostFragment =

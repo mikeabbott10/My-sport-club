@@ -55,9 +55,6 @@
             android:name=".activities.ScreenSlidePagerActivity">
         </activity>
         <activity android:name=".activities.overview.PeopleOverviewActivity" />
-        <activity android:name=".activities.MapActivity" />
-        <activity android:name=".activities.advanced.TrackerFunctionActivity" />
-        <activity android:name=".activities.advanced.TimerFunctionActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

@@ -40,8 +40,4 @@
         android:name="it.unipi.sam.app.ui.settings.MyPreferenceFragment"
         android:label="@string/menu_settings"/>
 
-    <fragment
-        android:id="@+id/nav_advanced_functions"
-        android:name="it.unipi.sam.app.ui.advanced.AdvancedFragment"
-        android:label="@string/menu_avanzate"/>
 </navigation>

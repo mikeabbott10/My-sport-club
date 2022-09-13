@@ -42,12 +42,6 @@
             app:itemIconTint="@color/customDarkLightIconColor"
             app:itemTextColor="@color/customDarkLightIconColor"/>
         <item
-            android:id="@+id/nav_advanced_functions"
-            android:icon="@drawable/ic_baseline_timer_24"
-            android:title="@string/menu_avanzate"
-            app:itemIconTint="@color/customDarkLightIconColor"
-            app:itemTextColor="@color/customDarkLightIconColor"/>
-        <item
             android:id="@+id/nav_nightmode"
             android:icon="@drawable/ic_light_mode"
             android:title="@string/night_mode"

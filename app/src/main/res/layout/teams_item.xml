@@ -50,6 +50,7 @@
                 android:maxLines="1"
                 android:maxLength="80"
                 android:textColor="@color/black"
+
                 android:background="@drawable/less_alpha_rounded_corners"
                 android:backgroundTint="@color/white"
                 android:padding="3dp"
