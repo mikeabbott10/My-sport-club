@@ -54,7 +54,7 @@ public class Constants {
     // Room
     public static String database_name = "VolleyCecinaFavorites";
 
-    public static final String lat_lon_marker_key = "llmk";
+    //public static final String lat_lon_marker_key = "llmk";
 
 
     /**
