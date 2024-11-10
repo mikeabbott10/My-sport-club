@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -22,7 +21,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import it.unipi.sam.app.R;
 import it.unipi.sam.app.databinding.ActivityMapBinding;
-import it.unipi.sam.app.util.Constants;
 import it.unipi.sam.app.util.SharedPreferenceUtility;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -48,7 +46,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMapBinding.inflate(getLayoutInflater());
+        /*binding = ActivityMapBinding.inflate(getLayoutInflater());
         // Set the layout file as the content view.
         setContentView(binding.getRoot());
 
@@ -60,7 +58,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
-        requestLocationPermission();
+        requestLocationPermission();*/
     }
 
     // Get a handle to the GoogleMap object and display marker.

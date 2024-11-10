@@ -14,7 +14,6 @@ public class Constants {
     public static final int MALE_FRAGMENT = 13;
     public static final int CONTACTS_FRAGMENT = 14;
     public static final int SETTINGS_FRAGMENT = 15;
-    public static final int ADVANCED_FRAGMENT = 16;
 
     public static String restBasePath = "https://donow.cloud/volleycecina/";
     public static String firstRestReqPath = "restInfo.json";
